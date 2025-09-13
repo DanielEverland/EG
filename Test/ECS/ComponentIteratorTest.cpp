@@ -40,3 +40,25 @@ TEST(Component, SimpleIteration)
 
     EXPECT_EQ(executions, 2);
 }
+
+TEST(Component, ProperSubset)
+{
+    ComponentManager manager;
+    const Entity entityA = 0;
+    const Entity entityB = 1;
+
+    manager.AddComponent<TestComponentA>(entityA);
+    manager.AddComponent<TestComponentA>(entityB);
+    
+    manager.AddComponent<TestComponentB>(entityA);
+
+    int32_t executions = 0;
+    auto iter = manager.CreateIterator<Entity, TestComponentA, TestComponentB>();
+    iter.Execute([&executions, entityA](Entity entityId, TestComponentA&, TestComponentB&)
+    {
+        executions++;
+        EXPECT_EQ(entityId, entityA);
+    });
+
+    EXPECT_EQ(executions, 1);
+}

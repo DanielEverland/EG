@@ -4,7 +4,6 @@
 #pragma once
 
 #include <cassert>
-#include <iostream>
 #include <memory>
 #include <ostream>
 
@@ -13,36 +12,53 @@
 
 class ComponentManager
 {
-public:
-    template<class... T>
-    requires (std::is_base_of_v<Component, T> && ...)
-    class Iter
+private:
+    template<class... ComponentTypes>
+    class IterBase
     {
     public:
-        Iter(ComponentManager& manager)
+        IterBase(ComponentManager& manager)
             :   Manager(manager),
-                Containers { Manager.GetContainer<T>()... }
+                Containers { Manager.GetContainer<ComponentTypes>()... }
         {
         }
         // Move constructor is dangerous due to manager field being a reference
-        Iter(ComponentManager&& manager) = delete;
-
-        template<std::invocable<T&...> F>
-        void Execute(F&& func)
+        IterBase(ComponentManager&& manager) = delete;
+        
+        template<std::invocable<Entity, ComponentTypes&...> F>
+        void EvaluateComponents(F&& func)
         {
             // TODO: Optimize by choosing the smallest container as driver
-            auto& driver = std::get<0>(Containers);            
+            auto& driver = std::get<0>(Containers);
             auto fn = std::forward<F>(func);
             for (auto& element : driver) {
-                if ((std::get<ComponentContainer<T>&>(Containers).Contains(element.EntityId) && ...)) {
-                    fn(std::get<ComponentContainer<T>&>(Containers).Get(element.EntityId)...);
+                if ((std::get<ComponentContainer<ComponentTypes>&>(Containers).Contains(element.EntityId) && ...)) {
+                    fn(element.EntityId, std::get<ComponentContainer<ComponentTypes>&>(Containers).Get(element.EntityId)...);
                 }
             }
         }
         
     private:
         ComponentManager& Manager;
-        std::tuple<ComponentContainer<T>&...> Containers;
+        std::tuple<ComponentContainer<ComponentTypes>&...> Containers;
+    };
+    
+public:
+    template<class... T>
+    class Iter : public IterBase<T...>
+    {
+    public:
+        using IterBase<T...>::IterBase;
+                
+        template<std::invocable<T&...> F>
+        void Execute(F&& func)
+        {
+            auto fn = std::forward<F>(func);
+            IterBase<T...>::EvaluateComponents([&fn](Entity entityId, T&... components)
+            {
+                fn(components...);
+            });
+        }
     };
 
     template<class T>
@@ -86,3 +102,21 @@ ComponentContainer<T>& ComponentManager::GetContainer()
     
     return *casted;
 }
+
+// Specialization for Entity + Components iterations
+template<class... T>
+class ComponentManager::Iter<Entity, T...> : public IterBase<T...>
+{
+public:
+    using IterBase<T...>::IterBase;
+    
+    template<std::invocable<Entity, T&...> F>
+    void Execute(F&& func)
+    {
+        auto fn = std::forward<F>(func);
+        IterBase<T...>::EvaluateComponents([&fn](Entity entityId, T&... components)
+        {
+            fn(entityId, components...);
+        });
+    }
+};
