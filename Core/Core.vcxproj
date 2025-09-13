@@ -75,22 +75,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Thirdparty\SDL\include</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir)</IncludePath>
     <LibraryPath>$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Thirdparty\SDL\include</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir)</IncludePath>
     <LibraryPath>$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Thirdparty\SDL\include</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir)</IncludePath>
     <LibraryPath>$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Thirdparty\SDL\include</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir)</IncludePath>
     <LibraryPath>$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -174,7 +174,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Core.cpp" />
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="CoreFramework\Game.cpp" />
+    <ClCompile Include="CoreFramework\GameComponent.cpp" />
+    <ClCompile Include="CoreFramework\Level.cpp" />
+    <ClCompile Include="DataStructrues\SparseSet.cpp" />
+    <ClCompile Include="ECS\Component.cpp" />
+    <ClCompile Include="ECS\ComponentContainer.cpp" />
+    <ClCompile Include="ECS\ComponentIterator.cpp" />
+    <ClCompile Include="ECS\ComponentManager.cpp" />
+    <ClCompile Include="ECS\Entity.cpp" />
+    <ClCompile Include="ECS\EntityManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="CoreFramework\Game.h" />
+    <ClInclude Include="CoreFramework\GameComponent.h" />
+    <ClInclude Include="CoreFramework\Level.h" />
+    <ClInclude Include="DataStructrues\SparseSet.h" />
+    <ClInclude Include="ECS\Component.h" />
+    <ClInclude Include="ECS\ComponentContainer.h" />
+    <ClInclude Include="ECS\ComponentIterator.h" />
+    <ClInclude Include="ECS\ComponentManager.h" />
+    <ClInclude Include="ECS\Entity.h" />
+    <ClInclude Include="ECS\EntityManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
