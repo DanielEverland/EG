@@ -17,6 +17,7 @@ public:
 
     virtual void Add(Entity entity) = 0;
     virtual bool Contains(Entity entity) = 0;
+    virtual void RemoveEntity(Entity entity) = 0;
     [[nodiscard]] virtual size_t Size() const = 0;
 };
 
@@ -40,6 +41,11 @@ public:
     bool Contains(Entity entity) override
     {
         return Components.Contains(entity);
+    }
+
+    void RemoveEntity(Entity entity) override
+    {
+        Components.Remove(entity);
     }
 
     T& Get(Entity entity)

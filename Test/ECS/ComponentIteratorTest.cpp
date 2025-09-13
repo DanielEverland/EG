@@ -1,6 +1,5 @@
 #include "TestComponentA.h"
 #include "TestComponentB.h"
-#include "ECS/ComponentIterator.h"
 #include "ECS/ComponentManager.h"
 #include "gtest/gtest.h"
 

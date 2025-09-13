@@ -6,6 +6,7 @@
 #include <cassert>
 #include <memory>
 #include <ostream>
+#include <ranges>
 
 #include "ComponentContainer.h"
 #include "Entity.h"
@@ -62,7 +63,19 @@ public:
     };
 
     template<class T>
-    void AddComponent(Entity entity);
+    void AddComponent(Entity entity)
+    {
+        ComponentContainer<T>& Container = GetContainer<T>();
+        Container.Add(entity);
+    }
+
+    void RemoveEntity(Entity entity)
+    {
+        for (const std::unique_ptr<IComponentContainer>& container : ComponentContainers | std::views::values)
+        {
+            container->RemoveEntity(entity);
+        }
+    }
 
     template<class... T>
     Iter<T...> CreateIterator()
@@ -76,13 +89,6 @@ private:
     template<class T>
     ComponentContainer<T>& GetContainer();
 };
-
-template <class T>
-void ComponentManager::AddComponent(Entity entity)
-{
-    ComponentContainer<T>& Container = GetContainer<T>();
-    Container.Add(entity);
-}
 
 template <class T>
 ComponentContainer<T>& ComponentManager::GetContainer()

@@ -1,5 +1,6 @@
 #pragma once
-#include "ECS/ComponentManager.h"
+
+#include "CoreFramework/Game.h"
 
 class Application
 {
@@ -8,5 +9,5 @@ public:
     void Tick();
 
 private:
-    ComponentManager ComponentManager;
+    std::shared_ptr<Game> GameInstance;
 };
