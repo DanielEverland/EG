@@ -75,22 +75,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir)</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\</IncludePath>
     <LibraryPath>$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir)</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\</IncludePath>
     <LibraryPath>$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir)</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\</IncludePath>
     <LibraryPath>$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir)</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\</IncludePath>
     <LibraryPath>$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -175,6 +175,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="CoreFramework\AssetManager.cpp" />
     <ClCompile Include="CoreFramework\Game.cpp" />
     <ClCompile Include="CoreFramework\GameComponent.cpp" />
     <ClCompile Include="CoreFramework\GameMode.cpp" />
@@ -194,9 +195,12 @@
     <ClCompile Include="Systems\RenderingSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Thirdparty\Json\json.hpp" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Components\SimpleColorRendererComponent.h" />
     <ClInclude Include="Components\LocationComponent.h" />
+    <ClInclude Include="CoreFramework\AssetManager.h" />
+    <ClInclude Include="CoreFramework\EngineStatics.h" />
     <ClInclude Include="CoreFramework\Game.h" />
     <ClInclude Include="CoreFramework\GameComponent.h" />
     <ClInclude Include="CoreFramework\GameMode.h" />

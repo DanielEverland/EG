@@ -4,6 +4,7 @@
 #include <SDL3/SDL_main.h>
 
 #include "../Core/Application.h"
+#include "../Core/CoreFramework/EngineStatics.h"
 
 static SDL_Window* window = nullptr;
 static SDL_Renderer* renderer = nullptr;
@@ -12,6 +13,10 @@ static Application application;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
+    std::string bootDir = argv[0];
+    bootDir = bootDir.substr(0, bootDir.find_last_of('\\') + 1);
+    EngineStatics::BootDir = bootDir;
+    
     SDL_SetAppMetadata("Example Renderer Clear", "1.0", "com.example.renderer-clear");
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -23,7 +28,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
-
+    
     application.Initialize(renderer);
 
     return SDL_APP_CONTINUE;

@@ -112,9 +112,8 @@
       <AdditionalDependencies>SDL3.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.dll" "$(TargetDir)"
-
-xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.pdb" "$(TargetDir)"</Command>
+      <Command>xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.pdb" "$(TargetDir)"
+xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -136,9 +135,8 @@ xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.pdb" "$(Tar
       <AdditionalDependencies>SDL3.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.dll" "$(TargetDir)"
-
-xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.pdb" "$(TargetDir)"</Command>
+      <Command>xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.pdb" "$(TargetDir)"
+xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -164,9 +162,8 @@ xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.pdb" "$(Tar
       <AdditionalDependencies>SDL3.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.dll" "$(TargetDir)"
-
-</Command>
+      <Command>xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.pdb" "$(TargetDir)"
+xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -192,9 +189,8 @@ xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.pdb" "$(Tar
       <AdditionalDependencies>SDL3.lib;Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.dll" "$(TargetDir)"
-
-</Command>
+      <Command>xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.pdb" "$(TargetDir)"
+xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -203,4 +199,11 @@ xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3.pdb" "$(Tar
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ItemGroup>
+    <MyFolderFiles Include="$(SolutionDir)Content\**\*.*" />
+  </ItemGroup>
+  <Target Name="CopyMyFolder" AfterTargets="Build">
+    <MakeDir Directories="$(OutDir)" />
+    <Copy SourceFiles="@(MyFolderFiles)" DestinationFiles="@(MyFolderFiles->'$(OutDir)%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
 </Project>

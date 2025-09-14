@@ -1,11 +1,17 @@
 #include "Renderer.h"
 
+#include <cassert>
+#include <string>
 #include <SDL3/SDL_render.h>
 
-void Renderer::DrawRect(const Rect& rect, const Color& color)
+void Renderer::DrawRect(const Rect& rect, const std::string& textureName)
 {
+    const Tileset& tileSet = AssetManagerInstance.GetTileset();
+    assert(tileSet.SourceRects.contains(textureName));
+    
+    SDL_FRect sourceRect = tileSet.SourceRects.at(textureName);    
     SDL_FRect sdlRect = rect;
-    SDL_SetRenderDrawColor(RawRenderer, color.R, color.G, color.B, SDL_ALPHA_OPAQUE);
-    SDL_RenderFillRect(RawRenderer, &sdlRect);
+
+    SDL_RenderTexture(RawRenderer, tileSet.Texture, &sourceRect, &sdlRect);
 }
     

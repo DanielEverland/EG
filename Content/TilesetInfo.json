@@ -1,0 +1,15 @@
+{
+
+    "SourceFile": "Tileset.bmp",
+    "Tiles": [
+        {
+            "Name": "Default",
+            "Rect": {
+                "X": 0,
+                "Y": 0,
+                "W": 5,
+                "H": 5
+            }
+        }
+    ]
+}

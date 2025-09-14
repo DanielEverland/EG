@@ -17,6 +17,6 @@ void RenderingSystem::Execute()
             r.Width = TileSize;
             r.Height = TileSize;
             
-            renderer->DrawRect(r, renderData.RectColor);
+            renderer->DrawRect(r, "Default");
         });
 }
