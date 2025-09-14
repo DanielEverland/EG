@@ -1,8 +1,12 @@
 #include "Application.h"
 
-void Application::Initialize()
+void Application::Initialize(SDL_Renderer* rawRenderer)
 {
-    GameInstance = std::make_shared<Game>();
+    assert(rawRenderer != nullptr);
+    
+    GameInstance = std::make_shared<Game>(this);
+    RendererInstance = std::make_shared<Renderer>(rawRenderer);
+    
     GameInstance->Initialize();
 }
 

@@ -15,6 +15,7 @@ public:
 
     Entity CreateEntity() const;
     void DestroyEntity(Entity entity);
+    ComponentManager& GetComponentManager() { return Components; }
     
 private:
     std::shared_ptr<Game> Game;

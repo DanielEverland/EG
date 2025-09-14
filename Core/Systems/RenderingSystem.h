@@ -8,5 +8,7 @@
 class RenderingSystem : public System
 {
 public:
+    using System::System;
+    
     void Execute() override;
 };

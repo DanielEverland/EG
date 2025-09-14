@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-#include "System.h"
+class System;
 
 class SystemScheduler
 {

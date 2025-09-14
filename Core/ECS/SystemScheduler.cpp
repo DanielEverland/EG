@@ -1,5 +1,7 @@
 #include "SystemScheduler.h"
 
+#include "System.h"
+
 void SystemScheduler::Register(std::shared_ptr<System> system)
 {
     if (ActiveSystems.empty())

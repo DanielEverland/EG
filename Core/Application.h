@@ -5,9 +5,11 @@
 class Application
 {
 public:
-    void Initialize();
+    void Initialize(SDL_Renderer* rawRenderer);
     void Tick();
+    std::shared_ptr<Renderer> GetRenderer() { return RendererInstance; }
 
 private:
     std::shared_ptr<Game> GameInstance;
+    std::shared_ptr<Renderer> RendererInstance;
 };

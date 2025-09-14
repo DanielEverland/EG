@@ -175,10 +175,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Components\SimpleColorRenderer.cpp" />
     <ClCompile Include="CoreFramework\Game.cpp" />
     <ClCompile Include="CoreFramework\GameComponent.cpp" />
+    <ClCompile Include="CoreFramework\GameMode.cpp" />
     <ClCompile Include="CoreFramework\Level.cpp" />
+    <ClCompile Include="CoreFramework\Renderer.cpp" />
     <ClCompile Include="DataStructrues\SparseSet.cpp" />
     <ClCompile Include="ECS\Component.cpp" />
     <ClCompile Include="ECS\ComponentContainer.cpp" />
@@ -187,14 +188,20 @@
     <ClCompile Include="ECS\EntityManager.cpp" />
     <ClCompile Include="ECS\System.cpp" />
     <ClCompile Include="ECS\SystemScheduler.cpp" />
+    <ClCompile Include="MainGame\MainGameMode.cpp" />
+    <ClCompile Include="Primitives\Color.cpp" />
+    <ClCompile Include="Primitives\Rect.cpp" />
     <ClCompile Include="Systems\RenderingSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
-    <ClInclude Include="Components\SimpleColorRenderer.h" />
+    <ClInclude Include="Components\SimpleColorRendererComponent.h" />
+    <ClInclude Include="Components\LocationComponent.h" />
     <ClInclude Include="CoreFramework\Game.h" />
     <ClInclude Include="CoreFramework\GameComponent.h" />
+    <ClInclude Include="CoreFramework\GameMode.h" />
     <ClInclude Include="CoreFramework\Level.h" />
+    <ClInclude Include="CoreFramework\Renderer.h" />
     <ClInclude Include="DataStructrues\SparseSet.h" />
     <ClInclude Include="ECS\Component.h" />
     <ClInclude Include="ECS\ComponentContainer.h" />
@@ -203,10 +210,10 @@
     <ClInclude Include="ECS\EntityManager.h" />
     <ClInclude Include="ECS\System.h" />
     <ClInclude Include="ECS\SystemScheduler.h" />
+    <ClInclude Include="MainGame\MainGameMode.h" />
+    <ClInclude Include="Primitives\Color.h" />
+    <ClInclude Include="Primitives\Rect.h" />
     <ClInclude Include="Systems\RenderingSystem.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="MainGame\" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

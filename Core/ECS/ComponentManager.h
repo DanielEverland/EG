@@ -63,10 +63,11 @@ public:
     };
 
     template<class T>
-    void AddComponent(Entity entity)
+    T& AddComponent(Entity entity)
     {
         ComponentContainer<T>& Container = GetContainer<T>();
         Container.Add(entity);
+        return Container.Get(entity);
     }
 
     void RemoveEntity(Entity entity)
