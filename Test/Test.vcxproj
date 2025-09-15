@@ -51,6 +51,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DataStructures\HashedStringTest.cpp" />
     <ClCompile Include="DataStructures\SparseSetTest.cpp">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>

@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <SDL3/SDL_render.h>
 
+#include "DataStructrues/HashedString.h"
 #include "Primitives/Rect.h"
 
 struct SDL_Surface;
@@ -17,7 +18,7 @@ struct Tileset
 {
     SDL_Surface* Surface = nullptr;
     SDL_Texture* Texture = nullptr;
-    std::unordered_map<std::string, Rect> SourceRects;
+    std::unordered_map<HashedString, Rect> SourceRects;
 
     bool IsValid() const { return Surface != nullptr; }
 };

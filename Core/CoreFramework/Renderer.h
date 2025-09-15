@@ -31,7 +31,7 @@ public:
 
     SDL_Renderer* GetSDLRenderer() const { return SDLRenderer; }
 
-    void DrawRect(const Rect& rect, const std::string& textureName);
+    void DrawRect(const Rect& rect, const HashedString& textureName) const;
 
 private:
     Renderer() = default;

@@ -1,14 +1,14 @@
 #include "RenderingSystem.h"
 
 #include "Components/LocationComponent.h"
-#include "Components/SimpleColorRendererComponent.h"
+#include "Components/TextureRendererComponent.h"
 
 void RenderingSystem::Execute()
 {
     static uint8_t TileSize = 32;
 
-    Query<LocationComponent, SimpleColorRendererComponent>(
-        [](const LocationComponent& location, const SimpleColorRendererComponent& renderData)
+    Query<LocationComponent, TextureRendererComponent>(
+        [](const LocationComponent& location, const TextureRendererComponent& renderData)
         {
             Rect r;
             r.X = location.X * TileSize;
@@ -16,6 +16,6 @@ void RenderingSystem::Execute()
             r.Width = TileSize;
             r.Height = TileSize;
             
-            Renderer::Get().DrawRect(r, "Default");
+            Renderer::Get().DrawRect(r, renderData.TextureName);
         });
 }

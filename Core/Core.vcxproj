@@ -181,6 +181,7 @@
     <ClCompile Include="CoreFramework\GameMode.cpp" />
     <ClCompile Include="CoreFramework\Level.cpp" />
     <ClCompile Include="CoreFramework\Renderer.cpp" />
+    <ClCompile Include="DataStructrues\HashedString.cpp" />
     <ClCompile Include="DataStructrues\SparseSet.cpp" />
     <ClCompile Include="ECS\Component.cpp" />
     <ClCompile Include="ECS\ComponentContainer.cpp" />
@@ -197,7 +198,7 @@
   <ItemGroup>
     <ClInclude Include="..\Thirdparty\Json\json.hpp" />
     <ClInclude Include="Application.h" />
-    <ClInclude Include="Components\SimpleColorRendererComponent.h" />
+    <ClInclude Include="Components\TextureRendererComponent.h" />
     <ClInclude Include="Components\LocationComponent.h" />
     <ClInclude Include="CoreFramework\AssetManager.h" />
     <ClInclude Include="CoreFramework\EngineStatics.h" />
@@ -206,6 +207,7 @@
     <ClInclude Include="CoreFramework\GameMode.h" />
     <ClInclude Include="CoreFramework\Level.h" />
     <ClInclude Include="CoreFramework\Renderer.h" />
+    <ClInclude Include="DataStructrues\HashedString.h" />
     <ClInclude Include="DataStructrues\SparseSet.h" />
     <ClInclude Include="ECS\Component.h" />
     <ClInclude Include="ECS\ComponentContainer.h" />

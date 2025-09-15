@@ -69,7 +69,7 @@ void AssetManager::LoadTileSet()
         auto rectData = element["Rect"];
         Rect sourceRect(rectData["X"], rectData["Y"], rectData["W"], rectData["H"]);
         
-        Tileset.SourceRects.emplace(std::move(name), sourceRect);
+        Tileset.SourceRects.emplace(HashedString(name), sourceRect);
     }
 }
 
