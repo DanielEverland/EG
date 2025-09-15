@@ -6,12 +6,12 @@
 
 void Renderer::DrawRect(const Rect& rect, const std::string& textureName)
 {
-    const Tileset& tileSet = AssetManagerInstance.GetTileset();
+    const Tileset& tileSet = AssetManager::Get().GetTileset();
     assert(tileSet.SourceRects.contains(textureName));
     
     SDL_FRect sourceRect = tileSet.SourceRects.at(textureName);    
     SDL_FRect sdlRect = rect;
 
-    SDL_RenderTexture(RawRenderer, tileSet.Texture, &sourceRect, &sdlRect);
+    SDL_RenderTexture(SDLRenderer, tileSet.Texture, &sourceRect, &sdlRect);
 }
     

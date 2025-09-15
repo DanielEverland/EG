@@ -6,15 +6,24 @@
 class Application
 {
 public:
-    void Initialize(SDL_Renderer* rawRenderer);
+    static Application& Get()
+    {
+        if (Instance == nullptr)
+        {
+            Instance = new Application();
+        }
+        return *Instance;
+    }
+    
+    void Initialize();
     void Tick();
-    std::shared_ptr<Renderer> GetRenderer() { return RendererInstance; }
 
 private:
-    AssetManager AssetManagerInstance;
+    Application() = default;
+    
+    static inline Application* Instance;
     
     std::shared_ptr<Game> GameInstance;
-    std::shared_ptr<Renderer> RendererInstance;
 
-    void LoadContent(SDL_Renderer* rawRenderer);
+    void LoadContent();
 };

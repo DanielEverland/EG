@@ -9,8 +9,6 @@
 static SDL_Window* window = nullptr;
 static SDL_Renderer* renderer = nullptr;
 
-static Application application;
-
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
     std::string bootDir = argv[0];
@@ -28,8 +26,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
-    
-    application.Initialize(renderer);
+
+    Renderer::Get().SetRenderer(renderer);
+    Application::Get().Initialize();
 
     return SDL_APP_CONTINUE;
 }
@@ -44,7 +43,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
-    application.Tick();
+    Application::Get().Tick();
     
     SDL_RenderPresent(renderer);
 

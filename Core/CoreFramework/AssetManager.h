@@ -15,8 +15,8 @@ struct SDL_Surface;
 
 struct Tileset
 {
-    SDL_Surface* Surface;
-    SDL_Texture* Texture;
+    SDL_Surface* Surface = nullptr;
+    SDL_Texture* Texture = nullptr;
     std::unordered_map<std::string, Rect> SourceRects;
 
     bool IsValid() const { return Surface != nullptr; }
@@ -25,19 +25,31 @@ struct Tileset
 class AssetManager
 {
 public:
-    void Load(SDL_Renderer* renderer);
+    static AssetManager& Get()
+    {
+        if (Instance == nullptr)
+        {
+            Instance = new AssetManager();
+        }
+        return *Instance;
+    }
+    
+    void Load();
     [[nodiscard]] std::filesystem::path GetPath(const std::string& assetName) const;
     [[nodiscard]] const Tileset& GetTileset() const;
 
 private:
+    AssetManager() = default;
+    static inline AssetManager* Instance = nullptr;
+    
     static const inline std::set<std::string> AssetExtensions = {
         ".json",
         ".bmp"
     };
 
     std::unordered_map<std::string, std::filesystem::path> DiscoveredAssets;
-    Tileset Tileset = { nullptr, nullptr };
+    Tileset Tileset;
     
     void DiscoverAssets();
-    void LoadTileSet(SDL_Renderer* renderer);
+    void LoadTileSet();
 };

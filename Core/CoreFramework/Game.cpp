@@ -29,10 +29,6 @@ Entity Game::GetNextEntity()
 {
     return CurrentEntity++;
 }
-std::shared_ptr<Renderer> Game::GetRenderer() const
-{
-    return ApplicationPtr->GetRenderer();
-}
 
 std::shared_ptr<Level> Game::CreateLevel()
 {

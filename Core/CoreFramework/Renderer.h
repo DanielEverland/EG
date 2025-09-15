@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <cassert>
 #include <string>
 
 #include "AssetManager.h"
@@ -13,13 +14,28 @@ struct SDL_Renderer;
 class Renderer
 {
 public:
-    Renderer() = default;
-    Renderer(SDL_Renderer* rawRenderer, AssetManager& manager) :
-        RawRenderer(rawRenderer), AssetManagerInstance(manager) { }
+    static Renderer& Get()
+    {
+        if (Instance == nullptr)
+        {
+            Instance = new Renderer(); 
+        }
+        return *Instance;
+    }
+
+    void SetRenderer(SDL_Renderer* rawRenderer)
+    {
+        assert(rawRenderer);
+        SDLRenderer = rawRenderer;
+    }
+
+    SDL_Renderer* GetSDLRenderer() const { return SDLRenderer; }
 
     void DrawRect(const Rect& rect, const std::string& textureName);
 
 private:
-    SDL_Renderer* RawRenderer = nullptr;
-    AssetManager& AssetManagerInstance;
+    Renderer() = default;
+    static inline Renderer* Instance = nullptr;
+    
+    SDL_Renderer* SDLRenderer = nullptr;
 };

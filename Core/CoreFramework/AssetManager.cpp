@@ -2,20 +2,20 @@
 
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 #include <set>
 #include <SDL3/SDL_surface.h>
 
 #include "json.hpp"
 #include "EngineStatics.h"
+#include "Renderer.h"
 
 using namespace nlohmann;
 using namespace std::filesystem;
 
-void AssetManager::Load(SDL_Renderer* renderer)
+void AssetManager::Load()
 {
     DiscoverAssets();
-    LoadTileSet(renderer);
+    LoadTileSet();
 }
 
 const Tileset& AssetManager::GetTileset() const
@@ -41,7 +41,7 @@ void AssetManager::DiscoverAssets()
     }
 }
 
-void AssetManager::LoadTileSet(SDL_Renderer* renderer)
+void AssetManager::LoadTileSet()
 {
     path tileSetPath = GetPath("TilesetInfo.json");
 
@@ -56,8 +56,10 @@ void AssetManager::LoadTileSet(SDL_Renderer* renderer)
     assert(!fullImagePath.empty());
 
     Tileset.Surface = SDL_LoadBMP(fullImagePath.string().c_str());
+    assert(Tileset.Surface);
     
-    Tileset.Texture = SDL_CreateTextureFromSurface(renderer, Tileset.Surface);
+    Tileset.Texture = SDL_CreateTextureFromSurface(Renderer::Get().GetSDLRenderer(), Tileset.Surface);
+    assert(Tileset.Texture);
     SDL_SetTextureScaleMode(Tileset.Texture, SDL_SCALEMODE_NEAREST);
 
     auto allTiles = info["Tiles"];

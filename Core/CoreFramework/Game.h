@@ -29,7 +29,6 @@ public:
     
     Entity GetNextEntity();
     std::shared_ptr<Level> GetLevel() const { return CurrentLevel; }
-    std::shared_ptr<Renderer> GetRenderer() const;
     
     template <class T>
     requires std::derived_from<T, System>

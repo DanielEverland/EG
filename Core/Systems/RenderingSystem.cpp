@@ -7,9 +7,8 @@ void RenderingSystem::Execute()
 {
     static uint8_t TileSize = 32;
 
-    std::shared_ptr<Renderer> renderer = GetGame()->GetRenderer();
     Query<LocationComponent, SimpleColorRendererComponent>(
-        [&renderer](const LocationComponent& location, const SimpleColorRendererComponent& renderData)
+        [](const LocationComponent& location, const SimpleColorRendererComponent& renderData)
         {
             Rect r;
             r.X = location.X * TileSize;
@@ -17,6 +16,6 @@ void RenderingSystem::Execute()
             r.Width = TileSize;
             r.Height = TileSize;
             
-            renderer->DrawRect(r, "Default");
+            Renderer::Get().DrawRect(r, "Default");
         });
 }
