@@ -16,6 +16,6 @@ void RenderingSystem::Execute()
             r.Width = TileSize;
             r.Height = TileSize;
             
-            Renderer::Get().DrawRect(r, renderData.TextureName);
+            Renderer::Get().Draw(r, renderData.TextureName, renderData.Order);
         });
 }

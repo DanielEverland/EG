@@ -11,8 +11,19 @@
 
 struct SDL_Renderer;
 
+enum class DrawCallOrder : uint8_t
+{
+    Background,
+    Foreground
+};
+
 class Renderer
 {
+    struct DrawCall
+    {
+        HashedString TextureName = HashedString("Default");
+        Rect DestinationRect = Rect(0, 0, 0, 0);
+    };
 public:
     static Renderer& Get()
     {
@@ -31,11 +42,21 @@ public:
 
     SDL_Renderer* GetSDLRenderer() const { return SDLRenderer; }
 
-    void DrawRect(const Rect& rect, const HashedString& textureName) const;
+    void Draw(const Rect& rect, const HashedString& textureName, DrawCallOrder order);
+    void Present();
 
 private:
     Renderer() = default;
     static inline Renderer* Instance = nullptr;
+    static constexpr size_t MaxNumDrawCalls = 2048;
+    static constexpr size_t BackgroundCallsEnd = static_cast<size_t>(MaxNumDrawCalls * (3.0f / 4.0f));
+
+    size_t BackgroundIdx = 0;
+    size_t ForegroundIdx = BackgroundCallsEnd + 1;
+    
+    DrawCall Buffer[sizeof(DrawCall) * MaxNumDrawCalls];
     
     SDL_Renderer* SDLRenderer = nullptr;
+
+    DrawCall* GetDrawCallStruct(DrawCallOrder order);
 };

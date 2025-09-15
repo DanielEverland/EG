@@ -44,11 +44,8 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
     Application::Get().Tick();
-    
-    SDL_RenderPresent(renderer);
 
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-    SDL_RenderClear(renderer);
+    Renderer::Get().Present();
 
     return SDL_APP_CONTINUE;
 }

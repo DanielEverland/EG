@@ -4,9 +4,11 @@
 #pragma once
 
 #include "DataStructrues/HashedString.h"
+#include "CoreFramework/Renderer.h"
 
 class TextureRendererComponent : public Component
 {
 public:
     HashedString TextureName { "Default" };
+    DrawCallOrder Order = DrawCallOrder::Foreground;
 };
