@@ -1,19 +1,13 @@
 #include "Game.h"
 
-#include "Application.h"
 #include "Level.h"
 #include "MainGame/MainGameMode.h"
 #include "Systems/RenderingSystem.h"
 
-Game::Game(Application* application) : ApplicationPtr(application)
-{
-    assert(application != nullptr);
-}
-
 void Game::Initialize()
 {
     CurrentLevel = CreateLevel();
-    CurrentGameMode = std::make_shared<MainGameMode>(shared_from_this());
+    CurrentGameMode = std::make_shared<MainGameMode>();
 
     CreateSystem<RenderingSystem>(SystemCategory::GameTime);
 
@@ -32,5 +26,5 @@ Entity Game::GetNextEntity()
 
 std::shared_ptr<Level> Game::CreateLevel()
 {
-    return std::make_shared<Level>(shared_from_this());
+    return std::make_shared<Level>();
 }

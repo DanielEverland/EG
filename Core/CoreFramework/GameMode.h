@@ -2,18 +2,23 @@
 // All rights reserved.
 
 #pragma once
-#include <memory>
+
+#include "ECS/Entity.h"
 
 class Game;
 
 class GameMode
 {
 public:
-    GameMode(std::shared_ptr<Game> game) : GameInstance(std::move(game)) { }
+    virtual ~GameMode() = default;
 
-    std::shared_ptr<Game> GetGame() const { return GameInstance; }
     virtual void Initialize() = 0;
+
+    Entity GetPossessedEntity() const { return PossessedEntity; }
+
+protected:
+    void SetPossessedEntity(Entity entity);
     
 private:
-    std::shared_ptr<Game> GameInstance;
+    Entity PossessedEntity = InvalidEntity;
 };

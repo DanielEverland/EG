@@ -27,11 +27,7 @@ class Renderer
 public:
     static Renderer& Get()
     {
-        if (Instance == nullptr)
-        {
-            Instance = new Renderer(); 
-        }
-        return *Instance;
+        return SingletonHelper::Impl<Renderer>();
     }
 
     void SetRenderer(SDL_Renderer* rawRenderer)
@@ -46,8 +42,6 @@ public:
     void Present();
 
 private:
-    Renderer() = default;
-    static inline Renderer* Instance = nullptr;
     static constexpr size_t MaxNumDrawCalls = 2048;
     static constexpr size_t BackgroundCallsEnd = static_cast<size_t>(MaxNumDrawCalls * (3.0f / 4.0f));
 
@@ -59,4 +53,5 @@ private:
     SDL_Renderer* SDLRenderer = nullptr;
 
     DrawCall* GetDrawCallStruct(DrawCallOrder order);
+    void UpdateCameraPosition() const;
 };

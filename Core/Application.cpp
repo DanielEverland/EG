@@ -5,13 +5,12 @@ void Application::Initialize()
 {
     LoadContent();
     
-    GameInstance = std::make_shared<Game>(this);
-    GameInstance->Initialize();
+    Game::Get().Initialize();
 }
 
 void Application::Tick()
 {
-    GameInstance->Tick();    
+    Game::Get().Tick();    
 }
 
 void Application::LoadContent()

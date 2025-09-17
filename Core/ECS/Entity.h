@@ -6,3 +6,5 @@
 #include <vector>
 
 typedef uint32_t Entity;
+
+static inline constexpr Entity InvalidEntity = 0;

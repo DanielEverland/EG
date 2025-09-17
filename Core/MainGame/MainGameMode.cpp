@@ -4,14 +4,14 @@
 
 #include "Components/LocationComponent.h"
 #include "Components/TextureRendererComponent.h"
+#include "CoreFramework/Camera.h"
 #include "CoreFramework/Game.h"
 #include "CoreFramework/Level.h"
 
 void MainGameMode::Initialize()
 {
-    std::shared_ptr<Level> level = GetGame()->GetLevel();
+    std::shared_ptr<Level> level = Game::Get().GetLevel();
     ComponentManager& componentManager = level->GetComponentManager();
-    
     
     for (int x = 0; x < 32; ++x)
     {
@@ -20,8 +20,7 @@ void MainGameMode::Initialize()
             auto& locationComp = componentManager.AddComponent<LocationComponent>(entityId);
             auto& renderComp = componentManager.AddComponent<TextureRendererComponent>(entityId);
 
-            locationComp.X = x;
-            locationComp.Y = y;
+            locationComp.WorldLocation = IntVector2D(x, y);
 
             renderComp.TextureName = HashedString("Default");
             renderComp.Order = DrawCallOrder::Background;
@@ -29,11 +28,12 @@ void MainGameMode::Initialize()
     }
 
     Entity playerEntity = level->CreateEntity();
+    SetPossessedEntity(playerEntity);
+    
     auto& playerLocation = componentManager.AddComponent<LocationComponent>(playerEntity);
     auto& renderComp = componentManager.AddComponent<TextureRendererComponent>(playerEntity);
     
-    playerLocation.X = 5;
-    playerLocation.Y = 5;
+    playerLocation.WorldLocation = IntVector2D(5, 5);
 
     renderComp.TextureName = HashedString("Player");
     renderComp.Order = DrawCallOrder::Foreground;

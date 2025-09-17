@@ -16,7 +16,6 @@ class System
 {
 public:
     System() = default;
-    explicit System(std::shared_ptr<Game> game) : Game(std::move(game)) { }
     virtual ~System() = default;
 
     // Priority defines the order in which systems are executed
@@ -25,7 +24,6 @@ public:
     
     virtual void Execute() = 0;
 
-    std::shared_ptr<Game> GetGame() const;
     std::shared_ptr<Level> GetLevel() const;
 
     template<class... T, std::invocable<T&...> F>
@@ -36,7 +34,5 @@ public:
     }
 
 private:
-    std::shared_ptr<Game> Game = nullptr;
-
     ComponentManager& GetComponentManager() const { return GetLevel()->GetComponentManager(); }
 };

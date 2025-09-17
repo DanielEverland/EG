@@ -78,6 +78,15 @@ public:
         }
     }
 
+    template<class T>
+    T* TryGetComponent(Entity entity)
+    {
+        ComponentContainer<T>& Container = GetContainer<T>();
+        if (!Container.Contains(entity))
+            return nullptr;
+        return &Container.Get(entity);
+    }
+
     template<class... T>
     Iter<T...> CreateIterator()
     {

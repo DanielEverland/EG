@@ -3,7 +3,7 @@
 
 Entity Level::CreateEntity() const
 {
-    return Game->GetNextEntity();
+    return Game::Get().GetNextEntity();
 }
 
 void Level::DestroyEntity(Entity entity)

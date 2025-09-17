@@ -11,6 +11,7 @@
 
 #include "DataStructrues/HashedString.h"
 #include "Primitives/Rect.h"
+#include "Utilities/SingletonHelpers.h"
 
 struct SDL_Surface;
 
@@ -28,21 +29,14 @@ class AssetManager
 public:
     static AssetManager& Get()
     {
-        if (Instance == nullptr)
-        {
-            Instance = new AssetManager();
-        }
-        return *Instance;
+        return SingletonHelper::Impl<AssetManager>();
     }
     
     void Load();
     [[nodiscard]] std::filesystem::path GetPath(const std::string& assetName) const;
     [[nodiscard]] const Tileset& GetTileset() const;
 
-private:
-    AssetManager() = default;
-    static inline AssetManager* Instance = nullptr;
-    
+private:    
     static const inline std::set<std::string> AssetExtensions = {
         ".json",
         ".bmp"

@@ -3,12 +3,11 @@
 
 #pragma once
 
-#include <cstdint>
+#include "DataStructrues/Vector.h"
 #include "ECS/Component.h"
 
 class LocationComponent : public Component
 {
 public:
-    int32_t X = 0;
-    int32_t Y = 0;
+    IntVector2D WorldLocation;
 };

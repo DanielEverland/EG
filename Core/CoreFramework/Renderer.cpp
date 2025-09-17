@@ -3,6 +3,13 @@
 #include <cassert>
 #include <SDL3/SDL_render.h>
 
+#include "Camera.h"
+#include "Game.h"
+#include "GameMode.h"
+#include "Level.h"
+#include "Components/LocationComponent.h"
+#include "ECS/Entity.h"
+
 void Renderer::Draw(const Rect& rect, const HashedString& textureName, DrawCallOrder order)
 {
     DrawCall* container = GetDrawCallStruct(order);
@@ -11,11 +18,16 @@ void Renderer::Draw(const Rect& rect, const HashedString& textureName, DrawCallO
 }
 void Renderer::Present()
 {
+    UpdateCameraPosition();
+    
     SDL_SetRenderDrawColor(SDLRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(SDLRenderer);
     
     const Tileset& tileSet = AssetManager::Get().GetTileset();
 
+    SDL_Rect viewportSize;
+    SDL_GetRenderViewport(SDLRenderer, &viewportSize);
+    
     SDL_FRect destRect;
     SDL_FRect sourceRect;
     DrawCall* call;
@@ -27,7 +39,10 @@ void Renderer::Present()
 
         sourceRect = tileSet.SourceRects.at(call->TextureName);
         destRect = call->DestinationRect;
-        
+        destRect.x += static_cast<float>(viewportSize.w) / 2.0f;
+        destRect.y += static_cast<float>(viewportSize.h) / 2.0f;
+
+        // TODO: Any batch render call?
         SDL_RenderTexture(SDLRenderer, tileSet.Texture, &sourceRect, &destRect);
     };
 
@@ -64,4 +79,23 @@ Renderer::DrawCall* Renderer::GetDrawCallStruct(DrawCallOrder order)
     }
     
     return &Buffer[idx];
+}
+
+void Renderer::UpdateCameraPosition() const
+{
+    Game& game = Game::Get();
+    Entity possessedEntity = game.GetGameMode()->GetPossessedEntity();
+
+    // No possessed entity may be valid. Camera should remain in place if so.
+    if (possessedEntity == InvalidEntity)
+        return;
+
+    ComponentManager& CompManager = game.GetLevel()->GetComponentManager();
+    auto Location = CompManager.TryGetComponent<LocationComponent>(possessedEntity);
+
+    // TODO: Is this actually valid? Or should we assert?
+    if (Location == nullptr)
+        return;
+
+    Camera::Get().GetPosition() = Location->WorldLocation;
 }

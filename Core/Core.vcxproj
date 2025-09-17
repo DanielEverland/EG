@@ -176,6 +176,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="CoreFramework\AssetManager.cpp" />
+    <ClCompile Include="CoreFramework\Camera.cpp" />
     <ClCompile Include="CoreFramework\Game.cpp" />
     <ClCompile Include="CoreFramework\GameComponent.cpp" />
     <ClCompile Include="CoreFramework\GameMode.cpp" />
@@ -183,6 +184,7 @@
     <ClCompile Include="CoreFramework\Renderer.cpp" />
     <ClCompile Include="DataStructrues\HashedString.cpp" />
     <ClCompile Include="DataStructrues\SparseSet.cpp" />
+    <ClCompile Include="DataStructrues\Vector.cpp" />
     <ClCompile Include="ECS\Component.cpp" />
     <ClCompile Include="ECS\ComponentContainer.cpp" />
     <ClCompile Include="ECS\ComponentManager.cpp" />
@@ -194,6 +196,7 @@
     <ClCompile Include="Primitives\Color.cpp" />
     <ClCompile Include="Primitives\Rect.cpp" />
     <ClCompile Include="Systems\RenderingSystem.cpp" />
+    <ClCompile Include="Utilities\SingletonHelpers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Thirdparty\Json\json.hpp" />
@@ -201,6 +204,7 @@
     <ClInclude Include="Components\TextureRendererComponent.h" />
     <ClInclude Include="Components\LocationComponent.h" />
     <ClInclude Include="CoreFramework\AssetManager.h" />
+    <ClInclude Include="CoreFramework\Camera.h" />
     <ClInclude Include="CoreFramework\EngineStatics.h" />
     <ClInclude Include="CoreFramework\Game.h" />
     <ClInclude Include="CoreFramework\GameComponent.h" />
@@ -209,6 +213,7 @@
     <ClInclude Include="CoreFramework\Renderer.h" />
     <ClInclude Include="DataStructrues\HashedString.h" />
     <ClInclude Include="DataStructrues\SparseSet.h" />
+    <ClInclude Include="DataStructrues\Vector.h" />
     <ClInclude Include="ECS\Component.h" />
     <ClInclude Include="ECS\ComponentContainer.h" />
     <ClInclude Include="ECS\ComponentManager.h" />
@@ -220,6 +225,7 @@
     <ClInclude Include="Primitives\Color.h" />
     <ClInclude Include="Primitives\Rect.h" />
     <ClInclude Include="Systems\RenderingSystem.h" />
+    <ClInclude Include="Utilities\SingletonHelpers.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -8,6 +8,7 @@
 #include "Renderer.h"
 #include "ECS/Entity.h"
 #include "ECS/SystemScheduler.h"
+#include "Utilities/SingletonHelpers.h"
 
 class GameMode;
 class Application;
@@ -19,16 +20,20 @@ enum class SystemCategory
     GameTime = 1 << 0,
 };
 
-class Game : public std::enable_shared_from_this<Game>
+class Game
 {
 public:
-    Game(Application* application);
+    static Game& Get()
+    {
+        return SingletonHelper::Impl<Game>();
+    }
     
     void Initialize();
     void Tick();
     
     Entity GetNextEntity();
     std::shared_ptr<Level> GetLevel() const { return CurrentLevel; }
+    std::shared_ptr<GameMode> GetGameMode() const { return CurrentGameMode; }
     
     template <class T>
     requires std::derived_from<T, System>
@@ -36,15 +41,15 @@ public:
     {
         assert(category != SystemCategory::None);
         
-        auto newSystem = std::make_shared<T>(shared_from_this());
+        auto newSystem = std::make_shared<T>();
         AllSystems.push_back(newSystem);
         GameTimeSystems.Register(newSystem);
     }
     
 private:
+    static inline Game* Instance = nullptr;
     Entity CurrentEntity = 0;
     
-    Application* ApplicationPtr;
     SystemScheduler GameTimeSystems;
     
     std::vector<std::shared_ptr<System>> AllSystems;

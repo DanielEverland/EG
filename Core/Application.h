@@ -8,22 +8,12 @@ class Application
 public:
     static Application& Get()
     {
-        if (Instance == nullptr)
-        {
-            Instance = new Application();
-        }
-        return *Instance;
+        return SingletonHelper::Impl<Application>();
     }
     
     void Initialize();
     void Tick();
 
-private:
-    Application() = default;
-    
-    static inline Application* Instance;
-    
-    std::shared_ptr<Game> GameInstance;
-
+private:    
     void LoadContent();
 };
