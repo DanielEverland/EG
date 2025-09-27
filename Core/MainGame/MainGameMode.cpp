@@ -45,10 +45,10 @@ void MainGameMode::RegisterInput()
     // Horizontal movement
     {
         const auto action = std::make_shared<AxisInputAction>();
-        action->SetKeycodeAxis(SDLK_D, 1, InputEventType::DownOrHeld);
-        action->SetKeycodeAxis(SDLK_A, -1, InputEventType::DownOrHeld);
-        action->SetKeycodeAxis(SDLK_RIGHT, 1, InputEventType::DownOrHeld);
-        action->SetKeycodeAxis(SDLK_LEFT, -1, InputEventType::DownOrHeld);
+        action->AddKeycodeAxis(SDLK_D, 1, InputEventType::DownOrHeld);
+        action->AddKeycodeAxis(SDLK_A, -1, InputEventType::DownOrHeld);
+        action->AddKeycodeAxis(SDLK_RIGHT, 1, InputEventType::DownOrHeld);
+        action->AddKeycodeAxis(SDLK_LEFT, -1, InputEventType::DownOrHeld);
         
         action->AddCallback(std::bind(&MainGameMode::HandleMovementInput, this, std::placeholders::_1, true));
 
@@ -58,10 +58,10 @@ void MainGameMode::RegisterInput()
     // Vertical movement
     {
         const auto action = std::make_shared<AxisInputAction>();
-        action->SetKeycodeAxis(SDLK_W, 1, InputEventType::DownOrHeld);
-        action->SetKeycodeAxis(SDLK_S, -1, InputEventType::DownOrHeld);
-        action->SetKeycodeAxis(SDLK_UP, 1, InputEventType::DownOrHeld);
-        action->SetKeycodeAxis(SDLK_DOWN, -1, InputEventType::DownOrHeld);
+        action->AddKeycodeAxis(SDLK_W, 1, InputEventType::DownOrHeld);
+        action->AddKeycodeAxis(SDLK_S, -1, InputEventType::DownOrHeld);
+        action->AddKeycodeAxis(SDLK_UP, 1, InputEventType::DownOrHeld);
+        action->AddKeycodeAxis(SDLK_DOWN, -1, InputEventType::DownOrHeld);
         
         action->AddCallback(std::bind(&MainGameMode::HandleMovementInput, this, std::placeholders::_1, false));
 

@@ -28,20 +28,26 @@ public:
 
 class DiscreteInputAction : public InputActionBase
 {
+    struct KeycodeDiscrete
+    {
+        SDL_Keycode Keycode;
+        uint8_t Filter = InputEventType::Any;
+    };
+    
 public:
-    void AddKeycode(SDL_Keycode keycode);
-    GenericHandle AddCallback(const std::function<void(bool)>& callback);
+    void AddKeycode(SDL_Keycode keycode, uint8_t eventTypeFilter = InputEventType::Any);
+    GenericHandle AddCallback(const std::function<void()>& callback);
     void RemoveCallback(GenericHandle handle);
     
     void OnInputEvent(SDL_Keycode keycode, bool isDown) override;
     std::vector<SDL_Keycode> GetRelevantKeycodes() const override;
 
 private:
-    std::unordered_map<GenericHandle, std::function<void(bool)>> Callbacks;
+    std::unordered_map<GenericHandle, std::function<void()>> Callbacks;
     std::set<SDL_Keycode> DownCodes;
-    std::vector<SDL_Keycode> Keys;
+    std::vector<KeycodeDiscrete> Keys;
 
-    void Invoke(bool isDown);
+    void Invoke();
 };
 
 class AxisInputAction : public InputActionBase
@@ -54,7 +60,7 @@ class AxisInputAction : public InputActionBase
     };
     
 public:
-    void SetKeycodeAxis(SDL_Keycode keycode, int32_t value, uint8_t eventTypeFilter = InputEventType::Any);
+    void AddKeycodeAxis(SDL_Keycode keycode, int32_t value, uint8_t eventTypeFilter = InputEventType::Any);
     GenericHandle AddCallback(const std::function<void(int32_t)>& callback);
     void RemoveCallback(GenericHandle handle);
 

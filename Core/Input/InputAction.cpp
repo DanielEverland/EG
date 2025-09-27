@@ -3,12 +3,15 @@
 #include <algorithm>
 #include <ranges>
 
-void DiscreteInputAction::AddKeycode(SDL_Keycode keycode)
+void DiscreteInputAction::AddKeycode(SDL_Keycode keycode, uint8_t eventTypeFilter)
 {
-    Keys.push_back(keycode);
+    Keys.push_back({
+        .Keycode = keycode,
+        .Filter = eventTypeFilter
+    });
 }
 
-GenericHandle DiscreteInputAction::AddCallback(const std::function<void(bool)>& callback)
+GenericHandle DiscreteInputAction::AddCallback(const std::function<void()>& callback)
 {
     GenericHandle newHandle;
     Callbacks.emplace(newHandle, callback);
@@ -22,32 +25,46 @@ void DiscreteInputAction::RemoveCallback(GenericHandle handle)
 
 void DiscreteInputAction::OnInputEvent(SDL_Keycode keycode, bool isDown)
 {
-    if (isDown)
+    InputEventType::Type eventType = InputEventType::KeyHeld;
+    if (isDown && !DownCodes.contains(keycode))
     {
+        eventType = InputEventType::KeyDown;
         DownCodes.emplace(keycode);
     }
-    else
+    else if (!isDown)
     {
+        eventType = InputEventType::KeyUp;
         DownCodes.erase(keycode);
     }
 
-    Invoke(DownCodes.empty() == false);
+    for (const KeycodeDiscrete& key : Keys)
+    {
+        if (key.Keycode == keycode && (key.Filter & eventType) != InputEventType::None)
+        {
+            Invoke();
+        }
+    }
 }
 
 std::vector<SDL_Keycode> DiscreteInputAction::GetRelevantKeycodes() const
 {
-    return Keys;
+    std::vector<SDL_Keycode> outKeys(Keys.size());
+    for (const KeycodeDiscrete& key : Keys)
+    {
+        outKeys.push_back(key.Keycode);
+    }
+    return outKeys;
 }
 
-void DiscreteInputAction::Invoke(const bool isDown)
+void DiscreteInputAction::Invoke()
 {
-    for (const std::function<void(bool)>& callback : Callbacks | std::views::values)
+    for (const std::function<void()>& callback : Callbacks | std::views::values)
     {
-        callback(isDown);
+        callback();
     }
 }
 
-void AxisInputAction::SetKeycodeAxis(SDL_Keycode keycode, int32_t value, uint8_t eventTypeFilter)
+void AxisInputAction::AddKeycodeAxis(SDL_Keycode keycode, int32_t value, uint8_t eventTypeFilter)
 {
     Axes.push_back({
             .Keycode = keycode,
@@ -95,9 +112,9 @@ void AxisInputAction::OnInputEvent(SDL_Keycode keycode, bool isDown)
 std::vector<SDL_Keycode> AxisInputAction::GetRelevantKeycodes() const
 {
     std::vector<SDL_Keycode> outKeys(Axes.size());
-    for (auto pair : Axes)
+    for (const KeycodeAxis& key : Axes)
     {
-        outKeys.push_back(pair.Keycode);
+        outKeys.push_back(key.Keycode);
     }
     return outKeys;
 }
