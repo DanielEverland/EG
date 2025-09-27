@@ -14,7 +14,9 @@ public:
         return SingletonHelper::Impl<Camera>();
     }
 
-    IntVector2D& GetPosition() { return CameraPosition; }
+    IntVector2D GetPosition() const { return CameraPosition; }
+    void SetPosition(const IntVector2D& position) { CameraPosition = position; }
+    
     IntVector2D ToViewSpace(const IntVector2D& worldPosition) const;
 
 private:

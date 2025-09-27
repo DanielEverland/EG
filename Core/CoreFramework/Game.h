@@ -14,11 +14,15 @@ class GameMode;
 class Application;
 class Level;
 
-enum class SystemCategory
+namespace SystemCategory
 {
-    None = 0,
-    GameTime = 1 << 0,
-};
+    enum Type
+    {
+        None = 0,
+        GameTime = 1 << 0,
+        RenderTime = 1 << 1
+    };
+}
 
 class Game
 {
@@ -30,6 +34,7 @@ public:
     
     void Initialize();
     void Tick();
+    void PrePresent();
     
     Entity GetNextEntity();
     std::shared_ptr<Level> GetLevel() const { return CurrentLevel; }
@@ -37,13 +42,21 @@ public:
     
     template <class T>
     requires std::derived_from<T, System>
-    void CreateSystem(SystemCategory category)
+    void CreateSystem(SystemCategory::Type category)
     {
         assert(category != SystemCategory::None);
         
         auto newSystem = std::make_shared<T>();
         AllSystems.push_back(newSystem);
-        GameTimeSystems.Register(newSystem);
+
+        if ((category & SystemCategory::GameTime) != SystemCategory::None)
+        {
+            GameTimeSystems.Register(newSystem);
+        }
+        if ((category & SystemCategory::RenderTime) != SystemCategory::None)
+        {
+            RenderTimeSystems.Register(newSystem);
+        }
     }
     
 private:
@@ -51,10 +64,12 @@ private:
     Entity CurrentEntity = 0;
     
     SystemScheduler GameTimeSystems;
+    SystemScheduler RenderTimeSystems;
     
     std::vector<std::shared_ptr<System>> AllSystems;
     std::shared_ptr<Level> CurrentLevel;
     std::shared_ptr<GameMode> CurrentGameMode;
     
     std::shared_ptr<Level> CreateLevel();
+    void UpdateCameraPosition();
 };

@@ -11,4 +11,8 @@ public:
     using GameMode::GameMode;
 
     void Initialize() override;
+
+private:
+    void RegisterInput();
+    void HandleMovementInput(int32_t value, bool bIsHorizontal);
 };

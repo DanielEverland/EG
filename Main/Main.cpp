@@ -1,4 +1,5 @@
 #define SDL_MAIN_USE_CALLBACKS 1  /* use the callbacks instead of main() */
+#include <iostream>
 #include <memory>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
@@ -37,14 +38,20 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 {
     if (event->type == SDL_EVENT_QUIT) {
         return SDL_APP_SUCCESS;
-    }    
+    }
+
+    if (event->type == SDL_EVENT_KEY_DOWN || event->type == SDL_EVENT_KEY_UP) {
+        Application::Get().HandleInputEvent(event->key, event->type == SDL_EVENT_KEY_DOWN);
+    }
+    
     return SDL_APP_CONTINUE;
 }
 
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
-    Application::Get().Tick();
-
+    auto app = Application::Get();
+    app.Tick();
+    app.PrePresent();
     Renderer::Get().Present();
 
     return SDL_APP_CONTINUE;

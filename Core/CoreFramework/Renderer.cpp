@@ -4,30 +4,27 @@
 #include <SDL3/SDL_render.h>
 
 #include "Camera.h"
-#include "Game.h"
-#include "GameMode.h"
 #include "Level.h"
-#include "Components/LocationComponent.h"
-#include "ECS/Entity.h"
 
-void Renderer::Draw(const Rect& rect, const HashedString& textureName, DrawCallOrder order)
+void Renderer::Draw(const Vector2D& worldPosition, const IntVector2D& destRectSize, const HashedString& textureName, DrawCallOrder order)
 {
     DrawCall* container = GetDrawCallStruct(order);
     container->TextureName = textureName;
-    container->DestinationRect = rect;
+    container->WorldPosition = worldPosition;
+    container->DestRectSize = destRectSize;
 }
+
 void Renderer::Present()
-{
-    UpdateCameraPosition();
-    
+{    
     SDL_SetRenderDrawColor(SDLRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(SDLRenderer);
     
     const Tileset& tileSet = AssetManager::Get().GetTileset();
-
+    
     SDL_Rect viewportSize;
     SDL_GetRenderViewport(SDLRenderer, &viewportSize);
-    
+
+    Vector2D cameraPos = Camera::Get().GetPosition();
     SDL_FRect destRect;
     SDL_FRect sourceRect;
     DrawCall* call;
@@ -38,9 +35,10 @@ void Renderer::Present()
         assert(tileSet.SourceRects.contains(call->TextureName));
 
         sourceRect = tileSet.SourceRects.at(call->TextureName);
-        destRect = call->DestinationRect;
-        destRect.x += static_cast<float>(viewportSize.w) / 2.0f;
-        destRect.y += static_cast<float>(viewportSize.h) / 2.0f;
+        destRect.x = (call->WorldPosition.X - cameraPos.X) * CellSize_f + static_cast<float>(viewportSize.w) / 2.0f;
+        destRect.y = (call->WorldPosition.Y - cameraPos.Y) * CellSize_f + static_cast<float>(viewportSize.h) / 2.0f;
+        destRect.w = static_cast<float>(call->DestRectSize.X);
+        destRect.h = static_cast<float>(call->DestRectSize.Y);
 
         // TODO: Any batch render call?
         SDL_RenderTexture(SDLRenderer, tileSet.Texture, &sourceRect, &destRect);
@@ -79,23 +77,4 @@ Renderer::DrawCall* Renderer::GetDrawCallStruct(DrawCallOrder order)
     }
     
     return &Buffer[idx];
-}
-
-void Renderer::UpdateCameraPosition() const
-{
-    Game& game = Game::Get();
-    Entity possessedEntity = game.GetGameMode()->GetPossessedEntity();
-
-    // No possessed entity may be valid. Camera should remain in place if so.
-    if (possessedEntity == InvalidEntity)
-        return;
-
-    ComponentManager& CompManager = game.GetLevel()->GetComponentManager();
-    auto Location = CompManager.TryGetComponent<LocationComponent>(possessedEntity);
-
-    // TODO: Is this actually valid? Or should we assert?
-    if (Location == nullptr)
-        return;
-
-    Camera::Get().GetPosition() = Location->WorldLocation;
 }
