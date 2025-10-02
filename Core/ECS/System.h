@@ -33,6 +33,13 @@ public:
         iter.Execute(std::forward<F>(func));
     }
 
+    template<class... T, std::invocable<Entity, T&...> F>
+    void Query(F&& func)
+    {
+        auto iter = GetComponentManager().CreateIterator<Entity, T...>();
+        iter.Execute(std::forward<F>(func));
+    }
+
 private:
     ComponentManager& GetComponentManager() const { return GetLevel()->GetComponentManager(); }
 };

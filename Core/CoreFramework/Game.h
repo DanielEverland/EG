@@ -20,7 +20,8 @@ namespace SystemCategory
     {
         None = 0,
         GameTime = 1 << 0,
-        RenderTime = 1 << 1
+        RealTime = 1 << 1,
+        RenderTime = 1 << 2
     };
 }
 
@@ -34,6 +35,7 @@ public:
     
     void Initialize();
     void Tick();
+    void StartRound();
     void PrePresent();
     
     Entity GetNextEntity();
@@ -53,6 +55,10 @@ public:
         {
             GameTimeSystems.Register(newSystem);
         }
+        if ((category & SystemCategory::RealTime) != SystemCategory::None)
+        {
+            RealTimeSystems.Register(newSystem);
+        }
         if ((category & SystemCategory::RenderTime) != SystemCategory::None)
         {
             RenderTimeSystems.Register(newSystem);
@@ -62,8 +68,14 @@ public:
 private:
     static inline Game* Instance = nullptr;
     Entity CurrentEntity = 0;
-    
+
+    // Ticks once per game round
     SystemScheduler GameTimeSystems;
+    
+    // Ticks once per frame
+    SystemScheduler RealTimeSystems;
+
+    // Ticks once per frame, after RealTimeSystems
     SystemScheduler RenderTimeSystems;
     
     std::vector<std::shared_ptr<System>> AllSystems;

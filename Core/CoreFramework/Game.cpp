@@ -20,8 +20,14 @@ void Game::Tick()
 {
     Input::Get().ProcessInputBuffer();
     
+    RealTimeSystems.Tick();
+}
+
+void Game::StartRound()
+{
     GameTimeSystems.Tick();
 }
+
 void Game::PrePresent()
 {
     RenderTimeSystems.Tick();

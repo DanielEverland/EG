@@ -4,6 +4,7 @@
 #pragma once
 #include <cstdint>
 #include <type_traits>
+#include <float.h>
 
 template<typename T, typename U>
 concept valid_integral_and_floating_point_conversion = requires
@@ -43,6 +44,24 @@ struct TemplatedVector
     bool operator==(const TemplatedVector& other) const
     {
         return X == other.X && Y == other.Y;
+    }
+
+    void Normalize()
+    {
+        T length = static_cast<T>(sqrt(X * X + Y * Y));
+        
+        if constexpr (std::is_integral_v<T>)
+        {
+            if (length == 0)
+                return;
+        }
+        else if (length < FLT_EPSILON)
+        {
+            return;
+        }
+            
+        X = static_cast<T>(X / length);
+        Y = static_cast<T>(Y / length);
     }
 };
 

@@ -1,4 +1,6 @@
 #include "MainGameMode.h"
+
+#include "Components/CreatureComponent.h"
 #include "Components/LocationComponent.h"
 #include "Components/TextureRendererComponent.h"
 #include "CoreFramework/Camera.h"
@@ -6,6 +8,7 @@
 #include "CoreFramework/Level.h"
 #include "Input/Input.h"
 #include "Input/InputAction.h"
+#include "Systems/CreatureAISystem.h"
 
 void MainGameMode::Initialize()
 {
@@ -37,7 +40,29 @@ void MainGameMode::Initialize()
     renderComp.TextureName = HashedString("Player");
     renderComp.Order = DrawCallOrder::Foreground;
 
+
+    IntVector2D enemySpawnPositions[] = {
+        { 10, 5 },
+        { 5, 10 },
+        { 11, 12 }
+    };
+    for (auto enemyPosition : enemySpawnPositions)
+    {
+        Entity enemyEntity = level->CreateEntity();
+        auto& enemyLocation = componentManager.AddComponent<LocationComponent>(enemyEntity);
+        auto& enemyRenderComp = componentManager.AddComponent<TextureRendererComponent>(enemyEntity);
+        auto& creatureComp = componentManager.AddComponent<CreatureComponent>(enemyEntity);
+
+        enemyLocation.WorldLocation = enemyPosition;
+
+        enemyRenderComp.TextureName = HashedString("Enemy");
+        enemyRenderComp.Order = DrawCallOrder::Foreground;
+    }
+    
+
     RegisterInput();
+
+    Game::Get().CreateSystem<CreatureAISystem>(SystemCategory::GameTime);
 }
 
 void MainGameMode::RegisterInput()
@@ -84,5 +109,7 @@ void MainGameMode::HandleMovementInput(int32_t value, bool bIsHorizontal)
         {
             locationComponent->WorldLocation.Y -= value;
         }
+
+        Game::Get().StartRound();
     }
 }
