@@ -1,5 +1,7 @@
 #include "Input.h"
 
+#include <execution>
+
 void Input::PushOntoInputBuffer(const SDL_Keycode key, bool isKeyDown)
 {
     InputBuffer.push_back({key, isKeyDown});
@@ -28,24 +30,12 @@ void Input::ProcessInputBuffer()
 
 void Input::ProcessInputEvent(SDL_Keycode key, bool isKeyDown)
 {
-    for (auto element : Actions)
-    {
-        if (element.first == key)
-        {
-            for (const std::shared_ptr<InputActionBase> action : element.second)
-            {
-                action->OnInputEvent(key, isKeyDown);
-            }
-        }
-    }
-
-    // TODO: Fix this to use find
-    /*auto iter = std::find(Actions.begin(), Actions.end(), static_cast<uint32_t>(key));
+    auto iter = Actions.find(key);
     if (iter == Actions.end())
         return;
     
     for (const std::shared_ptr<InputActionBase> element : iter->second)
     {
         element->OnInputEvent(key, isKeyDown);
-    }*/
+    }
 }
