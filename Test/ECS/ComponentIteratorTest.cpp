@@ -61,3 +61,24 @@ TEST(Component, ProperSubset)
 
     EXPECT_EQ(executions, 1);
 }
+
+TEST(Component, Any)
+{
+    ComponentManager manager;
+    const Entity entityA = 0;
+
+    TestComponentA& compA = manager.AddComponent<TestComponentA>(entityA);
+    auto iter = manager.CreateIterator<TestComponentA>();
+
+    auto predicate = [](const TestComponentA& comp) -> bool
+    {
+        return comp.A == 42;
+    };
+
+    const bool bHasAnyBefore = iter.Any(predicate);
+    compA.A = 42;
+    const bool bHasAnyAfter = iter.Any(predicate);
+
+    EXPECT_FALSE(bHasAnyBefore);
+    EXPECT_TRUE(bHasAnyAfter);
+}

@@ -4,6 +4,7 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <utility>
 
@@ -38,6 +39,13 @@ public:
     {
         auto iter = GetComponentManager().CreateIterator<Entity, T...>();
         iter.Execute(std::forward<F>(func));
+    }
+
+    template<class... T, std::predicate<T&...> F>
+    bool Any(F&& func) const
+    {
+        auto iter = GetComponentManager().CreateIterator<Entity, T...>();
+        return iter.Any(std::forward<F>(func));
     }
 
 private:

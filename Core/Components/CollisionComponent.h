@@ -2,10 +2,10 @@
 // All rights reserved.
 
 #pragma once
-
 #include "ECS/Component.h"
 
-class CreatureComponent : public Component
+class CollisionComponent : public Component
 {
 public:
+    
 };

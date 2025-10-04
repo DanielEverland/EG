@@ -3,9 +3,11 @@
 
 #pragma once
 
+#include "DataStructrues/Vector.h"
 #include "ECS/Component.h"
 
-class CreatureComponent : public Component
+class MovementComponent : public Component
 {
 public:
+    IntVector2D TargetLocation;
 };

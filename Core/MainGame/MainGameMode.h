@@ -15,4 +15,5 @@ public:
 private:
     void RegisterInput();
     void HandleMovementInput(int32_t value, bool bIsHorizontal);
+    Entity CreateCreature(Entity target = InvalidEntity) const;
 };

@@ -2,13 +2,14 @@
 
 #include "Components/CreatureComponent.h"
 #include "Components/LocationComponent.h"
+#include "Components/MovementComponent.h"
 #include "CoreFramework/GameMode.h"
 
 void CreatureAISystem::Execute()
 {
     auto gameMode = Game::Get().GetGameMode();
-    Query<LocationComponent, CreatureComponent>(
-        [gameMode](const Entity entity, LocationComponent& location, const CreatureComponent& creature)
+    Query<LocationComponent, CreatureComponent, MovementComponent>(
+        [this, gameMode](const Entity entity, LocationComponent& location, const CreatureComponent& creature, MovementComponent& movementComponent)
         {
             const Entity possessedEntity = gameMode->GetPossessedEntity();
             if (possessedEntity == InvalidEntity || possessedEntity == entity)
@@ -19,13 +20,6 @@ void CreatureAISystem::Execute()
             if (!targetLocationComp)
                 return;
 
-            IntVector2D direction = targetLocationComp->WorldLocation - location.WorldLocation;
-            direction.Normalize();
-            
-            const IntVector2D newPosition = location.WorldLocation + direction;
-            if (newPosition == targetLocationComp->WorldLocation)
-                return;
-
-            location.WorldLocation = newPosition;
+            movementComponent.TargetLocation = targetLocationComp->WorldLocation;
         });
 }

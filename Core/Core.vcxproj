@@ -202,13 +202,16 @@
     <ClCompile Include="Primitives\Color.cpp" />
     <ClCompile Include="Primitives\Rect.cpp" />
     <ClCompile Include="Systems\CreatureAISystem.cpp" />
+    <ClCompile Include="Systems\MovementSystem.cpp" />
     <ClCompile Include="Systems\RenderingSystem.cpp" />
     <ClCompile Include="Utilities\SingletonHelpers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Thirdparty\Json\json.hpp" />
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Components\CollisionComponent.h" />
     <ClInclude Include="Components\CreatureComponent.h" />
+    <ClInclude Include="Components\MovementComponent.h" />
     <ClInclude Include="Components\TextureRendererComponent.h" />
     <ClInclude Include="Components\LocationComponent.h" />
     <ClInclude Include="CoreFramework\AssetManager.h" />
@@ -239,6 +242,7 @@
     <ClInclude Include="Primitives\Color.h" />
     <ClInclude Include="Primitives\Rect.h" />
     <ClInclude Include="Systems\CreatureAISystem.h" />
+    <ClInclude Include="Systems\MovementSystem.h" />
     <ClInclude Include="Systems\RenderingSystem.h" />
     <ClInclude Include="Utilities\SingletonHelpers.h" />
   </ItemGroup>

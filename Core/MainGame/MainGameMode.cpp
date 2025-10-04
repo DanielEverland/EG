@@ -1,14 +1,16 @@
 #include "MainGameMode.h"
 
+#include "Components/CollisionComponent.h"
 #include "Components/CreatureComponent.h"
 #include "Components/LocationComponent.h"
+#include "Components/MovementComponent.h"
 #include "Components/TextureRendererComponent.h"
-#include "CoreFramework/Camera.h"
 #include "CoreFramework/Game.h"
 #include "CoreFramework/Level.h"
 #include "Input/Input.h"
 #include "Input/InputAction.h"
 #include "Systems/CreatureAISystem.h"
+#include "Systems/MovementSystem.h"
 
 void MainGameMode::Initialize()
 {
@@ -29,11 +31,11 @@ void MainGameMode::Initialize()
         }
     }
 
-    Entity playerEntity = level->CreateEntity();
+    Entity playerEntity = CreateCreature();
     SetPossessedEntity(playerEntity);
     
-    auto& playerLocation = componentManager.AddComponent<LocationComponent>(playerEntity);
-    auto& renderComp = componentManager.AddComponent<TextureRendererComponent>(playerEntity);
+    auto& playerLocation = componentManager.GetComponentChecked<LocationComponent>(playerEntity);
+    auto& renderComp = componentManager.GetComponentChecked<TextureRendererComponent>(playerEntity);
     
     playerLocation.WorldLocation = IntVector2D(5, 5);
 
@@ -48,10 +50,9 @@ void MainGameMode::Initialize()
     };
     for (auto enemyPosition : enemySpawnPositions)
     {
-        Entity enemyEntity = level->CreateEntity();
-        auto& enemyLocation = componentManager.AddComponent<LocationComponent>(enemyEntity);
-        auto& enemyRenderComp = componentManager.AddComponent<TextureRendererComponent>(enemyEntity);
-        auto& creatureComp = componentManager.AddComponent<CreatureComponent>(enemyEntity);
+        Entity enemyEntity = CreateCreature();
+        auto& enemyLocation = componentManager.GetComponentChecked<LocationComponent>(enemyEntity);
+        auto& enemyRenderComp = componentManager.GetComponentChecked<TextureRendererComponent>(enemyEntity);
 
         enemyLocation.WorldLocation = enemyPosition;
 
@@ -59,10 +60,10 @@ void MainGameMode::Initialize()
         enemyRenderComp.Order = DrawCallOrder::Foreground;
     }
     
-
     RegisterInput();
 
     Game::Get().CreateSystem<CreatureAISystem>(SystemCategory::GameTime);
+    Game::Get().CreateSystem<MovementSystem>(SystemCategory::GameTime);
 }
 
 void MainGameMode::RegisterInput()
@@ -83,10 +84,10 @@ void MainGameMode::RegisterInput()
     // Vertical movement
     {
         const auto action = std::make_shared<AxisInputAction>();
-        action->AddKeycodeAxis(SDLK_W, 1, InputEventType::DownOrHeld);
-        action->AddKeycodeAxis(SDLK_S, -1, InputEventType::DownOrHeld);
-        action->AddKeycodeAxis(SDLK_UP, 1, InputEventType::DownOrHeld);
-        action->AddKeycodeAxis(SDLK_DOWN, -1, InputEventType::DownOrHeld);
+        action->AddKeycodeAxis(SDLK_W, -1, InputEventType::DownOrHeld);
+        action->AddKeycodeAxis(SDLK_S, 1, InputEventType::DownOrHeld);
+        action->AddKeycodeAxis(SDLK_UP, -1, InputEventType::DownOrHeld);
+        action->AddKeycodeAxis(SDLK_DOWN, 1, InputEventType::DownOrHeld);
         
         action->AddCallback(std::bind(&MainGameMode::HandleMovementInput, this, std::placeholders::_1, false));
 
@@ -95,21 +96,45 @@ void MainGameMode::RegisterInput()
 }
 void MainGameMode::HandleMovementInput(int32_t value, bool bIsHorizontal)
 {
-    Entity possessedEntity = Game::Get().GetGameMode()->GetPossessedEntity();
+    Game game = Game::Get();
+    Entity possessedEntity = game.GetGameMode()->GetPossessedEntity();
     if (possessedEntity == InvalidEntity)
         return;
 
-    if (const auto locationComponent = Game::Get().GetLevel()->GetComponentManager().TryGetComponent<LocationComponent>(possessedEntity))
-    {
-        if (bIsHorizontal)
-        {
-            locationComponent->WorldLocation.X += value;
-        }
-        else
-        {
-            locationComponent->WorldLocation.Y -= value;
-        }
+    auto& movementComponent = game.GetLevel()->GetComponentManager().GetComponentChecked<MovementComponent>(possessedEntity);
+    const auto& locationComponent = game.GetLevel()->GetComponentManager().GetComponentChecked<LocationComponent>(possessedEntity);
 
-        Game::Get().StartRound();
+    movementComponent.TargetLocation = locationComponent.WorldLocation;
+    if (bIsHorizontal)
+    {
+        movementComponent.TargetLocation.X += value;
     }
+    else
+    {
+        movementComponent.TargetLocation.Y += value;
+    }
+
+    auto movementSystem = game.GetSystem<MovementSystem>();
+    if (movementSystem->IsValidMove(possessedEntity, locationComponent.WorldLocation, movementComponent.TargetLocation))
+    {
+        game.StartRound();
+    }
+}
+Entity MainGameMode::CreateCreature(Entity target) const
+{
+    std::shared_ptr<Level> level = Game::Get().GetLevel();
+    ComponentManager& componentManager = level->GetComponentManager();
+
+    if (target == InvalidEntity)
+    {
+        target = level->CreateEntity();
+    }
+
+    componentManager.AddComponent<LocationComponent>(target);
+    componentManager.AddComponent<CreatureComponent>(target);
+    componentManager.AddComponent<TextureRendererComponent>(target);
+    componentManager.AddComponent<CollisionComponent>(target);
+    componentManager.AddComponent<MovementComponent>(target);
+
+    return target;
 }

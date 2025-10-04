@@ -4,6 +4,7 @@
 #pragma once
 
 #include <cassert>
+#include <functional>
 #include <memory>
 #include <ostream>
 #include <ranges>
@@ -38,6 +39,23 @@ private:
                 }
             }
         }
+
+        template<std::predicate<ComponentTypes&...> F>
+        bool Any(F&& func)
+        {
+            // TODO: Optimize by choosing the smallest container as driver
+            auto& driver = std::get<0>(Containers);
+            auto fn = std::forward<F>(func);
+            for (auto& element : driver) {
+                if ((std::get<ComponentContainer<ComponentTypes>&>(Containers).Contains(element.EntityId) && ...)) {
+                    if (fn(std::get<ComponentContainer<ComponentTypes>&>(Containers).Get(element.EntityId)...))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         
     private:
         ComponentManager& Manager;
@@ -59,6 +77,13 @@ public:
             {
                 fn(components...);
             });
+        }
+
+        template<std::predicate<T&...> F>
+        bool Any(F&& func)
+        {
+            auto fn = std::forward<F>(func);
+            return IterBase<T...>::Any(fn);
         }
     };
 
@@ -85,6 +110,14 @@ public:
         if (!Container.Contains(entity))
             return nullptr;
         return &Container.Get(entity);
+    }
+
+    template<class T>
+    T& GetComponentChecked(Entity entity)
+    {
+        ComponentContainer<T>& Container = GetContainer<T>();
+        assert(Container.Contains(entity));
+        return Container.Get(entity);
     }
 
     template<class... T>

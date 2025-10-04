@@ -64,6 +64,20 @@ public:
             RenderTimeSystems.Register(newSystem);
         }
     }
+
+    template <class T>
+    requires std::derived_from<T, System>
+    T* GetSystem() const
+    {
+        for (const auto& system : AllSystems)
+        {
+            if (auto castedSystem = dynamic_cast<T*>(system.get()))
+            {
+                return castedSystem;
+            }
+        }
+        return nullptr;
+    }
     
 private:
     static inline Game* Instance = nullptr;
