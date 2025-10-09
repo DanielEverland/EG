@@ -96,7 +96,7 @@ void MainGameMode::RegisterInput()
 }
 void MainGameMode::HandleMovementInput(int32_t value, bool bIsHorizontal)
 {
-    Game game = Game::Get();
+    Game& game = Game::Get();
     Entity possessedEntity = game.GetGameMode()->GetPossessedEntity();
     if (possessedEntity == InvalidEntity)
         return;

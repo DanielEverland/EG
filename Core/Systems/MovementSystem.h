@@ -9,4 +9,7 @@ class MovementSystem : public System
 public:
     void Execute() override;
     bool IsValidMove(Entity entity, const IntVector2D& currentPosition, const IntVector2D& targetPosition) const;
+
+protected:
+    void RegisterIterators() override;
 };

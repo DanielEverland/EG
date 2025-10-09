@@ -8,7 +8,7 @@
 void CreatureAISystem::Execute()
 {
     auto gameMode = Game::Get().GetGameMode();
-    Query<LocationComponent, CreatureComponent, MovementComponent>(
+    /*Query<LocationComponent, CreatureComponent, MovementComponent>(
         [this, gameMode](const Entity entity, LocationComponent& location, const CreatureComponent& creature, MovementComponent& movementComponent)
         {
             const Entity possessedEntity = gameMode->GetPossessedEntity();
@@ -21,5 +21,5 @@ void CreatureAISystem::Execute()
                 return;
 
             movementComponent.TargetLocation = targetLocationComp->WorldLocation;
-        });
+        })*/;
 }

@@ -7,6 +7,7 @@
 
 #include "Renderer.h"
 #include "ECS/Entity.h"
+#include "ECS/SystemMutexCollection.h"
 #include "ECS/SystemScheduler.h"
 #include "Utilities/SingletonHelpers.h"
 
@@ -32,6 +33,8 @@ public:
     {
         return SingletonHelper::Impl<Game>();
     }
+
+    SystemMutexCollection MutexCollection;
     
     void Initialize();
     void Tick();

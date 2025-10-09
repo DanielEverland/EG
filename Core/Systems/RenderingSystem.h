@@ -11,4 +11,7 @@ public:
     using System::System;
     
     void Execute() override;
+
+protected:
+    void RegisterIterators() override;
 };

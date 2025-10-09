@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <shared_mutex>
 #include <unordered_map>
 
 #include "Entity.h"
@@ -15,6 +16,8 @@ class IComponentContainer
 public:
     virtual ~IComponentContainer() = default;
 
+    virtual void LockWritable() = 0;
+    virtual void UnlockWritable() = 0;
     virtual void Add(Entity entity) = 0;
     virtual bool Contains(Entity entity) = 0;
     virtual void RemoveEntity(Entity entity) = 0;
@@ -28,10 +31,22 @@ requires std::is_base_of_v<Component, T>
 class ComponentContainer : public IComponentContainer
 {    
 public:
+    std::shared_mutex Mutex;
+    
     ComponentContainer() = default;
 
     // We shouldn't ever copy containers
     ComponentContainer(const ComponentContainer& other) = delete;
+
+    void LockWritable() override
+    {
+        Mutex.lock();
+    }
+
+    void UnlockWritable() override
+    {
+        Mutex.unlock();
+    }
     
     void Add(Entity entity) override
     {

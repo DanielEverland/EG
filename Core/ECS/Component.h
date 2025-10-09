@@ -3,9 +3,10 @@
 
 #pragma once
 
+#include <shared_mutex>
+
 class Component
 {
+public:
+    
 };
-
-// Strictly enforce empty size of base class
-static_assert(sizeof(Component) == 1);

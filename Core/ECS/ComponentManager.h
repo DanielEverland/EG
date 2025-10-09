@@ -6,7 +6,6 @@
 #include <cassert>
 #include <functional>
 #include <memory>
-#include <ostream>
 #include <ranges>
 
 #include "ComponentContainer.h"
@@ -126,7 +125,7 @@ public:
         return Iter<T...>(*this);
     }
 
-private:
+//private:
     std::unordered_map<size_t, std::unique_ptr<IComponentContainer>> ComponentContainers;
     
     template<class T>

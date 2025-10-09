@@ -3,11 +3,7 @@
 
 #pragma once
 
-#include <cstdint>
-#include <functional>
 #include <memory>
-#include <utility>
-
 #include "CoreFramework/Game.h"
 #include "CoreFramework/Level.h"
 
@@ -26,8 +22,8 @@ public:
     virtual void Execute() = 0;
 
     std::shared_ptr<Level> GetLevel() const;
-
-    template<class... T, std::invocable<T&...> F>
+    
+    /*template<class... T, std::invocable<T&...> F>
     void Query(F&& func)
     {
         auto iter = GetComponentManager().CreateIterator<T...>();
@@ -46,7 +42,9 @@ public:
     {
         auto iter = GetComponentManager().CreateIterator<Entity, T...>();
         return iter.Any(std::forward<F>(func));
-    }
+    }*/
+
+    virtual void RegisterIterators() { }
 
 private:
     ComponentManager& GetComponentManager() const { return GetLevel()->GetComponentManager(); }
