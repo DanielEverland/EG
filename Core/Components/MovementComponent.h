@@ -9,5 +9,7 @@
 class MovementComponent : public Component
 {
 public:
+    using Component::Component;
+    
     IntVector2D TargetLocation;
 };

@@ -3,10 +3,7 @@
 
 #pragma once
 
-#include <shared_mutex>
-
 class Component
 {
 public:
-    
 };

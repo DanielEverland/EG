@@ -7,5 +7,5 @@
 class CollisionComponent : public Component
 {
 public:
-    
+    using Component::Component;
 };

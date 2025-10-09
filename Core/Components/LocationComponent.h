@@ -9,5 +9,7 @@
 class LocationComponent : public Component
 {
 public:
+    using Component::Component;
+    
     IntVector2D WorldLocation;
 };

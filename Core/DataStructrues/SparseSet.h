@@ -12,30 +12,35 @@
 template<class T>
 class SparseSet
 {
+    using ValueType = std::remove_cv_t<T>;
+    
 public:
     struct Entry
     {
-        Entry(const Entity entity, T value) : EntityId(entity), Data(value) {}
+        Entry(const Entity entity, ValueType value) : EntityId(entity), Data(value) {}
+
+        Entry& operator=(const Entry& other) = default;
+        
         Entity EntityId;
-        T Data;
+        ValueType Data;
     };
     
-    T& AddDefaulted(Entity entity)
+    ValueType& AddDefaulted(Entity entity)
     {
         if (Contains(entity))
             return Get(entity);
         
-        Dense.push_back(Entry(entity, { } ));
+        Dense.push_back(Entry(entity, T() ));
         Sparse[entity] = Dense.size() - 1;
         return Dense.back().Data;
     }
 
-    T& Get(const Entity entity)
+    ValueType& Get(const Entity entity)
     {
         return Dense[Sparse.at(entity)].Data;
     }
 
-    const T& Get(const Entity entity) const
+    const ValueType& Get(const Entity entity) const
     {
         return Dense[Sparse.at(entity)].Data;
     }

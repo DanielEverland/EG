@@ -9,6 +9,8 @@
 class TextureRendererComponent : public Component
 {
 public:
+    using Component::Component;
+    
     HashedString TextureName { "Default" };
     DrawCallOrder Order = DrawCallOrder::Foreground;
 };

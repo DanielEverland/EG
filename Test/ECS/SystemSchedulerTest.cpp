@@ -8,6 +8,8 @@
 #include "ECS/SystemScheduler.h"
 #include "gtest/gtest.h"
 
+int t = 0;
+
 class TestSystem : public System
 {
 public:
@@ -15,7 +17,7 @@ public:
     {
         op = QueryOperation<LocationComponent, const MovementComponent>(this, [this](/*Entity entity, */LocationComponent& location, const MovementComponent& movement)
         {
-            
+            t++;
         });
     }
     
@@ -23,7 +25,8 @@ public:
 
     void Execute() override
     {
-        
+        // TODO:  This will crash!
+//        op.Execute();
     }
 };
 

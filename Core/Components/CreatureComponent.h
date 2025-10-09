@@ -8,4 +8,5 @@
 class CreatureComponent : public Component
 {
 public:
+    using Component::Component;
 };
