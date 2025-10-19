@@ -25,8 +25,10 @@ public:
 
     void Execute() override
     {
-        // TODO:  This will crash!
-//        op.Execute();
+        // TODO: This will crash!
+        op.Execute();
+
+        //t++;
     }
 };
 

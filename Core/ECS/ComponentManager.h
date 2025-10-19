@@ -5,7 +5,9 @@
 
 #include <cassert>
 #include <functional>
+#include <iostream>
 #include <memory>
+#include <ostream>
 #include <ranges>
 
 #include "ComponentContainer.h"
@@ -96,6 +98,7 @@ public:
 
     void RemoveEntity(Entity entity)
     {
+        std::unique_lock writeLock(ComponentMutex);
         for (const std::unique_ptr<IComponentContainer>& container : ComponentContainers | std::views::values)
         {
             container->RemoveEntity(entity);
@@ -127,6 +130,7 @@ public:
 
 //private:
     std::unordered_map<size_t, std::unique_ptr<IComponentContainer>> ComponentContainers;
+    std::shared_mutex ComponentMutex;
     
     template<class T>
     ComponentContainer<T>& GetContainer();
@@ -137,14 +141,24 @@ ComponentContainer<T>& ComponentManager::GetContainer()
 {
     const size_t typeHash = typeid(T).hash_code();
 
+    std::unique_lock writeLock(ComponentMutex);
     if (!ComponentContainers.contains(typeHash))
     {
         auto newContainer  = std::make_unique<ComponentContainer<T>>();
         ComponentContainers[typeHash] = std::move(newContainer);
     }
-
+    
     IComponentContainer* component = ComponentContainers[typeHash].get();
+    // TODO: this will sometimes fail and crash
     auto casted = dynamic_cast<ComponentContainer<T>*>(component);
+
+#if _DEBUG
+    if (casted == nullptr)
+    {
+        std::cout << "Failed to cast! ComponentContainer<T>: " << typeid(T).name() << ", actual container type: " << typeid(*component).name() << std::endl;
+        __debugbreak();
+    }
+#endif
     
     assert(casted != nullptr);
     

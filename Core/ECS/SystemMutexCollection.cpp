@@ -9,9 +9,11 @@ SystemMutexCollection& SystemMutexCollection::Get()
 
 void SystemMutexCollection::Lock(const System *system)
 {
+    
     std::unordered_set<size_t>& mutexSet = ComponentsToLock[system];
     ComponentManager& componentManager = Game::Get().GetLevel()->GetComponentManager();
 
+    std::unique_lock writeLock(componentManager.ComponentMutex);
     const auto& components = componentManager.ComponentContainers;
 
     for (const auto& element : components)
@@ -28,6 +30,7 @@ void SystemMutexCollection::Unlock(const System *system)
     std::unordered_set<size_t>& mutexSet = ComponentsToLock[system];
     ComponentManager& componentManager = Game::Get().GetLevel()->GetComponentManager();
 
+    std::unique_lock writeLock(componentManager.ComponentMutex);
     const auto& components = componentManager.ComponentContainers;
 
     for (const auto& element : components)
