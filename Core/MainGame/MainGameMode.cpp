@@ -16,18 +16,34 @@ void MainGameMode::Initialize()
 {
     std::shared_ptr<Level> level = Game::Get().GetLevel();
     ComponentManager& componentManager = level->GetComponentManager();
-    
+
     for (int x = 0; x < 32; ++x)
     {
-        for (int y = 0; y < 32; ++y) {
-            Entity entityId = level->CreateEntity();
-            auto& locationComp = componentManager.AddComponent<LocationComponent>(entityId);
-            auto& renderComp = componentManager.AddComponent<TextureRendererComponent>(entityId);
+        for (int y = 0; y < 32; ++y)
+        {
+            if (x == 0 || y == 0 || x == 31 || y == 31)
+            {
+                Entity entityId = level->CreateEntity();
+                auto& locationComp = componentManager.AddComponent<LocationComponent>(entityId);
+                auto& renderComp = componentManager.AddComponent<TextureRendererComponent>(entityId);
+                auto& collisionComp = componentManager.AddComponent<CollisionComponent>(entityId);
 
-            locationComp.WorldLocation = IntVector2D(x, y);
+                locationComp.WorldLocation = IntVector2D(x, y);
 
-            renderComp.TextureName = HashedString("Default");
-            renderComp.Order = DrawCallOrder::Background;
+                renderComp.TextureName = HashedString("Wall");
+                renderComp.Order = DrawCallOrder::Background;
+            }
+            else
+            {
+                Entity entityId = level->CreateEntity();
+                auto& locationComp = componentManager.AddComponent<LocationComponent>(entityId);
+                auto& renderComp = componentManager.AddComponent<TextureRendererComponent>(entityId);
+
+                locationComp.WorldLocation = IntVector2D(x, y);
+
+                renderComp.TextureName = HashedString("Default");
+                renderComp.Order = DrawCallOrder::Background;
+            }
         }
     }
 

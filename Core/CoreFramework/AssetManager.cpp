@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <set>
 #include <SDL3/SDL_surface.h>
 
@@ -49,7 +50,8 @@ void AssetManager::LoadTileSet()
     assert(!infoPath.empty());
 
     std::ifstream f(infoPath.c_str());
-    json info = json::parse(f);
+    json info = json::parse(f, nullptr, false);
+    assert(!info.is_discarded() && "Couldn't parse tileset");
     auto imagePath = info["SourceFile"];
 
     const path fullImagePath = GetPath(imagePath);
