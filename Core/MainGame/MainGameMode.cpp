@@ -25,8 +25,7 @@ void MainGameMode::Initialize()
         {
             const bool isWall = x == 0 || y == 0 || x == 31 || y == 31;
             const std::string entityType = isWall ? "Wall" : "Floor"; 
-            Entity entityId = level->CreateEntity();
-            Application::Get().GetEntityFactory()->PopulateEntity(entityId, entityType, IntVector2D(x, y));
+            level->CreateEntity(entityType, IntVector2D(x, y));
         }
     }
 
