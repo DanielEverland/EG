@@ -1,0 +1,16 @@
+{
+    "Id": "Wall",
+    "Composites": [
+        "Renderable"
+    ],
+    "Components": [
+        {
+            "Id": "TextureRendererComponent",
+            "TextureName": "Wall",
+            "Order": "Background"
+        },
+        {
+            "Id": "CollisionComponent"
+        }
+    ]
+}

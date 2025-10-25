@@ -6,6 +6,9 @@
 #include "DataStructrues/Vector.h"
 #include "ECS/Component.h"
 
+#include "Factories/LocationComponentFactory.h"
+REGISTER_COMP_FACTORY(LocationComponentFactory, "LocationComponent");
+
 class LocationComponent : public Component
 {
 public:

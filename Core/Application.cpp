@@ -1,4 +1,6 @@
 #include "Application.h"
+
+#include "ECS/EntityFactory.h"
 #include "Input/Input.h"
 
 void Application::Initialize()
@@ -21,6 +23,9 @@ void Application::PrePresent()
 void Application::LoadContent()
 {
     AssetManager::Get().Load();
+
+    EntityTemplateFactory = std::make_shared<EntityFactory>();
+    EntityTemplateFactory->Load();
 }
 
 void Application::HandleInputEvent(const SDL_KeyboardEvent& key, bool isKeyDown)

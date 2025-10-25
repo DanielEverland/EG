@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Level.h"
 #include "Components/LocationComponent.h"
+#include "ECS/EntityFactory.h"
 #include "Input/Input.h"
 #include "MainGame/MainGameMode.h"
 #include "Systems/RenderingSystem.h"

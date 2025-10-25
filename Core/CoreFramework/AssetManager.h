@@ -34,6 +34,7 @@ public:
     
     void Load();
     [[nodiscard]] std::filesystem::path GetPath(const std::string& assetName) const;
+    [[nodiscard]] std::vector<std::filesystem::path> GetAssets(const std::filesystem::path& directory) const;
     [[nodiscard]] const Tileset& GetTileset() const;
 
 private:    

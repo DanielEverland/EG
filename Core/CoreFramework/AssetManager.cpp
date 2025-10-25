@@ -9,6 +9,7 @@
 #include "json.hpp"
 #include "EngineStatics.h"
 #include "Renderer.h"
+#include "Utilities/DirectoryHelpers.h"
 
 using namespace nlohmann;
 using namespace std::filesystem;
@@ -83,4 +84,17 @@ path AssetManager::GetPath(const std::string& assetName) const
         return { };
     }
     return iter->second;
+}
+
+std::vector<path> AssetManager::GetAssets(const path& directory) const
+{
+    std::vector<path> toReturn;
+    for (const std::pair<const std::string, path>& KVP : DiscoveredAssets)
+    {
+        if (DirectoryHelpers::IsSubPath(KVP.first, directory))
+        {
+            toReturn.push_back(KVP.second);
+        }
+    }
+    return toReturn;
 }

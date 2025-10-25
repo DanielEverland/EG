@@ -4,9 +4,7 @@
 #pragma once
 
 #include <cassert>
-#include <functional>
 #include <memory>
-#include <ostream>
 #include <ranges>
 
 #include "ComponentContainer.h"

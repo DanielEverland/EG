@@ -1,0 +1,11 @@
+{
+    "Id": "Renderable",
+    "Components": [
+        {
+            "Id": "LocationComponent"
+        },
+        {
+            "Id": "TextureRendererComponent"
+        }
+    ]
+}

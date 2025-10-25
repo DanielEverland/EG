@@ -175,6 +175,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Components\Factories\CollisionComponentFactory.cpp" />
+    <ClCompile Include="Components\Factories\LocationComponentFactory.cpp" />
+    <ClCompile Include="Components\Factories\TextureRendererFactory.cpp" />
     <ClCompile Include="CoreFramework\AssetManager.cpp" />
     <ClCompile Include="CoreFramework\Camera.cpp" />
     <ClCompile Include="CoreFramework\Game.cpp" />
@@ -187,8 +190,10 @@
     <ClCompile Include="DataStructrues\Vector.cpp" />
     <ClCompile Include="ECS\Component.cpp" />
     <ClCompile Include="ECS\ComponentContainer.cpp" />
+    <ClCompile Include="ECS\ComponentFactory.cpp" />
     <ClCompile Include="ECS\ComponentManager.cpp" />
     <ClCompile Include="ECS\Entity.cpp" />
+    <ClCompile Include="ECS\EntityFactory.cpp" />
     <ClCompile Include="ECS\EntityManager.cpp" />
     <ClCompile Include="ECS\System.cpp" />
     <ClCompile Include="ECS\SystemScheduler.cpp" />
@@ -204,6 +209,7 @@
     <ClCompile Include="Systems\CreatureAISystem.cpp" />
     <ClCompile Include="Systems\MovementSystem.cpp" />
     <ClCompile Include="Systems\RenderingSystem.cpp" />
+    <ClCompile Include="Utilities\DirectoryHelpers.cpp" />
     <ClCompile Include="Utilities\SingletonHelpers.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +217,9 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="Components\CollisionComponent.h" />
     <ClInclude Include="Components\CreatureComponent.h" />
+    <ClInclude Include="Components\Factories\CollisionComponentFactory.h" />
+    <ClInclude Include="Components\Factories\LocationComponentFactory.h" />
+    <ClInclude Include="Components\Factories\TextureRendererFactory.h" />
     <ClInclude Include="Components\MovementComponent.h" />
     <ClInclude Include="Components\TextureRendererComponent.h" />
     <ClInclude Include="Components\LocationComponent.h" />
@@ -227,8 +236,10 @@
     <ClInclude Include="DataStructrues\Vector.h" />
     <ClInclude Include="ECS\Component.h" />
     <ClInclude Include="ECS\ComponentContainer.h" />
+    <ClInclude Include="ECS\ComponentFactory.h" />
     <ClInclude Include="ECS\ComponentManager.h" />
     <ClInclude Include="ECS\Entity.h" />
+    <ClInclude Include="ECS\EntityFactory.h" />
     <ClInclude Include="ECS\EntityManager.h" />
     <ClInclude Include="ECS\System.h" />
     <ClInclude Include="ECS\SystemScheduler.h" />
@@ -244,6 +255,7 @@
     <ClInclude Include="Systems\CreatureAISystem.h" />
     <ClInclude Include="Systems\MovementSystem.h" />
     <ClInclude Include="Systems\RenderingSystem.h" />
+    <ClInclude Include="Utilities\DirectoryHelpers.h" />
     <ClInclude Include="Utilities\SingletonHelpers.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

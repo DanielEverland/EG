@@ -5,6 +5,10 @@
 
 #include "DataStructrues/HashedString.h"
 #include "CoreFramework/Renderer.h"
+#include "ECS/Component.h"
+
+#include "Components/Factories/TextureRendererFactory.h"
+REGISTER_COMP_FACTORY(TextureRendererFactory, "TextureRendererComponent")
 
 class TextureRendererComponent : public Component
 {

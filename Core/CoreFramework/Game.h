@@ -10,6 +10,7 @@
 #include "ECS/SystemScheduler.h"
 #include "Utilities/SingletonHelpers.h"
 
+class EntityFactory;
 class GameMode;
 class Application;
 class Level;
@@ -95,6 +96,7 @@ private:
     std::vector<std::shared_ptr<System>> AllSystems;
     std::shared_ptr<Level> CurrentLevel;
     std::shared_ptr<GameMode> CurrentGameMode;
+    std::shared_ptr<EntityFactory> EntityFactory;
     
     std::shared_ptr<Level> CreateLevel();
     void UpdateCameraPosition();

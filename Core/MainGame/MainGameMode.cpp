@@ -1,5 +1,6 @@
 #include "MainGameMode.h"
 
+#include "Application.h"
 #include "Components/CollisionComponent.h"
 #include "Components/CreatureComponent.h"
 #include "Components/LocationComponent.h"
@@ -7,6 +8,7 @@
 #include "Components/TextureRendererComponent.h"
 #include "CoreFramework/Game.h"
 #include "CoreFramework/Level.h"
+#include "ECS/EntityFactory.h"
 #include "Input/Input.h"
 #include "Input/InputAction.h"
 #include "Systems/CreatureAISystem.h"
@@ -21,29 +23,10 @@ void MainGameMode::Initialize()
     {
         for (int y = 0; y < 32; ++y)
         {
-            if (x == 0 || y == 0 || x == 31 || y == 31)
-            {
-                Entity entityId = level->CreateEntity();
-                auto& locationComp = componentManager.AddComponent<LocationComponent>(entityId);
-                auto& renderComp = componentManager.AddComponent<TextureRendererComponent>(entityId);
-                auto& collisionComp = componentManager.AddComponent<CollisionComponent>(entityId);
-
-                locationComp.WorldLocation = IntVector2D(x, y);
-
-                renderComp.TextureName = HashedString("Wall");
-                renderComp.Order = DrawCallOrder::Background;
-            }
-            else
-            {
-                Entity entityId = level->CreateEntity();
-                auto& locationComp = componentManager.AddComponent<LocationComponent>(entityId);
-                auto& renderComp = componentManager.AddComponent<TextureRendererComponent>(entityId);
-
-                locationComp.WorldLocation = IntVector2D(x, y);
-
-                renderComp.TextureName = HashedString("Default");
-                renderComp.Order = DrawCallOrder::Background;
-            }
+            const bool isWall = x == 0 || y == 0 || x == 31 || y == 31;
+            const std::string entityType = isWall ? "Wall" : "Floor"; 
+            Entity entityId = level->CreateEntity();
+            Application::Get().GetEntityFactory()->PopulateEntity(entityId, entityType, IntVector2D(x, y));
         }
     }
 

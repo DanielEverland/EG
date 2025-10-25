@@ -1,0 +1,13 @@
+{
+    "Id": "Floor",
+    "Composites": [
+        "Renderable"
+    ],
+    "Components": [
+        {
+            "Id": "TextureRendererComponent",
+            "TextureName": "Default",
+            "Order": "Background"
+        }
+    ]
+}
