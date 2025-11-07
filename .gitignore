@@ -8,3 +8,6 @@ x64/
 .idea/
 .vs/
 *.user
+
+# Tiled
+*.tiled-session

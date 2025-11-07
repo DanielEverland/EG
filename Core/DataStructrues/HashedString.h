@@ -4,28 +4,29 @@
 #pragma once
 
 #include <string>
-#include <system_error>
+#include <unordered_map>
 
 class HashedString
 {
 public:
-    constexpr HashedString(const std::string& str)
+    HashedString() = default;
+    HashedString(const std::string& str)
     {
-        // https://stackoverflow.com/a/7666577/3834696
-        const char* cStr = str.c_str();
-        Hash = 5381;
-        int c;
-
-        while (c = *cStr++)
+        auto [iter, success]  = Lookup.try_emplace(str, Cache.size());
+        if (success)
         {
-            Hash = ((Hash << 5) + Hash) + c;
-        }        
+            Cache.push_back(str);
+        }
+        Idx = iter->second;
     }
 
-    operator size_t() const { return Hash; }
+    operator size_t() const { return Idx; }
+    operator std::string() const;
 
 private:
-    size_t Hash = -1;
+    static inline std::unordered_map<std::string, size_t> Lookup = { };
+    static inline std::vector<std::string> Cache = { };
+    size_t Idx = SIZE_MAX;
 };
 
 template <>

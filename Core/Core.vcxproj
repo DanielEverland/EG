@@ -75,22 +75,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\;$(SolutionDir)Thirdparty\xml\</IncludePath>
     <LibraryPath>$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\;$(SolutionDir)Thirdparty\xml\</IncludePath>
     <LibraryPath>$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\;$(SolutionDir)Thirdparty\xml\</IncludePath>
     <LibraryPath>$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\;$(SolutionDir)Thirdparty\xml\</IncludePath>
     <LibraryPath>$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -203,6 +203,8 @@
     <ClCompile Include="Input\InputAction.cpp" />
     <ClCompile Include="Input\InputEventType.cpp" />
     <ClCompile Include="Input\InputReceiver.cpp" />
+    <ClCompile Include="Levels\Chunk.cpp" />
+    <ClCompile Include="Levels\LevelInstance.cpp" />
     <ClCompile Include="MainGame\MainGameMode.cpp" />
     <ClCompile Include="Primitives\Color.cpp" />
     <ClCompile Include="Primitives\Rect.cpp" />
@@ -210,7 +212,9 @@
     <ClCompile Include="Systems\MovementSystem.cpp" />
     <ClCompile Include="Systems\RenderingSystem.cpp" />
     <ClCompile Include="Utilities\DirectoryHelpers.cpp" />
+    <ClCompile Include="Utilities\FileHelpers.cpp" />
     <ClCompile Include="Utilities\SingletonHelpers.cpp" />
+    <ClCompile Include="Utilities\WorldPositionUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Thirdparty\Json\json.hpp" />
@@ -249,6 +253,8 @@
     <ClInclude Include="Input\InputAction.h" />
     <ClInclude Include="Input\InputEventType.h" />
     <ClInclude Include="Input\InputReceiver.h" />
+    <ClInclude Include="Levels\Chunk.h" />
+    <ClInclude Include="Levels\LevelInstance.h" />
     <ClInclude Include="MainGame\MainGameMode.h" />
     <ClInclude Include="Primitives\Color.h" />
     <ClInclude Include="Primitives\Rect.h" />
@@ -256,7 +262,9 @@
     <ClInclude Include="Systems\MovementSystem.h" />
     <ClInclude Include="Systems\RenderingSystem.h" />
     <ClInclude Include="Utilities\DirectoryHelpers.h" />
+    <ClInclude Include="Utilities\FileHelpers.h" />
     <ClInclude Include="Utilities\SingletonHelpers.h" />
+    <ClInclude Include="Utilities\WorldPositionUtility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

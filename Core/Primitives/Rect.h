@@ -17,5 +17,10 @@ struct Rect
     int32_t Width;
     int32_t Height;
 
+    bool operator==(const Rect& other) const
+    {
+        return X == other.X && Y == other.Y && Width == other.Width && Height == other.Height;
+    }
+
     operator SDL_FRect() const;
 };

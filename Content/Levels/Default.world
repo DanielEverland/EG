@@ -1,0 +1,12 @@
+{
+    "patterns": [
+        {
+            "regexp": "L_0*(\\-?\\d+)_0*(\\-?\\d+)\\.tmj",
+            "multiplierX": 1024,
+            "multiplierY": 1536,
+            "offsetX": 0,
+            "offsetY": 0
+        }
+    ],
+    "type": "world"
+}
