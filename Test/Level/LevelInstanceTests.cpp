@@ -20,12 +20,31 @@ protected:
 
 TEST_F(LevelTest, Deserialization)
 {
-    l0.LoadData();
+    size_t tileSetHash = std::hash<std::string>()("Environment.tsx");
     
+    l0.LoadData();
 
-    // TODO: Didn't account for multiple tilesets.
-    /*ASSERT_EQ(l0.GetSourceRectFromTileIdx(0), Rect(0, 0, 16, 24));
-    ASSERT_EQ(l0.GetSourceRectFromTileIdx(7), Rect(112, 0, 16, 24));
-    auto fa = l0.GetSourceRectFromTileIdx(34);
-    ASSERT_EQ(l0.GetSourceRectFromTileIdx(34), Rect(32, 24, 16, 24));*/
+    auto origoPos = IntVector(0, 0, 0);
+    auto origoInfo = l0.GetCellInfoFromWorldPosition(origoPos);
+    auto origoRect = l0.GetSourceRectFromWorldPosition(origoPos);
+    ASSERT_EQ(origoInfo.CellTypeName, HashedString("Dirt"));
+    ASSERT_EQ(origoInfo.TileId, 0);
+    ASSERT_EQ(origoInfo.TileSetId, tileSetHash);
+    ASSERT_EQ(origoRect, Rect(0, 0, 16, 24));
+
+    auto horizontalWallPos = IntVector(5, 8, 0);
+    auto horizontalWallInfo = l0.GetCellInfoFromWorldPosition(IntVector(horizontalWallPos));
+    auto horizontalWallRect = l0.GetSourceRectFromWorldPosition(IntVector(horizontalWallPos));
+    ASSERT_EQ(horizontalWallInfo.CellTypeName, HashedString("Wall"));
+    ASSERT_EQ(horizontalWallInfo.TileId, 67);
+    ASSERT_EQ(horizontalWallInfo.TileSetId, tileSetHash);
+    ASSERT_EQ(horizontalWallRect, Rect(48, 48, 16, 24));
+
+    auto cornerWallPos = IntVector(3, 8, 0);
+    auto cornerWallInfo = l0.GetCellInfoFromWorldPosition(IntVector(cornerWallPos));
+    auto cornerWallRect = l0.GetSourceRectFromWorldPosition(IntVector(cornerWallPos));
+    ASSERT_EQ(cornerWallInfo.CellTypeName, HashedString("Wall"));
+    ASSERT_EQ(cornerWallInfo.TileId, 71);
+    ASSERT_EQ(cornerWallInfo.TileSetId, tileSetHash);
+    ASSERT_EQ(cornerWallRect, Rect(112, 48, 16, 24));
 }

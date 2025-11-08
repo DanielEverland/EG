@@ -37,6 +37,8 @@ class LevelInstance
         uint16_t TileCount;
         uint8_t Columns;
 
+        Rect IdToRect(uint16_t id) const;
+
         std::unordered_map<uint16_t, TileData> Tiles;
     };
     
@@ -44,8 +46,8 @@ public:
     LevelInstance();
     LevelInstance(const std::string& levelDir);
 
-    /*Rect GetSourceRectFromTileIdx(const std::string& tileSetName, uint16_t localIdx);
-    TileSetData::TileData* TryGetTileDataFromIdx(const std::string& tileSetName, uint16_t localIdx);*/
+    Rect GetSourceRectFromWorldPosition(IntVector cellWorldPosition) const;
+    CellInfo GetCellInfoFromWorldPosition(IntVector cellWorldPosition) const;
     
     void LoadData();
     

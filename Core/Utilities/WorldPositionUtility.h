@@ -5,7 +5,11 @@
 
 #include <cstdint>
 
+#include "DataStructrues/Vector.h"
+
 class WorldPositionUtility
 {
 public:
+    static IntVector WorldPositionToChunkPosition(IntVector WorldPosition);
+    static IntVector WorldSpaceToChunkSpace(IntVector WorldPosition);
 };

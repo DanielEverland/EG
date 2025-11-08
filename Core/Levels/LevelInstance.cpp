@@ -9,6 +9,7 @@
 #include "rapidxml_utils.hpp"
 #include "CoreFramework/AssetManager.h"
 #include "DataStructrues/Vector.h"
+#include "Utilities/WorldPositionUtility.h"
 
 using namespace std::filesystem;
 using namespace nlohmann;
@@ -27,6 +28,7 @@ LevelInstance::TileSetData::TileData* LevelInstance::TryGetTileDataFromIdx(const
     return &TileSet.Tiles[localIdx];
 }*/
 
+
 LevelInstance::LevelInstance() : LevelDirectory("N/A")
 {
     
@@ -34,6 +36,48 @@ LevelInstance::LevelInstance() : LevelDirectory("N/A")
 
 LevelInstance::LevelInstance(const std::string& levelDir) : LevelDirectory(levelDir)
 {
+}
+
+Rect LevelInstance::TileSetData::IdToRect(uint16_t id) const
+{
+    return Rect
+    {
+        id % Columns * TileWidth,
+        id / Columns * TileHeight,
+        TileWidth,
+        TileHeight
+    };
+}
+
+Rect LevelInstance::GetSourceRectFromWorldPosition(IntVector cellWorldPosition) const
+{
+    CellInfo cellInfo = GetCellInfoFromWorldPosition(cellWorldPosition);
+
+    auto tileSet = LoadedTileSets.find(cellInfo.TileSetId);
+    if (tileSet == LoadedTileSets.end())
+    {
+        return { };
+    }
+    
+    return tileSet->second.IdToRect(cellInfo.TileId);
+}
+
+CellInfo LevelInstance::GetCellInfoFromWorldPosition(IntVector cellWorldPosition) const
+{
+    const IntVector chunkPos = WorldPositionUtility::WorldPositionToChunkPosition(cellWorldPosition);
+    if (!Chunks.contains(chunkPos))
+        return { };
+
+    std::shared_ptr<const Chunk> chunk = Chunks.at(chunkPos);
+    
+    const IntVector chunkSpacePos = WorldPositionUtility::WorldSpaceToChunkSpace(cellWorldPosition);
+    assert(chunkSpacePos.X >= 0 && chunkSpacePos.Y >= 0 && chunkSpacePos.Z == 0);
+    assert(chunkSpacePos.X < Chunk::Width && chunkSpacePos.Y < Chunk::Height);
+
+    CellInfo cellInfo;
+    chunk->TryGetCell(static_cast<IntVector2D>(chunkSpacePos), cellInfo);
+
+    return cellInfo;
 }
 
 void LevelInstance::LoadData()
@@ -166,6 +210,8 @@ void LevelInstance::ParseAllChunks()
                 assert(data.is_array());
                 for (auto chunkDataIter = data.begin(); chunkDataIter != data.end(); ++chunkDataIter, ++cellIdx)
                 {
+                    CellInfo newCell;
+                    
                     uint8_t xPosIndex = cellIdx % Chunk::Width;
                     uint8_t yPosIndex = cellIdx / Chunk::Width;
         
@@ -174,11 +220,10 @@ void LevelInstance::ParseAllChunks()
 
                     auto cellIdx = cellVal.get<uint16_t>();
                     
-                    HashedString cellType;
                     // TODO: Support air
                     if (cellIdx == 0)
                     {
-                        cellType = HashedString("Air");
+                        newCell.CellTypeName = HashedString("Air");
                     }
                     else
                     {
@@ -195,9 +240,11 @@ void LevelInstance::ParseAllChunks()
                         auto tileEntry = cellTileSetData.Tiles.find(actualId);
                         assert(tileEntry != cellTileSetData.Tiles.end());
 
-                        cellType = tileEntry->second.TypeStr;
+                        newCell.CellTypeName = tileEntry->second.TypeStr;
+                        newCell.TileSetId = nameHash;
+                        newCell.TileId = actualId;
                     }
-                    chunk->SetTerrain(cellType, IntVector2D(xPosIndex, yPosIndex));
+                    chunk->SetTerrain(std::move(newCell), IntVector2D(xPosIndex, yPosIndex));
                 }
             
                 Chunks.emplace(chunkPos, chunk);

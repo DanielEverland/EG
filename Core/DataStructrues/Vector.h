@@ -107,6 +107,11 @@ struct TemplatedVector
         return X == other.X && Y == other.Y && Z == other.Z;
     }
 
+    explicit operator TemplatedVector2D<T>() const
+    {
+        return { X, Y };
+    }
+
     void Normalize()
     {
         T length = static_cast<T>(sqrt(X * X + Y * Y + Z * Z));

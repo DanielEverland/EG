@@ -1,15 +1,27 @@
 #include "Chunk.h"
 
+#include <cassert>
+
 #include "Utilities/WorldPositionUtility.h"
 
 Chunk::Chunk() : Terrain {  }
 {
 }
 
-void Chunk::SetTerrain(HashedString cellTypeName, IntVector2D localPos)
+void Chunk::SetTerrain(CellInfo&& cellData, IntVector2D localPos)
 {
     assert(localPos.X >= 0 && localPos.X < Width && localPos.Y >= 0 && localPos.Y < Height);
-    Terrain[localPos.X + localPos.Y * Width] = cellTypeName;
+    Terrain[localPos.X + localPos.Y * Width] = std::move(cellData);
+}
+
+bool Chunk::TryGetCell(IntVector2D localPos, CellInfo& outCell) const
+{
+    if (localPos.X >= 0 && localPos.Y >= 0 && localPos.X < Width && localPos.Y < Height)
+    {
+        outCell = Terrain[localPos.X + localPos.Y * Width];
+        return true;
+    }
+    return false;
 }
 
 /*std::shared_ptr<std::vector<Chunk>> Chunk::CreateFromJson(IntVector2D chunkPosPlane, const nlohmann::json& rawData)
