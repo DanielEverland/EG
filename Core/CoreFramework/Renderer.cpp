@@ -1,8 +1,11 @@
 #include "Renderer.h"
 
 #include <cassert>
+#include <iostream>
 #include <SDL3/SDL_render.h>
 
+#include "Rendering/Texture.h"
+#include "Rendering/Tileset.h"
 #include "Camera.h"
 #include "Level.h"
 
@@ -19,8 +22,6 @@ void Renderer::Present()
     SDL_SetRenderDrawColor(SDLRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(SDLRenderer);
     
-    const Tileset& tileSet = AssetManager::Get().GetTileset();
-    
     SDL_Rect viewportSize;
     SDL_GetRenderViewport(SDLRenderer, &viewportSize);
 
@@ -31,17 +32,18 @@ void Renderer::Present()
     auto DoDraw = [&](size_t idx)
     {
         call = &Buffer[idx];
-        
-        assert(tileSet.SourceRects.contains(call->TextureName));
+    
+        std::shared_ptr<Texture> texture = AssetManager::Get().GetTexture(call->TextureName);
+        assert(texture != nullptr);
 
-        sourceRect = tileSet.SourceRects.at(call->TextureName);
-        destRect.x = (call->WorldPosition.X - cameraPos.X) * CellSize_f + static_cast<float>(viewportSize.w) / 2.0f;
-        destRect.y = (call->WorldPosition.Y - cameraPos.Y) * CellSize_f + static_cast<float>(viewportSize.h) / 2.0f;
+        sourceRect = texture->SourceRect;
+        destRect.x = (call->WorldPosition.X - cameraPos.X) * static_cast<float>(CellSize.X * 2) + static_cast<float>(viewportSize.w) / 2.0f;
+        destRect.y = (call->WorldPosition.Y - cameraPos.Y) * static_cast<float>(CellSize.Y * 2) + static_cast<float>(viewportSize.h) / 2.0f;
         destRect.w = static_cast<float>(call->DestRectSize.X);
         destRect.h = static_cast<float>(call->DestRectSize.Y);
 
         // TODO: Any batch render call?
-        SDL_RenderTexture(SDLRenderer, tileSet.Texture, &sourceRect, &destRect);
+        SDL_RenderTexture(SDLRenderer, texture->Tileset->SDLTexture, &sourceRect, &destRect);
     };
 
     for (size_t i = 0; i < BackgroundIdx; ++i)
@@ -58,6 +60,7 @@ void Renderer::Present()
 
     BackgroundIdx = 0;
     ForegroundIdx = BackgroundCallsEnd + 1;
+    FrameCount++;
 }
 
 Renderer::DrawCall* Renderer::GetDrawCallStruct(DrawCallOrder order)
@@ -68,9 +71,13 @@ Renderer::DrawCall* Renderer::GetDrawCallStruct(DrawCallOrder order)
     size_t idx = *curr;
     
     size_t nextIdx = idx + 1;
-    assert(nextIdx <= max);
+    if (nextIdx > max && LastDrawcallBufferOverflow < FrameCount)
+    {
+        LastDrawcallBufferOverflow = FrameCount;
+        std::cerr << "Drawcall buffer overflowed" << std::endl;
+    }
     
-    // Fallback to overwrite last element in release builds
+    // Fallback to overwrite last element
     if (nextIdx <= max)
     {
         *curr = nextIdx;

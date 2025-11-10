@@ -1,6 +1,7 @@
 #include "EntityFactory.h"
 
 #include <fstream>
+#include <iostream>
 
 #include "Components/LocationComponent.h"
 #include "CoreFramework/AssetManager.h"
@@ -65,7 +66,11 @@ void EntityFactory::Load()
 
 void EntityFactory::PopulateEntity(Entity entity, std::string templateId)
 {
-    assert(ParserLookup.contains(templateId));
+    if (!ParserLookup.contains(templateId))
+    {
+        std::cerr << "Unable to find entity template for " << templateId << std::endl;
+        abort();
+    }
 
     const TemplateParser& parser = ParserLookup[templateId];
     for (const std::string& compositeId : parser.GetComposites())

@@ -208,6 +208,8 @@
     <ClCompile Include="MainGame\MainGameMode.cpp" />
     <ClCompile Include="Primitives\Color.cpp" />
     <ClCompile Include="Primitives\Rect.cpp" />
+    <ClCompile Include="Rendering\Texture.cpp" />
+    <ClCompile Include="Rendering\Tileset.cpp" />
     <ClCompile Include="Systems\CreatureAISystem.cpp" />
     <ClCompile Include="Systems\MovementSystem.cpp" />
     <ClCompile Include="Systems\RenderingSystem.cpp" />
@@ -258,6 +260,8 @@
     <ClInclude Include="MainGame\MainGameMode.h" />
     <ClInclude Include="Primitives\Color.h" />
     <ClInclude Include="Primitives\Rect.h" />
+    <ClInclude Include="Rendering\Texture.h" />
+    <ClInclude Include="Rendering\Tileset.h" />
     <ClInclude Include="Systems\CreatureAISystem.h" />
     <ClInclude Include="Systems\MovementSystem.h" />
     <ClInclude Include="Systems\RenderingSystem.h" />

@@ -25,6 +25,7 @@ class LevelInstance
         struct TileData
         {
             HashedString TypeStr;
+            HashedString Name;
         };
         
         // Path to the .png file that contains the actual tilemap
@@ -48,6 +49,7 @@ public:
 
     Rect GetSourceRectFromWorldPosition(IntVector cellWorldPosition) const;
     CellInfo GetCellInfoFromWorldPosition(IntVector cellWorldPosition) const;
+    const std::unordered_map<IntVector, std::shared_ptr<Chunk>>& GetChunks() const { return Chunks; } 
     
     void LoadData();
     
@@ -56,7 +58,7 @@ private:
     std::unordered_map<IntVector, std::shared_ptr<Chunk>> Chunks;
 
     WorldData World;
-    std::unordered_map<size_t, TileSetData> LoadedTileSets;
+    std::unordered_map<size_t, CellInfo> IdToCellTemplate;
 
     void ParseWorldInfo();
     void ParseTileSets();

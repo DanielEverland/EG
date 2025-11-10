@@ -22,3 +22,13 @@ IntVector WorldPositionUtility::WorldSpaceToChunkSpace(IntVector WorldPosition)
         WorldPosition.Z - chunkPos.Z
     };
 }
+
+IntVector WorldPositionUtility::ChunkSpaceToWorldPosition(const IntVector& ChunkPosition, const IntVector2D& LocalPosition)
+{
+    return IntVector
+    {
+        ChunkPosition.X * Chunk::Width + LocalPosition.X,
+        ChunkPosition.Y * Chunk::Height + LocalPosition.Y,
+        ChunkPosition.Z
+    };
+}

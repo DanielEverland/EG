@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <type_traits>
 #include <float.h>
+#include <valarray>
 
 template<typename T, typename U>
 concept valid_integral_and_floating_point_conversion = requires
@@ -62,6 +63,11 @@ struct TemplatedVector2D
             
         X = static_cast<T>(X / length);
         Y = static_cast<T>(Y / length);
+    }
+
+    double Distance()
+    {
+        return std::sqrt(std::pow(X, 2) + std::pow(Y, 2));
     }
 };
 

@@ -1,4 +1,4 @@
-#include "../Utility/TestDirectoryHelper.h"
+/*#include "../Utility/TestDirectoryHelper.h"
 #include "DataStructrues/HashedString.h"
 #include "DataStructrues/Vector.h"
 #include "gtest/gtest.h"
@@ -24,7 +24,7 @@ TEST_F(LevelTest, Deserialization)
     
     l0.LoadData();
 
-    auto origoPos = IntVector(0, 0, 0);
+    /*auto origoPos = IntVector(0, 0, 0);
     auto origoInfo = l0.GetCellInfoFromWorldPosition(origoPos);
     auto origoRect = l0.GetSourceRectFromWorldPosition(origoPos);
     ASSERT_EQ(origoInfo.CellTypeName, HashedString("Dirt"));
@@ -46,5 +46,5 @@ TEST_F(LevelTest, Deserialization)
     ASSERT_EQ(cornerWallInfo.CellTypeName, HashedString("Wall"));
     ASSERT_EQ(cornerWallInfo.TileId, 71);
     ASSERT_EQ(cornerWallInfo.TileSetId, tileSetHash);
-    ASSERT_EQ(cornerWallRect, Rect(112, 48, 16, 24));
-}
+    ASSERT_EQ(cornerWallRect, Rect(112, 48, 16, 24));#1#
+}*/

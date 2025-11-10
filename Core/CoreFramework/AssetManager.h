@@ -11,18 +11,11 @@
 
 #include "DataStructrues/HashedString.h"
 #include "Primitives/Rect.h"
+#include "Rendering/Texture.h"
+#include "Rendering/Tileset.h"
 #include "Utilities/SingletonHelpers.h"
 
 struct SDL_Surface;
-
-struct Tileset
-{
-    SDL_Surface* Surface = nullptr;
-    SDL_Texture* Texture = nullptr;
-    std::unordered_map<HashedString, Rect> SourceRects;
-
-    bool IsValid() const { return Surface != nullptr; }
-};
 
 class AssetManager
 {
@@ -33,9 +26,12 @@ public:
     }
     
     void Load();
+    bool TryRegisterTexture(HashedString textureName, std::shared_ptr<Texture> textureData);
+    
     [[nodiscard]] std::filesystem::path GetPath(const std::string& assetName) const;
     [[nodiscard]] std::vector<std::filesystem::path> GetAssets(const std::filesystem::path& directory) const;
-    [[nodiscard]] const Tileset& GetTileset() const;
+    [[nodiscard]] std::shared_ptr<Texture> GetTexture(HashedString assetName) const;
+    [[nodiscard]] std::shared_ptr<Tileset> LoadTileset(const std::string& assetFilePath) const;
 
 private:    
     static const inline std::set<std::string> AssetExtensions = {
@@ -43,8 +39,8 @@ private:
         ".bmp"
     };
 
+    std::unordered_map<HashedString, std::shared_ptr<Texture>> TextureLookup;
     std::unordered_map<std::string, std::filesystem::path> DiscoveredAssets;
-    Tileset Tileset;
     
     void DiscoverAssets();
     void LoadTileSet();

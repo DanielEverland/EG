@@ -27,4 +27,7 @@ public:
 
         return cIter == childPath.end();
     }
+
+    static std::filesystem::path RelativeToFullPath(const std::filesystem::path& path);
+    static std::filesystem::path GetContentPath(const std::filesystem::path& path);
 };

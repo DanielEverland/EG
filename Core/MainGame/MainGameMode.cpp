@@ -1,6 +1,7 @@
 #include "MainGameMode.h"
 
-#include "Application.h"
+#include <unordered_set>
+
 #include "Components/CollisionComponent.h"
 #include "Components/CreatureComponent.h"
 #include "Components/LocationComponent.h"
@@ -11,23 +12,16 @@
 #include "ECS/EntityFactory.h"
 #include "Input/Input.h"
 #include "Input/InputAction.h"
+#include "Levels/LevelInstance.h"
 #include "Systems/CreatureAISystem.h"
 #include "Systems/MovementSystem.h"
+#include "Utilities/DirectoryHelpers.h"
+#include "Utilities/WorldPositionUtility.h"
 
 void MainGameMode::Initialize()
 {
     std::shared_ptr<Level> level = Game::Get().GetLevel();
     ComponentManager& componentManager = level->GetComponentManager();
-
-    for (int x = 0; x < 32; ++x)
-    {
-        for (int y = 0; y < 32; ++y)
-        {
-            const bool isWall = x == 0 || y == 0 || x == 31 || y == 31;
-            const std::string entityType = isWall ? "Wall" : "Floor"; 
-            level->CreateEntity(entityType, IntVector2D(x, y));
-        }
-    }
 
     Entity playerEntity = CreateCreature();
     SetPossessedEntity(playerEntity);
@@ -39,7 +33,33 @@ void MainGameMode::Initialize()
 
     renderComp.TextureName = HashedString("Player");
     renderComp.Order = DrawCallOrder::Foreground;
+    
+    std::filesystem::path p = DirectoryHelpers::GetContentPath("Levels/Level_01");
+    std::string pString = p.generic_string();
+    auto levelData = LevelInstance(pString);
+    levelData.LoadData();
 
+    std::unordered_set<IntVector> positions;
+    for (const std::pair<const TemplatedVector<int>, std::shared_ptr<Chunk>>& pair : levelData.GetChunks())
+    {
+        if (pair.first.Z != 0)
+            continue;
+        
+        for (int x = 0; x < Chunk::Width; ++x)
+        {
+            for (int y = 0; y < Chunk::Height; ++y)
+            {
+                const CellInfo& cellInfo = pair.second->Terrain[x + y * Chunk::Width];
+                IntVector position = WorldPositionUtility::ChunkSpaceToWorldPosition(pair.first, IntVector2D(x, y));
+                assert(!positions.contains(position));
+                positions.emplace(position);
+                Entity entity = level->CreateEntity(cellInfo.CellTypeName, IntVector2D(position.X, position.Y));
+                
+                auto& renderer = Game::Get().GetLevel()->GetComponentManager().GetComponentChecked<TextureRendererComponent>(entity);
+                renderer.TextureName = cellInfo.TextureName;
+            }
+        }
+    }
 
     IntVector2D enemySpawnPositions[] = {
         { 10, 5 },

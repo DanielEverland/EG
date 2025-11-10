@@ -38,7 +38,7 @@ void Game::PrePresent()
 
 Entity Game::GetNextEntity()
 {
-    return CurrentEntity++;
+    return ++CurrentEntity;
 }
 
 std::shared_ptr<Level> Game::CreateLevel()

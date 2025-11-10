@@ -2,12 +2,16 @@
 
 #include <fstream>
 #include <regex>
+#include <filesystem>
+#include <iostream>
+#include <unordered_set>
 
 #include "Chunk.h"
 #include "json.hpp"
 #include "rapidxml.hpp"
 #include "rapidxml_utils.hpp"
 #include "CoreFramework/AssetManager.h"
+#include "CoreFramework/Renderer.h"
 #include "DataStructrues/Vector.h"
 #include "Utilities/WorldPositionUtility.h"
 
@@ -52,14 +56,7 @@ Rect LevelInstance::TileSetData::IdToRect(uint16_t id) const
 Rect LevelInstance::GetSourceRectFromWorldPosition(IntVector cellWorldPosition) const
 {
     CellInfo cellInfo = GetCellInfoFromWorldPosition(cellWorldPosition);
-
-    auto tileSet = LoadedTileSets.find(cellInfo.TileSetId);
-    if (tileSet == LoadedTileSets.end())
-    {
-        return { };
-    }
-    
-    return tileSet->second.IdToRect(cellInfo.TileId);
+    return cellInfo.TextureInfo->SourceRect;
 }
 
 CellInfo LevelInstance::GetCellInfoFromWorldPosition(IntVector cellWorldPosition) const
@@ -114,13 +111,13 @@ void LevelInstance::ParseWorldInfo()
 
 void LevelInstance::ParseTileSets()
 {
-    std::hash<std::string> hasher;
+    //std::hash<std::string> hasher;
     for (auto iter : directory_iterator(LevelDirectory))
     {
         if (iter.path().extension() != ".tsx")
             continue;
 
-        TileSetData tileSet;
+        //TileSetData tileSet;
         
         file xmlFile(iter.path().generic_string().c_str());
         xml_document<> doc;
@@ -129,37 +126,74 @@ void LevelInstance::ParseTileSets()
         auto tileSetNode = doc.first_node("tileset");
         assert(tileSetNode != nullptr);
 
-        tileSet.TileWidth = std::stoi(tileSetNode->first_attribute("tilewidth", 0, false)->value());
-        tileSet.TileHeight = std::stoi(tileSetNode->first_attribute("tileheight", 0, false)->value());
-        tileSet.TileCount = std::stoi(tileSetNode->first_attribute("tilecount", 0, false)->value());
-        tileSet.Columns = std::stoi(tileSetNode->first_attribute("columns", 0, false)->value());
+        auto TileWidth = std::stoi(tileSetNode->first_attribute("tilewidth")->value());
+        auto TileHeight = std::stoi(tileSetNode->first_attribute("tileheight")->value());
+        auto TileCount = std::stoi(tileSetNode->first_attribute("tilecount")->value());
+        auto Columns = std::stoi(tileSetNode->first_attribute("columns")->value());
 
         auto imageNode = tileSetNode->first_node("image");
         assert(imageNode != nullptr);
-        std::string nameAttribute = imageNode->first_attribute("source", 0, false)->value();
+        std::string nameAttribute = imageNode->first_attribute("source")->value();
         assert(!nameAttribute.empty());
         nameAttribute.insert(nameAttribute.begin(), '/');
 
-        tileSet.AssetPath = LevelDirectory.generic_string() + nameAttribute;
-        tileSet.AssetWidth = std::stoi(imageNode->first_attribute("width", 0, false)->value());
-        tileSet.AssetHeight = std::stoi(imageNode->first_attribute("height", 0, false)->value());
+        auto AssetPath = LevelDirectory.generic_string() + nameAttribute;
+        auto AssetWidth = std::stoi(imageNode->first_attribute("width")->value());
+        auto AssetHeight = std::stoi(imageNode->first_attribute("height")->value());
+
+        std::shared_ptr<Tileset> tileset = AssetManager::Get().LoadTileset(AssetPath);
 
         auto tileNode = tileSetNode->first_node("tile");
         while (tileNode != nullptr)
         {
-            auto idVal = tileNode->first_attribute("id", 0, false);
+            auto texture = std::make_shared<Texture>();
+            texture->Tileset = tileset;
+            
+            auto idVal = tileNode->first_attribute("id");
             int32_t id = std::stoi(idVal->value());
 
-            TileSetData::TileData tileData;
-            tileData.TypeStr = HashedString(tileNode->first_attribute("type", 0, false)->value());
+            texture->SourceRect = Rect
+            {
+                id % Columns * TileWidth,
+                id / Columns * TileHeight,
+                TileWidth,
+                TileHeight
+            };
 
-            tileSet.Tiles.emplace(id, tileData);
+            TileSetData::TileData tileData;
+            tileData.TypeStr = HashedString(tileNode->first_attribute("type")->value());
+            
+            if (auto propertiesNode = tileNode->first_node("properties"))
+            {
+                auto propertyNode = propertiesNode->first_node("property");
+                while (propertyNode != nullptr)
+                {
+                    std::string propertyName = propertyNode->first_attribute("name")->value();
+                    std::string propertyValue = propertyNode->first_attribute("value")->value();
+                    if (propertyName == "Name")
+                    {
+                        tileData.Name = HashedString(propertyValue);
+                        break;
+                    }
+                    propertyNode = propertiesNode->next_sibling("property");
+                }
+            }
+            assert(tileData.Name.IsValid());
+            
+            const bool succeeded = AssetManager::Get().TryRegisterTexture(tileData.Name, texture);
+            assert(succeeded);
+
+            CellInfo cellTemplate;
+            cellTemplate.TextureInfo = texture;
+            cellTemplate.CellTypeName = tileData.TypeStr;
+            cellTemplate.TextureName = tileData.Name;
+            IdToCellTemplate.emplace(id, cellTemplate);
 
             tileNode = tileNode->next_sibling("tile");
         }
 
         std::string fileName = iter.path().filename().generic_string();
-        LoadedTileSets.emplace(hasher(fileName), tileSet);
+        //LoadedTileSets.emplace(hasher(fileName), tileSet);
     }
 }
 
@@ -209,9 +243,7 @@ void LevelInstance::ParseAllChunks()
                 auto data = chunkData["data"];
                 assert(data.is_array());
                 for (auto chunkDataIter = data.begin(); chunkDataIter != data.end(); ++chunkDataIter, ++cellIdx)
-                {
-                    CellInfo newCell;
-                    
+                {                    
                     uint8_t xPosIndex = cellIdx % Chunk::Width;
                     uint8_t yPosIndex = cellIdx / Chunk::Width;
         
@@ -219,7 +251,8 @@ void LevelInstance::ParseAllChunks()
                     assert(cellVal.is_number());
 
                     auto cellIdx = cellVal.get<uint16_t>();
-                    
+
+                    CellInfo newCell;
                     // TODO: Support air
                     if (cellIdx == 0)
                     {
@@ -227,22 +260,10 @@ void LevelInstance::ParseAllChunks()
                     }
                     else
                     {
-                        // TODO: Implement support for multiple tilesets per map.
-                        auto tileSetName = tileSets[0]["source"].get<std::string>();
-                        size_t nameHash = strHasher(tileSetName);
-                        auto tileSetEntry = LoadedTileSets.find(nameHash);
-                        assert(tileSetEntry != LoadedTileSets.end());
-                        const TileSetData& cellTileSetData = tileSetEntry->second;
-
-                        // TODO: Multiple tilesets
-                        // For now, just offset by 1 as they will always be 1-indexed
-                        uint16_t actualId = cellIdx - 1;
-                        auto tileEntry = cellTileSetData.Tiles.find(actualId);
-                        assert(tileEntry != cellTileSetData.Tiles.end());
-
-                        newCell.CellTypeName = tileEntry->second.TypeStr;
-                        newCell.TileSetId = nameHash;
-                        newCell.TileId = actualId;
+                        // Technically 1-indexed. With more tilesets you would have to offset, but for now this is ok.
+                        auto textureEntry = IdToCellTemplate.find(cellIdx - 1);
+                        assert(textureEntry != IdToCellTemplate.end());
+                        newCell = textureEntry->second;
                     }
                     chunk->SetTerrain(std::move(newCell), IntVector2D(xPosIndex, yPosIndex));
                 }

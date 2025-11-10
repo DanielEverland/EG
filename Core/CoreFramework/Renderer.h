@@ -29,8 +29,7 @@ public:
         return SingletonHelper::Impl<Renderer>();
     }
 
-    static constexpr int32_t CellSize = 32;
-    static constexpr float CellSize_f = static_cast<float>(CellSize);
+    static inline IntVector2D CellSize = IntVector2D(16, 24);
 
     void SetRenderer(SDL_Renderer* rawRenderer)
     {
@@ -40,6 +39,7 @@ public:
 
     SDL_Renderer* GetSDLRenderer() const { return SDLRenderer; }
 
+    size_t GetFrameCount() const { return FrameCount; }
     void Draw(const Vector2D& worldPosition, const IntVector2D& destRectSize, const HashedString& textureName, DrawCallOrder order);
     void Present();
 
@@ -47,10 +47,12 @@ private:
     static constexpr size_t MaxNumDrawCalls = 2048;
     static constexpr size_t BackgroundCallsEnd = static_cast<size_t>(MaxNumDrawCalls * (3.0f / 4.0f));
 
+    size_t LastDrawcallBufferOverflow = 0;
+    size_t FrameCount = 0;
     size_t BackgroundIdx = 0;
     size_t ForegroundIdx = BackgroundCallsEnd + 1;
     
-    DrawCall Buffer[sizeof(DrawCall) * MaxNumDrawCalls];
+    DrawCall Buffer[MaxNumDrawCalls];
     
     SDL_Renderer* SDLRenderer = nullptr;
 

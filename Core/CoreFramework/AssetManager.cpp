@@ -5,6 +5,7 @@
 #include <iostream>
 #include <set>
 #include <SDL3/SDL_surface.h>
+#include <SDL3_image/SDL_image.h>
 
 #include "json.hpp"
 #include "EngineStatics.h"
@@ -20,10 +21,15 @@ void AssetManager::Load()
     LoadTileSet();
 }
 
-const Tileset& AssetManager::GetTileset() const
+bool AssetManager::TryRegisterTexture(HashedString textureName, std::shared_ptr<Texture> textureData)
 {
-    assert(Tileset.IsValid());
-    return Tileset;
+    if (TextureLookup.contains(textureName))
+    {
+        std::cerr << "Failed to register texture with name " << textureName.ToString() << ", as it already exists" << std::endl;
+        return false;
+    }
+    TextureLookup.emplace(textureName, textureData);
+    return true;
 }
 
 void AssetManager::DiscoverAssets()
@@ -58,21 +64,22 @@ void AssetManager::LoadTileSet()
     const path fullImagePath = GetPath(imagePath);
     assert(!fullImagePath.empty());
 
-    Tileset.Surface = SDL_LoadBMP(fullImagePath.string().c_str());
-    assert(Tileset.Surface);
-    
-    Tileset.Texture = SDL_CreateTextureFromSurface(Renderer::Get().GetSDLRenderer(), Tileset.Surface);
-    assert(Tileset.Texture);
-    SDL_SetTextureScaleMode(Tileset.Texture, SDL_SCALEMODE_NEAREST);
+    std::shared_ptr<Tileset> tileset = LoadTileset(fullImagePath.string());
 
     auto allTiles = info["Tiles"];
     for (auto element : allTiles)
     {
+        std::shared_ptr<Texture> texture = std::make_shared<Texture>();
+        
         std::string name = element["Name"];
         auto rectData = element["Rect"];
         Rect sourceRect(rectData["X"], rectData["Y"], rectData["W"], rectData["H"]);
-        
-        Tileset.SourceRects.emplace(HashedString(name), sourceRect);
+
+        texture->SourceRect = sourceRect;
+        texture->Tileset = tileset;
+
+        // TODO: Report if this fails somewhere central
+        TryRegisterTexture(HashedString(name), texture);
     }
 }
 
@@ -96,5 +103,40 @@ std::vector<path> AssetManager::GetAssets(const path& directory) const
             toReturn.push_back(KVP.second);
         }
     }
+    return toReturn;
+}
+
+std::shared_ptr<Texture> AssetManager::GetTexture(HashedString assetName) const
+{
+    auto iter = TextureLookup.find(assetName);
+    if (iter == TextureLookup.end())
+        return nullptr;
+
+    return iter->second;
+}
+
+std::shared_ptr<Tileset> AssetManager::LoadTileset(const std::string& assetFilePath) const
+{
+    path path = assetFilePath;
+    auto toReturn = std::make_shared<Tileset>();
+
+    if (path.extension() == ".png")
+    {
+        toReturn->SDLSurface = IMG_Load(assetFilePath.c_str());
+        assert(toReturn->SDLSurface);
+    }
+    else if (path.extension() == ".bmp")
+    {
+        toReturn->SDLSurface = SDL_LoadBMP(assetFilePath.c_str());
+        assert(toReturn->SDLSurface);
+    }
+    else
+    {
+        assert(false);
+    }    
+    
+    toReturn->SDLTexture = SDL_CreateTextureFromSurface(Renderer::Get().GetSDLRenderer(), toReturn->SDLSurface);
+    assert(toReturn->SDLTexture);
+    SDL_SetTextureScaleMode(toReturn->SDLTexture, SDL_SCALEMODE_NEAREST);
     return toReturn;
 }

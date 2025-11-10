@@ -23,6 +23,9 @@ public:
     operator size_t() const { return Idx; }
     operator std::string() const;
 
+    [[nodiscard]] std::string ToString() const;
+    [[nodiscard]] bool IsValid() const { return Idx != SIZE_MAX; }
+
 private:
     static inline std::unordered_map<std::string, size_t> Lookup = { };
     static inline std::vector<std::string> Cache = { };
