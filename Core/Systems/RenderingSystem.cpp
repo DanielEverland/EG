@@ -2,22 +2,26 @@
 
 #include "Components/LocationComponent.h"
 #include "Components/TextureRendererComponent.h"
-#include "CoreFramework/GameMode.h"
 
 void RenderingSystem::Execute()
 {
+    Renderer& renderer = Renderer::Get();
     static IntVector2D tileSize = IntVector2D(16 * 2, 24 * 2);
-    Entity possessedEntity = Game::Get().GetGameMode()->GetPossessedEntity();
-    auto possessedLocationComp = Game::Get().GetLevel()->GetComponentManager().GetComponentChecked<LocationComponent>(possessedEntity);
-    IntVector2D position = possessedLocationComp.WorldLocation;
-
+    
     Query<LocationComponent, TextureRendererComponent>(
-        [position](const LocationComponent& location, const TextureRendererComponent& renderData)
+        [&](const LocationComponent& location, const TextureRendererComponent& renderData)
         {
-            IntVector2D diff = position - location.WorldLocation;
-            if (diff.Distance() > 15)
-                return;
-            
-            Renderer::Get().Draw(location.WorldLocation, tileSize, renderData.TextureName, renderData.Order);
+            Rect destRect = Rect
+            {
+                location.WorldLocation.X - tileSize.X / 2,
+                location.WorldLocation.Y - tileSize.Y / 2,
+                tileSize.X,
+                tileSize.Y,
+            };
+
+            if (renderer.IsWithinWorldSpaceViewport(destRect))
+            {
+                renderer.Draw(location.WorldLocation, tileSize, renderData.TextureName, renderData.Order);
+            }
         });
 }

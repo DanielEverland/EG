@@ -39,14 +39,17 @@ public:
 
     SDL_Renderer* GetSDLRenderer() const { return SDLRenderer; }
 
+    bool IsWithinWorldSpaceViewport(const Rect& WorldRect) const;
+    Rect GetViewportRect() const;
     size_t GetFrameCount() const { return FrameCount; }
     void Draw(const Vector2D& worldPosition, const IntVector2D& destRectSize, const HashedString& textureName, DrawCallOrder order);
     void Present();
 
 private:
-    static constexpr size_t MaxNumDrawCalls = 2048;
+    static constexpr size_t MaxNumDrawCalls = 8192 * 2 * 2 * 2;
     static constexpr size_t BackgroundCallsEnd = static_cast<size_t>(MaxNumDrawCalls * (3.0f / 4.0f));
 
+    Rect WorldViewportRect = { };
     size_t LastDrawcallBufferOverflow = 0;
     size_t FrameCount = 0;
     size_t BackgroundIdx = 0;

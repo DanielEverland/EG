@@ -3,11 +3,30 @@
 #include <cassert>
 #include <iostream>
 #include <SDL3/SDL_render.h>
+#include <chrono>
 
 #include "Rendering/Texture.h"
 #include "Rendering/Tileset.h"
 #include "Camera.h"
 #include "Level.h"
+
+bool Renderer::IsWithinWorldSpaceViewport(const Rect& WorldRect) const
+{
+    return WorldViewportRect.Intersects(WorldRect);
+}
+
+Rect Renderer::GetViewportRect() const
+{
+    SDL_Rect viewportSize;
+    SDL_GetRenderViewport(SDLRenderer, &viewportSize);
+    return Rect
+    {
+        viewportSize.x,
+        viewportSize.y,
+        viewportSize.w,
+        viewportSize.h
+    };
+}
 
 void Renderer::Draw(const Vector2D& worldPosition, const IntVector2D& destRectSize, const HashedString& textureName, DrawCallOrder order)
 {
@@ -22,10 +41,16 @@ void Renderer::Present()
     SDL_SetRenderDrawColor(SDLRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(SDLRenderer);
     
-    SDL_Rect viewportSize;
-    SDL_GetRenderViewport(SDLRenderer, &viewportSize);
-
+    Rect viewportRect = GetViewportRect();
     Vector2D cameraPos = Camera::Get().GetPosition();
+    WorldViewportRect = Rect
+    {
+        static_cast<int32_t>(cameraPos.X),
+        static_cast<int32_t>(cameraPos.Y),
+        viewportRect.Width,
+        viewportRect.Height
+    };
+    
     SDL_FRect destRect;
     SDL_FRect sourceRect;
     DrawCall* call;
@@ -37,15 +62,20 @@ void Renderer::Present()
         assert(texture != nullptr);
 
         sourceRect = texture->SourceRect;
-        destRect.x = (call->WorldPosition.X - cameraPos.X) * static_cast<float>(CellSize.X * 2) + static_cast<float>(viewportSize.w) / 2.0f;
-        destRect.y = (call->WorldPosition.Y - cameraPos.Y) * static_cast<float>(CellSize.Y * 2) + static_cast<float>(viewportSize.h) / 2.0f;
+        destRect.x = (call->WorldPosition.X - cameraPos.X) * static_cast<float>(CellSize.X * 2) + static_cast<float>(viewportRect.Width) / 2.0f;
+        destRect.y = (call->WorldPosition.Y - cameraPos.Y) * static_cast<float>(CellSize.Y * 2) + static_cast<float>(viewportRect.Height) / 2.0f;
         destRect.w = static_cast<float>(call->DestRectSize.X);
         destRect.h = static_cast<float>(call->DestRectSize.Y);
+
+        if (!WorldViewportRect.Intersects(destRect))
+            return;
 
         // TODO: Any batch render call?
         SDL_RenderTexture(SDLRenderer, texture->Tileset->SDLTexture, &sourceRect, &destRect);
     };
 
+    auto begin = std::chrono::high_resolution_clock::now();
+    
     for (size_t i = 0; i < BackgroundIdx; ++i)
     {
         DoDraw(i);
@@ -55,6 +85,9 @@ void Renderer::Present()
     {
         DoDraw(i);
     }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::cout << "Render time passed " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[μs]" << '\n';
 
     SDL_RenderPresent(SDLRenderer);
 
