@@ -74,7 +74,7 @@ void Renderer::Present()
         SDL_RenderTexture(SDLRenderer, texture->Tileset->SDLTexture, &sourceRect, &destRect);
     };
 
-    auto begin = std::chrono::high_resolution_clock::now();
+    //auto begin = std::chrono::high_resolution_clock::now();
     
     for (size_t i = 0; i < BackgroundIdx; ++i)
     {
@@ -86,8 +86,8 @@ void Renderer::Present()
         DoDraw(i);
     }
 
-    auto end = std::chrono::high_resolution_clock::now();
-    std::cout << "Render time passed " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[μs]" << '\n';
+    /*auto end = std::chrono::high_resolution_clock::now();
+    std::cout << "Render time passed " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[μs]" << '\n';*/
 
     SDL_RenderPresent(SDLRenderer);
 
