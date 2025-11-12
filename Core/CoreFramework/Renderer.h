@@ -30,6 +30,8 @@ public:
     }
 
     static inline IntVector2D CellSize = IntVector2D(16, 24);
+    static constexpr int32_t RenderScale = 2;
+    static inline IntVector2D CellRenderingSize = IntVector2D(CellSize.X * RenderScale, CellSize.Y * RenderScale);
 
     void SetRenderer(SDL_Renderer* rawRenderer)
     {
@@ -41,6 +43,7 @@ public:
 
     bool IsWithinWorldSpaceViewport(const Rect& WorldRect) const;
     Rect GetViewportRect() const;
+    void SetWorldViewportRect(const Rect& worldRect) { WorldViewportRect = worldRect; }
     size_t GetFrameCount() const { return FrameCount; }
     void Draw(const Vector2D& worldPosition, const IntVector2D& destRectSize, const HashedString& textureName, DrawCallOrder order);
     void Present();

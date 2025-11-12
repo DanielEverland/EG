@@ -31,9 +31,8 @@ void Game::StartRound()
 
 void Game::PrePresent()
 {
-    RenderTimeSystems.Tick();
-    
     UpdateCameraPosition();
+    RenderTimeSystems.Tick();
 }
 
 Entity Game::GetNextEntity()

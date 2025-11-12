@@ -15,7 +15,7 @@ public:
     }
 
     IntVector2D GetPosition() const { return CameraPosition; }
-    void SetPosition(const IntVector2D& position) { CameraPosition = position; }
+    void SetPosition(const IntVector2D& position);
     
     IntVector2D ToViewSpace(const IntVector2D& worldPosition) const;
 
