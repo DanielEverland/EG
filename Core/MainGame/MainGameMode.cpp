@@ -71,11 +71,14 @@ void MainGameMode::Initialize()
         Entity enemyEntity = CreateCreature();
         auto& enemyLocation = componentManager.GetComponentChecked<LocationComponent>(enemyEntity);
         auto& enemyRenderComp = componentManager.GetComponentChecked<TextureRendererComponent>(enemyEntity);
+        auto& enemyMovementComp = componentManager.GetComponentChecked<MovementComponent>(enemyEntity);
 
         enemyLocation.WorldLocation = enemyPosition;
 
         enemyRenderComp.TextureName = HashedString("Enemy");
         enemyRenderComp.Order = DrawCallOrder::Foreground;
+
+        enemyMovementComp.MovementSpeed = 0.75f;
     }
     
     RegisterInput();

@@ -8,16 +8,19 @@ void MovementSystem::Execute()
 {
     auto gameMode = Game::Get().GetGameMode();
     Query<LocationComponent, MovementComponent>(
-        [this](Entity entity, LocationComponent& location, const MovementComponent& movement)
-        {
-            IntVector2D direction = movement.TargetLocation - location.WorldLocation;
-            direction.Normalize();
-            
-            const IntVector2D newPosition = location.WorldLocation + direction;
-            if (!IsValidMove(entity, location.WorldLocation, newPosition))
-                return;
+        [this](Entity entity, LocationComponent& location, MovementComponent& movement)
+        {   
+            for (movement.MovementSpeedRemainder += movement.MovementSpeed; movement.MovementSpeedRemainder >= 1.0f; movement.MovementSpeedRemainder -= 1.0f)
+            {
+                IntVector2D direction = movement.TargetLocation - location.WorldLocation;
+                direction.Normalize();
+                
+                const IntVector2D newPosition = location.WorldLocation + direction;
+                if (!IsValidMove(entity, location.WorldLocation, newPosition))
+                    continue;
 
-            location.WorldLocation = newPosition;
+                location.WorldLocation = newPosition;
+            }
         });
 }
 bool MovementSystem::IsValidMove(Entity entity, const IntVector2D& currentPosition, const IntVector2D& targetPosition) const
