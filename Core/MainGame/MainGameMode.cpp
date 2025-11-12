@@ -1,9 +1,6 @@
 #include "MainGameMode.h"
 
 #include <unordered_set>
-
-#include "Components/CollisionComponent.h"
-#include "Components/CreatureComponent.h"
 #include "Components/LocationComponent.h"
 #include "Components/MovementComponent.h"
 #include "Components/TextureRendererComponent.h"
@@ -22,18 +19,18 @@ void MainGameMode::Initialize()
 {
     std::shared_ptr<Level> level = Game::Get().GetLevel();
     ComponentManager& componentManager = level->GetComponentManager();
+    
+    LoadMap(level);
+    CreatePlayer(level, componentManager);
+    SpawnEnemies(level, componentManager);
+    RegisterInput();
 
-    Entity playerEntity = CreateCreature();
-    SetPossessedEntity(playerEntity);
-    
-    auto& playerLocation = componentManager.GetComponentChecked<LocationComponent>(playerEntity);
-    auto& renderComp = componentManager.GetComponentChecked<TextureRendererComponent>(playerEntity);
-    
-    playerLocation.WorldLocation = IntVector2D(5, 5);
+    Game::Get().CreateSystem<CreatureAISystem>(SystemCategory::GameTime);
+    Game::Get().CreateSystem<MovementSystem>(SystemCategory::GameTime);
+}
 
-    renderComp.TextureName = HashedString("Player");
-    renderComp.Order = DrawCallOrder::Foreground;
-    
+void MainGameMode::LoadMap(std::shared_ptr<Level> level)
+{
     std::filesystem::path p = DirectoryHelpers::GetContentPath("Levels/Level_01");
     std::string pString = p.generic_string();
     auto levelData = LevelInstance(pString);
@@ -60,7 +57,18 @@ void MainGameMode::Initialize()
             }
         }
     }
+}
 
+void MainGameMode::CreatePlayer(std::shared_ptr<Level> level, ComponentManager& componentManager)
+{
+    Entity playerEntity = level->CreateEntity("Player");
+    SetPossessedEntity(playerEntity);
+    auto& playerLocation = level->GetComponentManager().GetComponentChecked<LocationComponent>(playerEntity);    
+    playerLocation.WorldLocation = IntVector2D(5, 5);
+}
+
+void MainGameMode::SpawnEnemies(std::shared_ptr<Level> level, ComponentManager& componentManager)
+{
     IntVector2D enemySpawnPositions[] = {
         { 10, 5 },
         { 5, 10 },
@@ -68,23 +76,11 @@ void MainGameMode::Initialize()
     };
     for (auto enemyPosition : enemySpawnPositions)
     {
-        Entity enemyEntity = CreateCreature();
+        Entity enemyEntity = level->CreateEntity("Ghost");
         auto& enemyLocation = componentManager.GetComponentChecked<LocationComponent>(enemyEntity);
-        auto& enemyRenderComp = componentManager.GetComponentChecked<TextureRendererComponent>(enemyEntity);
-        auto& enemyMovementComp = componentManager.GetComponentChecked<MovementComponent>(enemyEntity);
 
         enemyLocation.WorldLocation = enemyPosition;
-
-        enemyRenderComp.TextureName = HashedString("Enemy");
-        enemyRenderComp.Order = DrawCallOrder::Foreground;
-
-        enemyMovementComp.MovementSpeed = 0.75f;
     }
-    
-    RegisterInput();
-
-    Game::Get().CreateSystem<CreatureAISystem>(SystemCategory::GameTime);
-    Game::Get().CreateSystem<MovementSystem>(SystemCategory::GameTime);
 }
 
 void MainGameMode::RegisterInput()
@@ -140,22 +136,4 @@ void MainGameMode::HandleMovementInput(int32_t value, bool bIsHorizontal)
     {
         game.StartRound();
     }
-}
-Entity MainGameMode::CreateCreature(Entity target) const
-{
-    std::shared_ptr<Level> level = Game::Get().GetLevel();
-    ComponentManager& componentManager = level->GetComponentManager();
-
-    if (target == InvalidEntity)
-    {
-        target = level->CreateEntity();
-    }
-
-    componentManager.AddComponent<LocationComponent>(target);
-    componentManager.AddComponent<CreatureComponent>(target);
-    componentManager.AddComponent<TextureRendererComponent>(target);
-    componentManager.AddComponent<CollisionComponent>(target);
-    componentManager.AddComponent<MovementComponent>(target);
-
-    return target;
 }

@@ -6,6 +6,9 @@
 #include "DataStructrues/Vector.h"
 #include "ECS/Component.h"
 
+#include "Factories/MovementComponentFactory.h"
+REGISTER_COMP_FACTORY(MovementComponentFactory, "MovementComponent")
+
 class MovementComponent : public Component
 {
 public:

@@ -1,0 +1,12 @@
+{
+    "Id": "Player",
+    "Composites": [
+        "Creature"
+    ],
+    "Components": [
+        {
+            "Id": "TextureRendererComponent",
+            "TextureName": "Player"
+        }
+    ]
+}

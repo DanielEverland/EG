@@ -1,0 +1,21 @@
+{
+    "Id": "Creature",
+    "Composites": [
+        "Renderable"
+    ],
+    "Components": [
+        {
+            "Id": "TextureRendererComponent",
+            "Order": "Foreground"
+        },
+        {
+            "Id": "CollisionComponent"
+        },
+        {
+            "Id": "CreatureComponent"
+        },
+        {
+            "Id": "MovementComponent"
+        }
+    ]
+}

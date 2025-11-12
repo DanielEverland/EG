@@ -1,0 +1,16 @@
+{
+    "Id": "Ghost",
+    "Composites": [
+        "Creature"
+    ],
+    "Components": [
+        {
+            "Id": "TextureRendererComponent",
+            "TextureName": "Enemy"
+        },
+        {
+            "Id": "MovementComponent",
+            "MovementSpeed": 0.75
+        }
+    ]
+}

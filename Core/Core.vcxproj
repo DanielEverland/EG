@@ -176,7 +176,9 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Components\Factories\CollisionComponentFactory.cpp" />
+    <ClCompile Include="Components\Factories\CreatureComponentFactory.cpp" />
     <ClCompile Include="Components\Factories\LocationComponentFactory.cpp" />
+    <ClCompile Include="Components\Factories\MovementComponentFactory.cpp" />
     <ClCompile Include="Components\Factories\TextureRendererFactory.cpp" />
     <ClCompile Include="CoreFramework\AssetManager.cpp" />
     <ClCompile Include="CoreFramework\Camera.cpp" />
@@ -224,7 +226,9 @@
     <ClInclude Include="Components\CollisionComponent.h" />
     <ClInclude Include="Components\CreatureComponent.h" />
     <ClInclude Include="Components\Factories\CollisionComponentFactory.h" />
+    <ClInclude Include="Components\Factories\CreatureComponentFactory.h" />
     <ClInclude Include="Components\Factories\LocationComponentFactory.h" />
+    <ClInclude Include="Components\Factories\MovementComponentFactory.h" />
     <ClInclude Include="Components\Factories\TextureRendererFactory.h" />
     <ClInclude Include="Components\MovementComponent.h" />
     <ClInclude Include="Components\TextureRendererComponent.h" />
