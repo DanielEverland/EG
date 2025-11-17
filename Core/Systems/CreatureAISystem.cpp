@@ -4,6 +4,8 @@
 #include "Components/LocationComponent.h"
 #include "Components/MovementComponent.h"
 #include "CoreFramework/GameMode.h"
+#include "CoreFramework/LevelNavigationGraphTraverser.h"
+#include "CoreFramework/NavRequest.h"
 
 void CreatureAISystem::Execute()
 {
@@ -21,9 +23,22 @@ void CreatureAISystem::Execute()
                 return;
 
             const Navigation& nav = level->GetNavigation();
-            std::shared_ptr<NavPath> path = std::make_shared<NavPath>();
-            assert(false);
-            //bool succeeded = nav.TryCalculatePath(location.GetLocation(), targetLocationComp->GetLocation(), path);
-            movementComponent.TargetLocation = targetLocationComp->GetLocation();
+
+            NavRequest request;
+            request.StartPosition = location.GetLocation();
+            request.TargetPosition = targetLocationComp->GetLocation();
+            request.Traverser = std::make_shared<LevelNavigationGraphTraverser>(level);
+            NavResult result = nav.TryCalculatePath(request);
+
+            if (result.Succeeded)
+            {
+                // Always includes start, so we pop that off.
+                result.Path.pop_front();
+                movementComponent.TargetLocation = IntVector2D(result.Path.front());
+            }
+            else
+            {
+                movementComponent.TargetLocation = targetLocationComp->GetLocation();
+            }
         });
 }
