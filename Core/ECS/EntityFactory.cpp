@@ -79,6 +79,7 @@ void EntityFactory::PopulateEntity(Entity entity, std::string templateId)
     }
 
     std::shared_ptr<Level> level = Game::Get().GetLevel();
+    assert(level);
     ComponentManager& componentManager = level->GetComponentManager();
 
     for (const ComponentFactory::Parameters& componentParams : parser.GetComponents())
@@ -96,6 +97,6 @@ void EntityFactory::PopulateEntity(Entity entity, std::string templateId, IntVec
 
     if (LocationComponent* comp = componentManager.TryGetComponent<LocationComponent>(entity))
     {
-        comp->WorldLocation = worldLocation;
+        comp->SetLocation(entity, worldLocation);
     }
 }

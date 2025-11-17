@@ -1,36 +1,25 @@
 #include "GameplayMessages.h"
 
-void GameplayMessages::BroadcastEntityMessage(Entity caller, const HashedString& channel, const GameplayMessage& message)
+void GameplayMessages::BroadcastMessage(const HashedString& channel, const GameplayMessage& message)
 {
-    auto containerIter = EntitySubscriptions.find(caller);
-    if (containerIter == EntitySubscriptions.end())
+    auto channelIter = Channels.find(channel);
+    if (channelIter == Channels.end())
         return;
 
-    auto channelIter = containerIter->second.Channels.find(channel);
-    if (channelIter == containerIter->second.Channels.end())
-        return;
-
-    std::vector<std::function<void(unsigned, const GameplayMessage&)>>& callbacks = channelIter->second.Callbacks;
+    std::vector<std::function<void(const GameplayMessage&)>>& callbacks = channelIter->second.Callbacks;
     for (const auto& callback : callbacks)
     {
-        callback(caller, message);
+        callback(message);
     }
 }
 
-void GameplayMessages::SubscribeEntityMessage(Entity target, const HashedString& channel,
-    const std::function<void(Entity, const GameplayMessage&)>& callback)
+void GameplayMessages::SubscribeMessage(const HashedString& channel, const std::function<void(const GameplayMessage&)>& callback)
 {
-    if (!EntitySubscriptions.contains(target))
+    if (!Channels.contains(channel))
     {
-        EntitySubscriptions.emplace(target, EntityContainer());
+        Channels.emplace(channel, ChannelContainer<const GameplayMessage&>());
     }
 
-    EntityContainer& subscription = EntitySubscriptions[target];
-    if (!subscription.Channels.contains(channel))
-    {
-        subscription.Channels.emplace(channel, EntityContainer::ContainerType());
-    }
-
-    EntityContainer::ContainerType& container = subscription.Channels[channel];
+    ContainerType& container = Channels[channel];
     container.Callbacks.emplace_back(callback);
 }

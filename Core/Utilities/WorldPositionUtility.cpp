@@ -1,13 +1,15 @@
 #include "WorldPositionUtility.h"
 
-#include "Levels/Chunk.h"
+#include <cassert>
+
+#include "Levels/MapChunk.h"
 
 IntVector WorldPositionUtility::WorldPositionToChunkPosition(IntVector WorldPosition)
 {
     return IntVector
     {
-        WorldPosition.X / Chunk::Width,
-        WorldPosition.Y / Chunk::Height,
+        WorldPosition.X / ChunkWidth,
+        WorldPosition.Y / ChunkHeight,
         WorldPosition.Z
     };
 }
@@ -17,8 +19,8 @@ IntVector WorldPositionUtility::WorldSpaceToChunkSpace(IntVector WorldPosition)
     const IntVector chunkPos = WorldPositionToChunkPosition(WorldPosition);
     return IntVector
     {
-        WorldPosition.X - chunkPos.X * Chunk::Width,
-        WorldPosition.Y - chunkPos.Y * Chunk::Height,
+        WorldPosition.X - chunkPos.X * ChunkWidth,
+        WorldPosition.Y - chunkPos.Y * ChunkHeight,
         WorldPosition.Z - chunkPos.Z
     };
 }
@@ -27,8 +29,18 @@ IntVector WorldPositionUtility::ChunkSpaceToWorldPosition(const IntVector& Chunk
 {
     return IntVector
     {
-        ChunkPosition.X * Chunk::Width + LocalPosition.X,
-        ChunkPosition.Y * Chunk::Height + LocalPosition.Y,
+        ChunkPosition.X * ChunkWidth + LocalPosition.X,
+        ChunkPosition.Y * ChunkHeight + LocalPosition.Y,
         ChunkPosition.Z
     };
+}
+bool WorldPositionUtility::IsChunkSpacePositionInChunk(const IntVector& pos)
+{
+    return pos.X >= 0 && pos.Y >= 0 && pos.Z == 0 && pos.X < ChunkWidth && pos.Y < ChunkHeight;
+}
+
+int32_t WorldPositionUtility::GetTileIndex(const IntVector& chunkSpacePos)
+{
+    assert(IsChunkSpacePositionInChunk(chunkSpacePos));
+    return chunkSpacePos.X + chunkSpacePos.Y * ChunkWidth;
 }

@@ -8,8 +8,9 @@
 #include "DataStructrues/HashedString.h"
 #include "DataStructrues/Vector.h"
 #include "Rendering/Texture.h"
+#include "Utilities/WorldPositionUtility.h"
 
-struct CellInfo
+struct MapCellInfo
 {
     // Type of the cell. Several different appearances can use the same type (I.e. several different versions of a wall)
     HashedString CellTypeName;
@@ -18,16 +19,13 @@ struct CellInfo
     HashedString TextureName;
 };
 
-class Chunk
+class MapChunk
 {
 public:
-    Chunk();
-    
-    static constexpr uint8_t Width = 64;
-    static constexpr uint8_t Height = 64;
+    MapChunk();
 
-    void SetTerrain(CellInfo&& cellData, IntVector2D localPos);
-    bool TryGetCell(IntVector2D localPos, CellInfo& outCell) const;
+    void SetTerrain(MapCellInfo&& cellData, IntVector2D localPos);
+    bool TryGetCell(IntVector2D localPos, MapCellInfo& outCell) const;
     
-    CellInfo Terrain[Width * Height];
+    MapCellInfo Terrain[WorldPositionUtility::ChunkWidth * WorldPositionUtility::ChunkHeight];
 };

@@ -1,24 +1,24 @@
-#include "Chunk.h"
+#include "MapChunk.h"
 
 #include <cassert>
 
 #include "Utilities/WorldPositionUtility.h"
 
-Chunk::Chunk() : Terrain {  }
+MapChunk::MapChunk() : Terrain {  }
 {
 }
 
-void Chunk::SetTerrain(CellInfo&& cellData, IntVector2D localPos)
+void MapChunk::SetTerrain(MapCellInfo&& cellData, IntVector2D localPos)
 {
-    assert(localPos.X >= 0 && localPos.X < Width && localPos.Y >= 0 && localPos.Y < Height);
-    Terrain[localPos.X + localPos.Y * Width] = std::move(cellData);
+    assert(localPos.X >= 0 && localPos.X < WorldPositionUtility::ChunkWidth && localPos.Y >= 0 && localPos.Y < WorldPositionUtility::ChunkHeight);
+    Terrain[localPos.X + localPos.Y * WorldPositionUtility::ChunkWidth] = std::move(cellData);
 }
 
-bool Chunk::TryGetCell(IntVector2D localPos, CellInfo& outCell) const
+bool MapChunk::TryGetCell(IntVector2D localPos, MapCellInfo& outCell) const
 {
-    if (localPos.X >= 0 && localPos.Y >= 0 && localPos.X < Width && localPos.Y < Height)
+    if (localPos.X >= 0 && localPos.Y >= 0 && localPos.X < WorldPositionUtility::ChunkWidth && localPos.Y < WorldPositionUtility::ChunkHeight)
     {
-        outCell = Terrain[localPos.X + localPos.Y * Width];
+        outCell = Terrain[localPos.X + localPos.Y * WorldPositionUtility::ChunkWidth];
         return true;
     }
     return false;

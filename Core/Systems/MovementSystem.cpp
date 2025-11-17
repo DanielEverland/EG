@@ -12,14 +12,14 @@ void MovementSystem::Execute()
         {   
             for (movement.MovementSpeedRemainder += movement.MovementSpeed; movement.MovementSpeedRemainder >= 1.0f; movement.MovementSpeedRemainder -= 1.0f)
             {
-                IntVector2D direction = movement.TargetLocation - location.WorldLocation;
+                IntVector2D direction = movement.TargetLocation - location.GetLocation();
                 direction.Normalize();
                 
-                const IntVector2D newPosition = location.WorldLocation + direction;
-                if (!IsValidMove(entity, location.WorldLocation, newPosition))
+                const IntVector2D newPosition = location.GetLocation() + direction;
+                if (!IsValidMove(entity, location.GetLocation(), newPosition))
                     continue;
 
-                location.WorldLocation = newPosition;
+                location.SetLocation(entity, newPosition);
             }
         });
 }
@@ -27,6 +27,6 @@ bool MovementSystem::IsValidMove(Entity entity, const IntVector2D& currentPositi
 {
     return !Any<LocationComponent, CollisionComponent>([&targetPosition](const LocationComponent& location, CollisionComponent& _) -> bool
         {
-           return location.WorldLocation == targetPosition;
+           return location.GetLocation() == targetPosition;
         });
 }

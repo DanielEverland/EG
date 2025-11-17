@@ -60,5 +60,5 @@ void Game::UpdateCameraPosition()
     if (Location == nullptr)
         return;
 
-    Camera::Get().SetPosition(Location->WorldLocation);
+    Camera::Get().SetPosition(Location->GetLocation());
 }

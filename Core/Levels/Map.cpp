@@ -1,4 +1,4 @@
-#include "LevelInstance.h"
+#include "Map.h"
 
 #include <fstream>
 #include <regex>
@@ -6,7 +6,7 @@
 #include <iostream>
 #include <unordered_set>
 
-#include "Chunk.h"
+#include "MapChunk.h"
 #include "json.hpp"
 #include "rapidxml.hpp"
 #include "rapidxml_utils.hpp"
@@ -33,16 +33,16 @@ LevelInstance::TileSetData::TileData* LevelInstance::TryGetTileDataFromIdx(const
 }*/
 
 
-LevelInstance::LevelInstance() : LevelDirectory("N/A")
+Map::Map() : LevelDirectory("N/A")
 {
     
 }
 
-LevelInstance::LevelInstance(const std::string& levelDir) : LevelDirectory(levelDir)
+Map::Map(const std::string& levelDir) : LevelDirectory(levelDir)
 {
 }
 
-Rect LevelInstance::TileSetData::IdToRect(uint16_t id) const
+Rect Map::TileSetData::IdToRect(uint16_t id) const
 {
     return Rect
     {
@@ -53,38 +53,38 @@ Rect LevelInstance::TileSetData::IdToRect(uint16_t id) const
     };
 }
 
-Rect LevelInstance::GetSourceRectFromWorldPosition(IntVector cellWorldPosition) const
+Rect Map::GetSourceRectFromWorldPosition(IntVector cellWorldPosition) const
 {
-    CellInfo cellInfo = GetCellInfoFromWorldPosition(cellWorldPosition);
+    MapCellInfo cellInfo = GetCellInfoFromWorldPosition(cellWorldPosition);
     return cellInfo.TextureInfo->SourceRect;
 }
 
-CellInfo LevelInstance::GetCellInfoFromWorldPosition(IntVector cellWorldPosition) const
+MapCellInfo Map::GetCellInfoFromWorldPosition(IntVector cellWorldPosition) const
 {
     const IntVector chunkPos = WorldPositionUtility::WorldPositionToChunkPosition(cellWorldPosition);
     if (!Chunks.contains(chunkPos))
         return { };
 
-    std::shared_ptr<const Chunk> chunk = Chunks.at(chunkPos);
+    std::shared_ptr<const MapChunk> chunk = Chunks.at(chunkPos);
     
     const IntVector chunkSpacePos = WorldPositionUtility::WorldSpaceToChunkSpace(cellWorldPosition);
     assert(chunkSpacePos.X >= 0 && chunkSpacePos.Y >= 0 && chunkSpacePos.Z == 0);
-    assert(chunkSpacePos.X < Chunk::Width && chunkSpacePos.Y < Chunk::Height);
+    assert(chunkSpacePos.X < WorldPositionUtility::ChunkWidth && chunkSpacePos.Y < WorldPositionUtility::ChunkHeight);
 
-    CellInfo cellInfo;
+    MapCellInfo cellInfo;
     chunk->TryGetCell(static_cast<IntVector2D>(chunkSpacePos), cellInfo);
 
     return cellInfo;
 }
 
-void LevelInstance::LoadData()
+void Map::LoadData()
 {
     ParseWorldInfo();
     ParseTileSets();
     ParseAllChunks();
 }
 
-void LevelInstance::ParseWorldInfo()
+void Map::ParseWorldInfo()
 {
     path worldPath;
     for (auto iter : directory_iterator(LevelDirectory))
@@ -109,7 +109,7 @@ void LevelInstance::ParseWorldInfo()
     World.MapPatternRegex = std::regex(World.MapPatternStr);
 }
 
-void LevelInstance::ParseTileSets()
+void Map::ParseTileSets()
 {
     //std::hash<std::string> hasher;
     for (auto iter : directory_iterator(LevelDirectory))
@@ -183,7 +183,7 @@ void LevelInstance::ParseTileSets()
             const bool succeeded = AssetManager::Get().TryRegisterTexture(tileData.Name, texture);
             assert(succeeded);
 
-            CellInfo cellTemplate;
+            MapCellInfo cellTemplate;
             cellTemplate.TextureInfo = texture;
             cellTemplate.CellTypeName = tileData.TypeStr;
             cellTemplate.TextureName = tileData.Name;
@@ -197,7 +197,7 @@ void LevelInstance::ParseTileSets()
     }
 }
 
-void LevelInstance::ParseAllChunks()
+void Map::ParseAllChunks()
 {
     auto strHasher = std::hash<std::string>();
     for (auto iter : directory_iterator(LevelDirectory))
@@ -224,11 +224,11 @@ void LevelInstance::ParseAllChunks()
             for (auto layerIter = layers.begin(); layerIter != layers.end(); ++layerIter)
             {
                 auto chunkData = *layerIter;
-                auto chunk = std::make_shared<Chunk>();
+                auto chunk = std::make_shared<MapChunk>();
                 
                 assert(chunkData.is_object());
-                assert(chunkData["width"].get<uint8_t>() == Chunk::Width);
-                assert(chunkData["height"].get<uint8_t>() == Chunk::Height);
+                assert(chunkData["width"].get<uint8_t>() == WorldPositionUtility::ChunkWidth);
+                assert(chunkData["height"].get<uint8_t>() == WorldPositionUtility::ChunkHeight);
 
                 std::string layerName = chunkData["name"];
                 assert(layerName.starts_with('L'));
@@ -244,15 +244,15 @@ void LevelInstance::ParseAllChunks()
                 assert(data.is_array());
                 for (auto chunkDataIter = data.begin(); chunkDataIter != data.end(); ++chunkDataIter, ++cellIdx)
                 {                    
-                    uint8_t xPosIndex = cellIdx % Chunk::Width;
-                    uint8_t yPosIndex = cellIdx / Chunk::Width;
+                    uint8_t xPosIndex = cellIdx % WorldPositionUtility::ChunkWidth;
+                    uint8_t yPosIndex = cellIdx / WorldPositionUtility::ChunkWidth;
         
                     auto cellVal = *chunkDataIter;
                     assert(cellVal.is_number());
 
                     auto cellIdx = cellVal.get<uint16_t>();
 
-                    CellInfo newCell;
+                    MapCellInfo newCell;
                     // TODO: Support air
                     if (cellIdx == 0)
                     {

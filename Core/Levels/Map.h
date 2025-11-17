@@ -8,11 +8,14 @@
 #include <string>
 #include <unordered_map>
 
-#include "Chunk.h"
+#include "MapChunk.h"
 #include "DataStructrues/Vector.h"
 #include "Primitives/Rect.h"
 
-class LevelInstance
+// Deserialized version of a map that has been serialized to disk
+// Anything that references "Map" is related to immutable data deserialized from disk
+// Anything that references "Level" is what's currently in-memory and mutable
+class Map
 {
     struct WorldData
     {
@@ -44,21 +47,21 @@ class LevelInstance
     };
     
 public:
-    LevelInstance();
-    LevelInstance(const std::string& levelDir);
+    Map();
+    Map(const std::string& levelDir);
 
     Rect GetSourceRectFromWorldPosition(IntVector cellWorldPosition) const;
-    CellInfo GetCellInfoFromWorldPosition(IntVector cellWorldPosition) const;
-    const std::unordered_map<IntVector, std::shared_ptr<Chunk>>& GetChunks() const { return Chunks; } 
+    MapCellInfo GetCellInfoFromWorldPosition(IntVector cellWorldPosition) const;
+    const std::unordered_map<IntVector, std::shared_ptr<MapChunk>>& GetChunks() const { return Chunks; } 
     
     void LoadData();
     
 private:
     std::filesystem::path LevelDirectory;
-    std::unordered_map<IntVector, std::shared_ptr<Chunk>> Chunks;
+    std::unordered_map<IntVector, std::shared_ptr<MapChunk>> Chunks;
 
     WorldData World;
-    std::unordered_map<size_t, CellInfo> IdToCellTemplate;
+    std::unordered_map<size_t, MapCellInfo> IdToCellTemplate;
 
     void ParseWorldInfo();
     void ParseTileSets();

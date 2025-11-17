@@ -8,6 +8,9 @@
             "Id": "TextureRendererComponent",
             "TextureName": "Default",
             "Order": "Background"
+        },
+        {
+            "Id": "NavigableComponent"
         }
     ]
 }

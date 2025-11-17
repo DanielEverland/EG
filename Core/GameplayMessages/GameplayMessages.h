@@ -28,12 +28,6 @@ class GameplayMessages
     {
         std::vector<std::function<void(T ...)>> Callbacks;
     };
-
-    struct EntityContainer
-    {
-        using ContainerType = ChannelContainer<Entity, const GameplayMessage&>;
-        std::unordered_map<HashedString, ContainerType> Channels;
-    };
     
 public:
     static GameplayMessages& Get()
@@ -41,10 +35,10 @@ public:
         return SingletonHelper::Impl<GameplayMessages>();
     }
 
-    void BroadcastEntityMessage(Entity caller, const HashedString& channel, const GameplayMessage& message);
-    void SubscribeEntityMessage(Entity target, const HashedString& channel,
-        const std::function<void(Entity, const GameplayMessage&)>& callback);
+    void BroadcastMessage(const HashedString& channel, const GameplayMessage& message);
+    void SubscribeMessage(const HashedString& channel, const std::function<void(const GameplayMessage&)>& callback);
 
 private:
-    std::unordered_map<Entity, EntityContainer> EntitySubscriptions;
+    using ContainerType = ChannelContainer<const GameplayMessage&>;
+    std::unordered_map<HashedString, ContainerType> Channels;
 };

@@ -20,6 +20,10 @@ void CreatureAISystem::Execute()
             if (!targetLocationComp)
                 return;
 
-            movementComponent.TargetLocation = targetLocationComp->WorldLocation;
+            const Navigation& nav = level->GetNavigation();
+            std::shared_ptr<NavPath> path = std::make_shared<NavPath>();
+            assert(false);
+            //bool succeeded = nav.TryCalculatePath(location.GetLocation(), targetLocationComp->GetLocation(), path);
+            movementComponent.TargetLocation = targetLocationComp->GetLocation();
         });
 }

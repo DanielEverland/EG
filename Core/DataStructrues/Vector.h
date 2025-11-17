@@ -76,6 +76,7 @@ struct TemplatedVector
 {
     TemplatedVector() = default;
     TemplatedVector(T inX, T inY, T inZ) : X(inX), Y(inY), Z(inZ) { }
+    TemplatedVector(const TemplatedVector2D<T>& other) : X(other.X), Y(other.Y), Z(0) { }
     
     template<class U>
     requires valid_integral_and_floating_point_conversion<T, U>

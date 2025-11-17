@@ -13,15 +13,15 @@ void RenderingSystem::Execute()
         {
             Rect worldRect = Rect
             {
-                location.WorldLocation.X * tileSize.X - tileSize.X / 2,
-                location.WorldLocation.Y * tileSize.Y - tileSize.Y / 2,
+                location.GetLocation().X * tileSize.X - tileSize.X / 2,
+                location.GetLocation().Y * tileSize.Y - tileSize.Y / 2,
                 tileSize.X,
                 tileSize.Y,
             };
 
             if (renderer.IsWithinWorldSpaceViewport(worldRect))
             {
-                renderer.Draw(location.WorldLocation, tileSize, renderData.TextureName, renderData.Order);
+                renderer.Draw(location.GetLocation(), tileSize, renderData.TextureName, renderData.Order);
             }
         }
     );

@@ -3,17 +3,14 @@
 #include <unordered_set>
 #include "Components/LocationComponent.h"
 #include "Components/MovementComponent.h"
-#include "Components/TextureRendererComponent.h"
 #include "CoreFramework/Game.h"
 #include "CoreFramework/Level.h"
-#include "ECS/EntityFactory.h"
 #include "Input/Input.h"
 #include "Input/InputAction.h"
-#include "Levels/LevelInstance.h"
+#include "Levels/Map.h"
 #include "Systems/CreatureAISystem.h"
 #include "Systems/MovementSystem.h"
 #include "Utilities/DirectoryHelpers.h"
-#include "Utilities/WorldPositionUtility.h"
 
 void MainGameMode::Initialize()
 {
@@ -33,29 +30,15 @@ void MainGameMode::LoadMap(std::shared_ptr<Level> level)
 {
     std::filesystem::path p = DirectoryHelpers::GetContentPath("Levels/Level_01");
     std::string pString = p.generic_string();
-    auto levelData = LevelInstance(pString);
+    auto levelData = Map(pString);
     levelData.LoadData();
 
-    std::unordered_set<IntVector> positions;
-    for (const std::pair<const TemplatedVector<int>, std::shared_ptr<Chunk>>& pair : levelData.GetChunks())
+    for (const std::pair<const TemplatedVector<int>, std::shared_ptr<MapChunk>>& pair : levelData.GetChunks())
     {
         if (pair.first.Z != 0)
             continue;
         
-        for (int x = 0; x < Chunk::Width; ++x)
-        {
-            for (int y = 0; y < Chunk::Height; ++y)
-            {
-                const CellInfo& cellInfo = pair.second->Terrain[x + y * Chunk::Width];
-                IntVector position = WorldPositionUtility::ChunkSpaceToWorldPosition(pair.first, IntVector2D(x, y));
-                assert(!positions.contains(position));
-                positions.emplace(position);
-                Entity entity = level->CreateEntity(cellInfo.CellTypeName, IntVector2D(position.X, position.Y));
-                
-                auto& renderer = Game::Get().GetLevel()->GetComponentManager().GetComponentChecked<TextureRendererComponent>(entity);
-                renderer.TextureName = cellInfo.TextureName;
-            }
-        }
+        level->LoadChunk(pair.first, pair.second);
     }
 }
 
@@ -63,8 +46,8 @@ void MainGameMode::CreatePlayer(std::shared_ptr<Level> level, ComponentManager& 
 {
     Entity playerEntity = level->CreateEntity("Player");
     SetPossessedEntity(playerEntity);
-    auto& playerLocation = level->GetComponentManager().GetComponentChecked<LocationComponent>(playerEntity);    
-    playerLocation.WorldLocation = IntVector2D(5, 5);
+    auto& playerLocation = level->GetComponentManager().GetComponentChecked<LocationComponent>(playerEntity);
+    playerLocation.SetLocation(playerEntity, IntVector2D(5, 5));
 }
 
 void MainGameMode::SpawnEnemies(std::shared_ptr<Level> level, ComponentManager& componentManager)
@@ -79,7 +62,7 @@ void MainGameMode::SpawnEnemies(std::shared_ptr<Level> level, ComponentManager& 
         Entity enemyEntity = level->CreateEntity("Ghost");
         auto& enemyLocation = componentManager.GetComponentChecked<LocationComponent>(enemyEntity);
 
-        enemyLocation.WorldLocation = enemyPosition;
+        enemyLocation.SetLocation(enemyEntity, enemyPosition);
     }
 }
 
@@ -121,7 +104,7 @@ void MainGameMode::HandleMovementInput(int32_t value, bool bIsHorizontal)
     auto& movementComponent = game.GetLevel()->GetComponentManager().GetComponentChecked<MovementComponent>(possessedEntity);
     const auto& locationComponent = game.GetLevel()->GetComponentManager().GetComponentChecked<LocationComponent>(possessedEntity);
 
-    movementComponent.TargetLocation = locationComponent.WorldLocation;
+    movementComponent.TargetLocation = locationComponent.GetLocation();
     if (bIsHorizontal)
     {
         movementComponent.TargetLocation.X += value;
@@ -132,7 +115,7 @@ void MainGameMode::HandleMovementInput(int32_t value, bool bIsHorizontal)
     }
 
     auto movementSystem = game.GetSystem<MovementSystem>();
-    if (movementSystem->IsValidMove(possessedEntity, locationComponent.WorldLocation, movementComponent.TargetLocation))
+    if (movementSystem->IsValidMove(possessedEntity, locationComponent.GetLocation(), movementComponent.TargetLocation))
     {
         game.StartRound();
     }

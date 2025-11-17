@@ -24,10 +24,9 @@ TEST(GameplayMessages, EntityMessage)
     const Entity targetB = 1;
     uint8_t callbacks = 0;
 
-    messages.SubscribeEntityMessage(targetA, ChannelA, [&](Entity caller, const GameplayMessage& message)
+    messages.SubscribeMessage(ChannelA, [&](const GameplayMessage& message)
     {
         callbacks++;
-        EXPECT_EQ(targetA, caller);
         EXPECT_EQ(message.GetChecked<MessageAData>().value, 42);
         EXPECT_DEATH(message.GetChecked<MessageBData>(), ".*");
     });
@@ -35,8 +34,8 @@ TEST(GameplayMessages, EntityMessage)
     MessageAData inputData;
     inputData.value = 42;
     
-    messages.BroadcastEntityMessage(targetA, ChannelA, inputData);
-    messages.BroadcastEntityMessage(targetB, ChannelA, inputData);
+    messages.BroadcastMessage(ChannelA, inputData);
+    messages.BroadcastMessage(ChannelA, inputData);
 
-    EXPECT_EQ(callbacks, 1);
+    EXPECT_EQ(callbacks, 2);
 }
