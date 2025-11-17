@@ -10,7 +10,8 @@
             "Order": "Background"
         },
         {
-            "Id": "NavigableComponent"
+            "Id": "NavigableComponent",
+            "TraversalDifficulty": 1
         }
     ]
 }

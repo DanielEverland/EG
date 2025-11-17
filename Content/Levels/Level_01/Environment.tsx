@@ -126,6 +126,16 @@
    <property name="Name" value="Wall_Corner_TopRight"/>
   </properties>
  </tile>
+ <tile id="96" type="Wall">
+  <properties>
+   <property name="Name" value="Wall_Left"/>
+  </properties>
+ </tile>
+ <tile id="97" type="Wall">
+  <properties>
+   <property name="Name" value="Wall_Right"/>
+  </properties>
+ </tile>
  <tile id="102" type="Wall">
   <properties>
    <property name="Name" value="Wall_T_Right"/>
