@@ -116,5 +116,6 @@ double Navigation::GetHeuristic(const IntVector& pos, const IntVector& target)
 {
     int32_t dx = std::abs(pos.X - target.X);
     int32_t dy = std::abs(pos.Y - target.Y);
-    return std::max(dx, dy);
+    int32_t dz = std::abs(pos.Z - target.Z);
+    return dx + dy + dz;
 }
