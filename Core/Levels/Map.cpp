@@ -19,20 +19,6 @@ using namespace std::filesystem;
 using namespace nlohmann;
 using namespace rapidxml;
 
-/*Rect LevelInstance::GetSourceRectFromTileIdx(const std::string& tileSetName, uint16_t localIdx)
-{
-    assert(localIdx < TileSet.TileCount);
-    return Rect((localIdx % TileSet.Columns) * TileSet.TileWidth, (localIdx / TileSet.Columns) * TileSet.TileHeight, TileSet.TileWidth, TileSet.TileHeight);
-}
-
-LevelInstance::TileSetData::TileData* LevelInstance::TryGetTileDataFromIdx(const std::string& tileSetName, uint16_t localIdx)
-{
-    if (!TileSet.Tiles.contains(localIdx))
-        return nullptr;
-    return &TileSet.Tiles[localIdx];
-}*/
-
-
 Map::Map() : LevelDirectory("N/A")
 {
     
@@ -111,13 +97,10 @@ void Map::ParseWorldInfo()
 
 void Map::ParseTileSets()
 {
-    //std::hash<std::string> hasher;
     for (auto iter : directory_iterator(LevelDirectory))
     {
         if (iter.path().extension() != ".tsx")
             continue;
-
-        //TileSetData tileSet;
         
         file xmlFile(iter.path().generic_string().c_str());
         xml_document<> doc;
@@ -193,7 +176,6 @@ void Map::ParseTileSets()
         }
 
         std::string fileName = iter.path().filename().generic_string();
-        //LoadedTileSets.emplace(hasher(fileName), tileSet);
     }
 }
 
