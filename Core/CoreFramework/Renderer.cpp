@@ -67,11 +67,20 @@ void Renderer::Present()
         // -1 since all depths will by definition be below the camera
         float zDepth = std::abs(std::floor(call.RelativeCameraPosition.Z));
         uint8_t truncatedDepth = static_cast<uint8_t>(zDepth);
+
+        constexpr uint8_t StartingShade = 150;
+        constexpr uint8_t ShadingLevels = 8;
+        constexpr uint8_t ShadingPerLevel = (255 - StartingShade) / ShadingLevels;
         
-        constexpr uint8_t ShadingLevels = 4;
-        constexpr uint8_t ShadingPerLevel = 255 / ShadingLevels;
-        uint8_t colorModOffset = std::min(ShadingPerLevel * truncatedDepth, 255);
-        SDL_SetTextureColorMod(texture->Tileset->SDLTexture, 255 - colorModOffset, 255 - colorModOffset, 255 - colorModOffset);
+        if (truncatedDepth > 0)
+        {
+            uint8_t colorModOffset = std::min(StartingShade + ShadingPerLevel * (truncatedDepth - 1), 255);
+            SDL_SetTextureColorMod(texture->Tileset->SDLTexture, 255 - colorModOffset, 255 - colorModOffset, 255 - colorModOffset);
+        }
+        else
+        {
+            SDL_SetTextureColorMod(texture->Tileset->SDLTexture, 255, 255, 255);
+        }
         SDL_RenderTexture(SDLRenderer, texture->Tileset->SDLTexture, &sourceRect, &destRect);
     }
     
