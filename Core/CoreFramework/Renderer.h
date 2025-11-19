@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <array>
 #include <cassert>
 #include "AssetManager.h"
 #include "DataStructrues/Vector.h"
@@ -20,8 +21,13 @@ class Renderer
     struct DrawCall
     {
         HashedString TextureName = HashedString("Default");
-        Vector WorldPosition = Vector(0, 0, 0);
+        Vector RelativeCameraPosition = Vector(0, 0, 0);
         IntVector DestRectSize = IntVector(0, 0, 0);
+
+        friend bool operator<(const DrawCall& a, DrawCall b)
+        {
+            return a.RelativeCameraPosition.Z < b.RelativeCameraPosition.Z;
+        }
     };
 public:
     static Renderer& Get()
@@ -45,7 +51,7 @@ public:
     Rect GetViewportRect() const;
     void SetWorldViewportRect(const Rect& worldRect) { WorldViewportRect = worldRect; }
     size_t GetFrameCount() const { return FrameCount; }
-    void Draw(const Vector& worldPosition, const IntVector& destRectSize, const HashedString& textureName, DrawCallOrder order);
+    void Draw(const Vector& relativeCameraPosition, const IntVector& destRectSize, const HashedString& textureName, DrawCallOrder order);
     void Present();
 
 private:
@@ -55,12 +61,11 @@ private:
     Rect WorldViewportRect = { };
     size_t LastDrawcallBufferOverflow = 0;
     size_t FrameCount = 0;
-    size_t BackgroundIdx = 0;
-    size_t ForegroundIdx = BackgroundCallsEnd + 1;
-    
-    DrawCall Buffer[MaxNumDrawCalls];
+
+    size_t DrawCallIdx = 0;
+    std::array<DrawCall, MaxNumDrawCalls> DrawCalls;
     
     SDL_Renderer* SDLRenderer = nullptr;
 
-    DrawCall* GetDrawCallStruct(DrawCallOrder order);
+    Renderer::DrawCall& GetDrawCallStruct();
 };

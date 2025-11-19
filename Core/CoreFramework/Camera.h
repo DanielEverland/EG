@@ -16,9 +16,13 @@ public:
 
     IntVector GetPosition() const { return CameraPosition; }
     void SetPosition(const IntVector& position);
+
+    void SetSnapToPossessed(bool newVal) { SnapToPossessed = newVal; }
+    bool GetSnapToPossessed() const { return SnapToPossessed; }
     
     IntVector ToViewSpace(const IntVector& worldPosition) const;
 
 private:
     IntVector CameraPosition = IntVector(0, 0, 0);
+    bool SnapToPossessed = true;
 };

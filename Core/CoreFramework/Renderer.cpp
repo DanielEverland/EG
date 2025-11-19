@@ -4,6 +4,7 @@
 #include <iostream>
 #include <SDL3/SDL_render.h>
 #include <chrono>
+#include <SDL3/SDL_hints.h>
 
 #include "Rendering/Texture.h"
 #include "Rendering/Tileset.h"
@@ -28,12 +29,15 @@ Rect Renderer::GetViewportRect() const
     };
 }
 
-void Renderer::Draw(const Vector& worldPosition, const IntVector& destRectSize, const HashedString& textureName, DrawCallOrder order)
+void Renderer::Draw(const Vector& relativeCameraPosition, const IntVector& destRectSize, const HashedString& textureName, DrawCallOrder order)
 {
-    DrawCall* container = GetDrawCallStruct(order);
-    container->TextureName = textureName;
-    container->WorldPosition = worldPosition;
-    container->DestRectSize = destRectSize;
+    DrawCall& drawCall = GetDrawCallStruct();
+    drawCall.TextureName = textureName;
+    drawCall.RelativeCameraPosition = relativeCameraPosition;
+    if (order == DrawCallOrder::Foreground)
+        drawCall.RelativeCameraPosition.Z += 0.5f;
+    
+    drawCall.DestRectSize = destRectSize;
 }
 
 void Renderer::Present()
@@ -42,69 +46,58 @@ void Renderer::Present()
     SDL_RenderClear(SDLRenderer);
     
     Rect viewportRect = GetViewportRect();
-    Vector cameraPos = Camera::Get().GetPosition();
     
     SDL_FRect destRect;
     SDL_FRect sourceRect;
-    DrawCall* call;
-    auto DoDraw = [&](size_t idx)
-    {
-        call = &Buffer[idx];
     
-        std::shared_ptr<Texture> texture = AssetManager::Get().GetTexture(call->TextureName);
+    std::sort(DrawCalls.begin(), DrawCalls.begin() + DrawCallIdx);
+    for (size_t i = 0; i < DrawCallIdx; ++i)
+    {
+        DrawCall& call = DrawCalls[i];
+    
+        std::shared_ptr<Texture> texture = AssetManager::Get().GetTexture(call.TextureName);
         assert(texture != nullptr);
 
         sourceRect = texture->SourceRect;
-        destRect.x = (call->WorldPosition.X - cameraPos.X) * static_cast<float>(CellRenderingSize.X) + static_cast<float>(viewportRect.Width) / 2.0f;
-        destRect.y = (call->WorldPosition.Y - cameraPos.Y) * static_cast<float>(CellRenderingSize.Y) + static_cast<float>(viewportRect.Height) / 2.0f;
-        destRect.w = static_cast<float>(call->DestRectSize.X);
-        destRect.h = static_cast<float>(call->DestRectSize.Y);
+        destRect.x = call.RelativeCameraPosition.X * static_cast<float>(CellRenderingSize.X) + static_cast<float>(viewportRect.Width) / 2.0f;
+        destRect.y = call.RelativeCameraPosition.Y * static_cast<float>(CellRenderingSize.Y) + static_cast<float>(viewportRect.Height) / 2.0f;
+        destRect.w = static_cast<float>(call.DestRectSize.X);
+        destRect.h = static_cast<float>(call.DestRectSize.Y);
 
-        // TODO: Any batch render call?
+        // -1 since all depths will by definition be below the camera
+        float zDepth = std::abs(std::floor(call.RelativeCameraPosition.Z));
+        uint8_t truncatedDepth = static_cast<uint8_t>(zDepth);
+        
+        constexpr uint8_t ShadingLevels = 4;
+        constexpr uint8_t ShadingPerLevel = 255 / ShadingLevels;
+        uint8_t colorModOffset = std::min(ShadingPerLevel * truncatedDepth, 255);
+        SDL_SetTextureColorMod(texture->Tileset->SDLTexture, 255 - colorModOffset, 255 - colorModOffset, 255 - colorModOffset);
         SDL_RenderTexture(SDLRenderer, texture->Tileset->SDLTexture, &sourceRect, &destRect);
-    };
-
-    //auto begin = std::chrono::high_resolution_clock::now();
-    
-    for (size_t i = 0; i < BackgroundIdx; ++i)
-    {
-        DoDraw(i);
     }
-
-    for (size_t i = BackgroundCallsEnd + 1; i < ForegroundIdx; ++i)
-    {
-        DoDraw(i);
-    }
-
-    /*auto end = std::chrono::high_resolution_clock::now();
-    std::cout << "Render time passed " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[μs]" << '\n';*/
     
     SDL_RenderPresent(SDLRenderer);
-
-    BackgroundIdx = 0;
-    ForegroundIdx = BackgroundCallsEnd + 1;
+    
+    DrawCallIdx = 0;
     FrameCount++;
 }
 
-Renderer::DrawCall* Renderer::GetDrawCallStruct(DrawCallOrder order)
+Renderer::DrawCall& Renderer::GetDrawCallStruct()
 {
-    size_t* curr = (order == DrawCallOrder::Background) ? &BackgroundIdx : &ForegroundIdx;
-    size_t max = (order == DrawCallOrder::Background) ? BackgroundCallsEnd : MaxNumDrawCalls;
-
-    size_t idx = *curr;
+    size_t idx = DrawCallIdx++;
+    size_t maxPermittedIdx = MaxNumDrawCalls - 1;
     
     size_t nextIdx = idx + 1;
-    if (nextIdx > max && LastDrawcallBufferOverflow < FrameCount)
+    if (nextIdx > maxPermittedIdx && LastDrawcallBufferOverflow < FrameCount)
     {
         LastDrawcallBufferOverflow = FrameCount;
         std::cerr << "Drawcall buffer overflowed" << std::endl;
     }
     
-    // Fallback to overwrite last element
-    if (nextIdx <= max)
+    // Prevent crash in release
+    if (nextIdx > maxPermittedIdx)
     {
-        *curr = nextIdx;
+        DrawCallIdx--;
     }
     
-    return &Buffer[idx];
+    return DrawCalls[idx];
 }

@@ -47,6 +47,11 @@ std::shared_ptr<Level> Game::CreateLevel()
 
 void Game::UpdateCameraPosition()
 {
+    auto& camera = Camera::Get();
+
+    if (!camera.GetSnapToPossessed())
+        return;
+    
     Entity possessedEntity = GetGameMode()->GetPossessedEntity();
 
     // No possessed entity may be valid. Camera should remain in place if so.
@@ -60,5 +65,5 @@ void Game::UpdateCameraPosition()
     if (Location == nullptr)
         return;
 
-    Camera::Get().SetPosition(Location->GetLocation());
+    camera.SetPosition(Location->GetLocation());
 }

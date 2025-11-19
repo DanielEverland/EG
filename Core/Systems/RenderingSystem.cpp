@@ -21,9 +21,10 @@ void RenderingSystem::Execute()
                 tileSize.Y,
             };
 
-            if (renderer.IsWithinWorldSpaceViewport(worldRect) && camLoc.Z >= location.GetLocation().Z)
+            Vector relativePosition = location.GetLocation() - camLoc;
+            if (renderer.IsWithinWorldSpaceViewport(worldRect) && relativePosition.Z <= FLT_EPSILON)
             {
-                renderer.Draw(location.GetLocation(), tileSize, renderData.TextureName, renderData.Order);
+                renderer.Draw(relativePosition, tileSize, renderData.TextureName, renderData.Order);
             }
         }
     );

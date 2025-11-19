@@ -3,6 +3,7 @@
 #include <unordered_set>
 #include "Components/LocationComponent.h"
 #include "Components/MovementComponent.h"
+#include "CoreFramework/Camera.h"
 #include "CoreFramework/Game.h"
 #include "CoreFramework/Level.h"
 #include "Input/Input.h"
@@ -90,6 +91,17 @@ void MainGameMode::RegisterInput()
 
         Input::Get().RegisterAction(action);
     }
+
+    // Camera Movement
+    {
+        const auto action = std::make_shared<AxisInputAction>();
+        action->AddKeycodeAxis(SDLK_PAGEUP, 1, InputEventType::DownOrHeld);
+        action->AddKeycodeAxis(SDLK_PAGEDOWN, -1, InputEventType::DownOrHeld);
+
+        action->AddCallback(std::bind(&MainGameMode::HandleCameraZoom, this, std::placeholders::_1));
+
+        Input::Get().RegisterAction(action);
+    }
 }
 void MainGameMode::HandleMovementInput(int32_t value, bool bIsHorizontal)
 {
@@ -114,6 +126,16 @@ void MainGameMode::HandleMovementInput(int32_t value, bool bIsHorizontal)
     auto movementSystem = game.GetSystem<MovementSystem>();
     if (movementSystem->IsValidMove(possessedEntity, locationComponent.GetLocation(), movementComponent.TargetLocation))
     {
+        Camera::Get().SetSnapToPossessed(true);
         game.StartRound();
     }
+}
+
+void MainGameMode::HandleCameraZoom(int32_t value)
+{
+    auto& camera = Camera::Get();
+    IntVector camPos = camera.GetPosition();
+    camPos.Z += value;
+    camera.SetPosition(camPos);
+    camera.SetSnapToPossessed(false);
 }
