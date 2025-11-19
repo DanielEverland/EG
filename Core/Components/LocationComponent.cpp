@@ -4,7 +4,7 @@
 #include "LocationComponent.h"
 #include "GameplayMessages/GameplayMessages.h"
 
-void LocationComponent::SetLocation(Entity owner, const IntVector2D& newLocation)
+void LocationComponent::SetLocation(Entity owner, const IntVector& newLocation)
 {
     LocationChangedMessage message;
     message.Owner = owner;

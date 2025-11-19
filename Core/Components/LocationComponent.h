@@ -20,9 +20,9 @@ struct LocationChangedMessage : public GameplayMessage
 class LocationComponent : public Component
 {
 public:
-    const IntVector2D& GetLocation() const { return WorldLocation; }
-    void SetLocation(Entity owner, const IntVector2D& newLocation);
+    const IntVector& GetLocation() const { return WorldLocation; }
+    void SetLocation(Entity owner, const IntVector& newLocation);
 
 private:
-    IntVector2D WorldLocation;
+    IntVector WorldLocation;
 };

@@ -2,11 +2,13 @@
 
 #include "Components/LocationComponent.h"
 #include "Components/TextureRendererComponent.h"
+#include "CoreFramework/Camera.h"
 
 void RenderingSystem::Execute()
 {
     Renderer& renderer = Renderer::Get();
     static IntVector2D tileSize = IntVector2D(16 * 2, 24 * 2);
+    IntVector camLoc = Camera::Get().GetPosition();
     
     Query<LocationComponent, TextureRendererComponent>(
         [&](const LocationComponent& location, const TextureRendererComponent& renderData)
@@ -19,7 +21,7 @@ void RenderingSystem::Execute()
                 tileSize.Y,
             };
 
-            if (renderer.IsWithinWorldSpaceViewport(worldRect))
+            if (renderer.IsWithinWorldSpaceViewport(worldRect) && camLoc.Z >= location.GetLocation().Z)
             {
                 renderer.Draw(location.GetLocation(), tileSize, renderData.TextureName, renderData.Order);
             }

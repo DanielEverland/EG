@@ -28,7 +28,7 @@ Rect Renderer::GetViewportRect() const
     };
 }
 
-void Renderer::Draw(const Vector2D& worldPosition, const IntVector2D& destRectSize, const HashedString& textureName, DrawCallOrder order)
+void Renderer::Draw(const Vector& worldPosition, const IntVector& destRectSize, const HashedString& textureName, DrawCallOrder order)
 {
     DrawCall* container = GetDrawCallStruct(order);
     container->TextureName = textureName;
@@ -42,7 +42,7 @@ void Renderer::Present()
     SDL_RenderClear(SDLRenderer);
     
     Rect viewportRect = GetViewportRect();
-    Vector2D cameraPos = Camera::Get().GetPosition();
+    Vector cameraPos = Camera::Get().GetPosition();
     
     SDL_FRect destRect;
     SDL_FRect sourceRect;

@@ -23,8 +23,11 @@ void Level::LoadChunk(const IntVector& chunkPos, std::shared_ptr<MapChunk> chunk
         for (int y = 0; y < WorldPositionUtility::ChunkHeight; ++y)
         {
             const MapCellInfo& cellInfo = chunk->Terrain[x + y * WorldPositionUtility::ChunkWidth];
+            if (cellInfo.CellTypeName == HashedString("Null"))
+                continue;
+            
             IntVector entityWorldPos = WorldPositionUtility::ChunkSpaceToWorldPosition(chunkPos, IntVector2D(x, y));
-            Entity entity = CreateEntity(cellInfo.CellTypeName, IntVector2D(entityWorldPos.X, entityWorldPos.Y));
+            Entity entity = CreateEntity(cellInfo.CellTypeName, entityWorldPos);
                 
             auto& renderer = Game::Get().GetLevel()->GetComponentManager().GetComponentChecked<TextureRendererComponent>(entity);
             renderer.TextureName = cellInfo.TextureName;
@@ -50,7 +53,7 @@ Entity Level::CreateEntity(const std::string& templateId) const
     return entity;
 }
 
-Entity Level::CreateEntity(const std::string& templateId, const IntVector2D& position) const
+Entity Level::CreateEntity(const std::string& templateId, const IntVector& position) const
 {
     Entity entity = Game::Get().GetNextEntity();
     Application::Get().GetEntityFactory()->PopulateEntity(entity, templateId, position);

@@ -32,7 +32,7 @@ public:
     
     Entity CreateEntity() const;
     Entity CreateEntity(const std::string& templateId) const;
-    Entity CreateEntity(const std::string& templateId, const IntVector2D& position) const;
+    Entity CreateEntity(const std::string& templateId, const IntVector& position) const;
     
     void DestroyEntity(Entity entity);
     ComponentManager& GetComponentManager() { return Components; }

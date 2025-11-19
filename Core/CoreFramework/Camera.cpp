@@ -3,7 +3,7 @@
 #include "Renderer.h"
 #include "Primitives/Rect.h"
 
-void Camera::SetPosition(const IntVector2D& position)
+void Camera::SetPosition(const IntVector& position)
 {
     CameraPosition = position;
 
@@ -19,7 +19,7 @@ void Camera::SetPosition(const IntVector2D& position)
     Renderer::Get().SetWorldViewportRect(newWorldViewport);
 }
 
-IntVector2D Camera::ToViewSpace(const IntVector2D& worldPosition) const
+IntVector Camera::ToViewSpace(const IntVector& worldPosition) const
 {
     return worldPosition - CameraPosition;
 }

@@ -59,7 +59,9 @@ void EntityFactory::Load()
         TemplateParser parser;
         if (parser.TryParse(data))
         {
-            ParserLookup.emplace(parser.GetId(), std::move(parser));
+            const auto id = parser.GetId();
+            assert(!ParserLookup.contains(id));
+            ParserLookup.try_emplace(id, std::move(parser));
         }
     }
 }
@@ -88,7 +90,7 @@ void EntityFactory::PopulateEntity(Entity entity, std::string templateId)
     }
 }
 
-void EntityFactory::PopulateEntity(Entity entity, std::string templateId, IntVector2D worldLocation)
+void EntityFactory::PopulateEntity(Entity entity, std::string templateId, IntVector worldLocation)
 {
     PopulateEntity(entity, templateId);
 

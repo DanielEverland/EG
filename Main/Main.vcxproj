@@ -210,6 +210,9 @@ xcopy /y /d "$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)\SDL3_image.dll" 
   <ItemGroup>
     <MyFolderFiles Include="$(SolutionDir)Content\**\*.*" />
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="NatvisFile.natvis" />
+  </ItemGroup>
   <Target Name="CopyMyFolder" AfterTargets="Build">
     <MakeDir Directories="$(OutDir)" />
     <Copy SourceFiles="@(MyFolderFiles)" DestinationFiles="@(MyFolderFiles->'$(OutDir)%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />

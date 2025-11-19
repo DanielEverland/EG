@@ -34,10 +34,7 @@ void MainGameMode::LoadMap(std::shared_ptr<Level> level)
     levelData.LoadData();
 
     for (const std::pair<const TemplatedVector<int>, std::shared_ptr<MapChunk>>& pair : levelData.GetChunks())
-    {
-        if (pair.first.Z != 0)
-            continue;
-        
+    {        
         level->LoadChunk(pair.first, pair.second);
     }
 }
@@ -47,7 +44,7 @@ void MainGameMode::CreatePlayer(std::shared_ptr<Level> level, ComponentManager& 
     Entity playerEntity = level->CreateEntity("Player");
     SetPossessedEntity(playerEntity);
     auto& playerLocation = level->GetComponentManager().GetComponentChecked<LocationComponent>(playerEntity);
-    playerLocation.SetLocation(playerEntity, IntVector2D(5, 5));
+    playerLocation.SetLocation(playerEntity, IntVector(12, 12, 0));
 }
 
 void MainGameMode::SpawnEnemies(std::shared_ptr<Level> level, ComponentManager& componentManager)

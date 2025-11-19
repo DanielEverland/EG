@@ -12,7 +12,7 @@ REGISTER_COMP_FACTORY(MovementComponentFactory, "MovementComponent")
 class MovementComponent : public Component
 {
 public:
-    IntVector2D TargetLocation;
+    IntVector TargetLocation;
 
     // Movement speed supports fractions. An entity will cache leftover movement used, which can be used later on
     // to move more than one tile per game tick. I.e. with a movement speed of 1.5, an entity will move two tiles

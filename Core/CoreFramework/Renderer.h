@@ -20,8 +20,8 @@ class Renderer
     struct DrawCall
     {
         HashedString TextureName = HashedString("Default");
-        Vector2D WorldPosition = Vector2D(0, 0);
-        IntVector2D DestRectSize = IntVector2D(0, 0);
+        Vector WorldPosition = Vector(0, 0, 0);
+        IntVector DestRectSize = IntVector(0, 0, 0);
     };
 public:
     static Renderer& Get()
@@ -45,7 +45,7 @@ public:
     Rect GetViewportRect() const;
     void SetWorldViewportRect(const Rect& worldRect) { WorldViewportRect = worldRect; }
     size_t GetFrameCount() const { return FrameCount; }
-    void Draw(const Vector2D& worldPosition, const IntVector2D& destRectSize, const HashedString& textureName, DrawCallOrder order);
+    void Draw(const Vector& worldPosition, const IntVector& destRectSize, const HashedString& textureName, DrawCallOrder order);
     void Present();
 
 private:

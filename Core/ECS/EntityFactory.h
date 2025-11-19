@@ -30,7 +30,7 @@ class EntityFactory
 public:
     void Load();
     void PopulateEntity(Entity entity, std::string templateId);
-    void PopulateEntity(Entity entity, std::string templateId, IntVector2D worldLocation);
+    void PopulateEntity(Entity entity, std::string templateId, IntVector worldLocation);
 
 private:
     std::unordered_map<std::string, TemplateParser> ParserLookup;

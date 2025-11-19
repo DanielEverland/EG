@@ -14,11 +14,11 @@ public:
         return SingletonHelper::Impl<Camera>();
     }
 
-    IntVector2D GetPosition() const { return CameraPosition; }
-    void SetPosition(const IntVector2D& position);
+    IntVector GetPosition() const { return CameraPosition; }
+    void SetPosition(const IntVector& position);
     
-    IntVector2D ToViewSpace(const IntVector2D& worldPosition) const;
+    IntVector ToViewSpace(const IntVector& worldPosition) const;
 
 private:
-    IntVector2D CameraPosition = IntVector2D(0, 0);
+    IntVector CameraPosition = IntVector(0, 0, 0);
 };

@@ -235,10 +235,10 @@ void Map::ParseAllChunks()
                     auto cellIdx = cellVal.get<uint16_t>();
 
                     MapCellInfo newCell;
-                    // TODO: Support air
+                    
                     if (cellIdx == 0)
                     {
-                        newCell.CellTypeName = HashedString("Air");
+                        newCell.CellTypeName = HashedString("Null");
                     }
                     else
                     {
