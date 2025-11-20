@@ -11,7 +11,7 @@ static SDL_Window* window = nullptr;
 static SDL_Renderer* renderer = nullptr;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
-{
+{    
     std::string bootDir = argv[0];
     bootDir = bootDir.substr(0, bootDir.find_last_of('\\') + 1);
     EngineStatics::BootDir = bootDir;

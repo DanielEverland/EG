@@ -30,4 +30,7 @@ public:
 
     static std::filesystem::path RelativeToFullPath(const std::filesystem::path& path);
     static std::filesystem::path GetContentPath(const std::filesystem::path& path);
+    
+    static std::filesystem::path GetSavedDirectory();
+    static std::filesystem::path GetLogsDirectory();
 };

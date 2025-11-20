@@ -2,9 +2,12 @@
 
 #include "ECS/EntityFactory.h"
 #include "Input/Input.h"
+#include "Logging/Logger.h"
 
 void Application::Initialize()
 {
+    Logger::Init();
+    
     LoadContent();
     
     Game::Get().Initialize();
@@ -22,6 +25,7 @@ void Application::PrePresent()
 
 void Application::LoadContent()
 {
+    Logger::Log(Engine, Info, "Loading content...");
     AssetManager::Get().Load();
 
     EntityTemplateFactory = std::make_shared<EntityFactory>();

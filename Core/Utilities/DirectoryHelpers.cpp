@@ -13,3 +13,14 @@ std::filesystem::path DirectoryHelpers::GetContentPath(const std::filesystem::pa
     return RelativeToFullPath(/*"Content/" +*/ path.generic_string());
 
 }
+
+std::filesystem::path DirectoryHelpers::GetSavedDirectory()
+{
+    return EngineStatics::BootDir + "Saved\\";
+}
+
+std::filesystem::path DirectoryHelpers::GetLogsDirectory()
+{
+    std::string fullPath = GetSavedDirectory().string() + "Logs\\";
+    return fullPath;
+}

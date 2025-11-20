@@ -7,6 +7,7 @@
 #include "CoreFramework/AssetManager.h"
 #include "CoreFramework/Game.h"
 #include "CoreFramework/Level.h"
+#include "Logging/Logger.h"
 
 bool EntityFactory::TemplateParser::TryParse(json data)
 {
@@ -70,7 +71,7 @@ void EntityFactory::PopulateEntity(Entity entity, std::string templateId)
 {
     if (!ParserLookup.contains(templateId))
     {
-        std::cerr << "Unable to find entity template for " << templateId << std::endl;
+        Logger::Log(Game, Error, "Unable to find entity template for {}", templateId);
         abort();
     }
 
