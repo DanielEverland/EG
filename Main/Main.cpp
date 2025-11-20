@@ -16,14 +16,12 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     bootDir = bootDir.substr(0, bootDir.find_last_of('\\') + 1);
     EngineStatics::BootDir = bootDir;
     
-    SDL_SetAppMetadata("Example Renderer Clear", "1.0", "com.example.renderer-clear");
-
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
 
-    if (!SDL_CreateWindowAndRenderer("examples/renderer/clear", 640, 480, 0, &window, &renderer)) {
+    if (!SDL_CreateWindowAndRenderer("ECS Game", 1920, 1080, 0, &window, &renderer)) {
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
