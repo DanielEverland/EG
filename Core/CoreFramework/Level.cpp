@@ -22,16 +22,26 @@ void Level::LoadChunk(const IntVector& chunkPos, std::shared_ptr<MapChunk> chunk
     {
         for (int y = 0; y < WorldPositionUtility::ChunkHeight; ++y)
         {
-            const MapCellInfo& cellInfo = chunk->Terrain[x + y * WorldPositionUtility::ChunkWidth];
-            if (cellInfo.CellTypeName == HashedString("Null"))
+            const TileInfo& cellInfo = chunk->Terrain[x + y * WorldPositionUtility::ChunkWidth];
+            if (cellInfo.EntityType == HashedString("Null"))
                 continue;
             
             IntVector entityWorldPos = WorldPositionUtility::ChunkSpaceToWorldPosition(chunkPos, IntVector2D(x, y));
-            Entity entity = CreateEntity(cellInfo.CellTypeName, entityWorldPos);
+            Entity entity = CreateEntity(cellInfo.EntityType, entityWorldPos);
                 
             auto& renderer = Game::Get().GetLevel()->GetComponentManager().GetComponentChecked<TextureRendererComponent>(entity);
             renderer.TextureName = cellInfo.TextureName;
         }
+    }
+
+    for (const MapObjectInfo& objectInfo : chunk->GetObjects())
+    {
+        IntVector entityWorldPos = WorldPositionUtility::ChunkSpaceToWorldPosition(chunkPos, objectInfo.ChunkSpacePosition);
+        Entity entity = CreateEntity(objectInfo.Tile.EntityType, entityWorldPos);
+                
+        auto& renderer = Game::Get().GetLevel()->GetComponentManager().GetComponentChecked<TextureRendererComponent>(entity);
+        renderer.TextureName = objectInfo.Tile.TextureName;
+        renderer.Order = DrawCallOrder::Foreground;
     }
 }
 

@@ -1,0 +1,12 @@
+{
+    "Id": "Staircase",
+    "Composites": [
+        "Renderable"
+    ],
+    "Components": [
+        {
+            "Id": "NavigableComponent",
+            "TraversalDifficulty": 1
+        }
+    ]
+}

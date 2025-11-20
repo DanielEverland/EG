@@ -71,7 +71,7 @@ void EntityFactory::PopulateEntity(Entity entity, std::string templateId)
 {
     if (!ParserLookup.contains(templateId))
     {
-        Logger::Log(Game, Error, "Unable to find entity template for {}", templateId);
+        Logger::Log(Engine, Error, "Unable to find entity template for {}", templateId);
         abort();
     }
 

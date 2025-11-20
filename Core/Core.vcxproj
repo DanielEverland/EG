@@ -527,6 +527,7 @@
     <ClCompile Include="Systems\CreatureAISystem.cpp" />
     <ClCompile Include="Systems\MovementSystem.cpp" />
     <ClCompile Include="Systems\RenderingSystem.cpp" />
+    <ClCompile Include="Utilities\ConversionUtil.cpp" />
     <ClCompile Include="Utilities\DirectoryHelpers.cpp" />
     <ClCompile Include="Utilities\FileHelpers.cpp" />
     <ClCompile Include="Utilities\SingletonHelpers.cpp" />
@@ -593,6 +594,7 @@
     <ClInclude Include="Systems\CreatureAISystem.h" />
     <ClInclude Include="Systems\MovementSystem.h" />
     <ClInclude Include="Systems\RenderingSystem.h" />
+    <ClInclude Include="Utilities\ConversionUtil.h" />
     <ClInclude Include="Utilities\DirectoryHelpers.h" />
     <ClInclude Include="Utilities\FileHelpers.h" />
     <ClInclude Include="Utilities\SingletonHelpers.h" />

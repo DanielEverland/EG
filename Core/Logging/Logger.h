@@ -11,7 +11,6 @@
 enum Category : uint8_t
 {
     Engine,
-    Game
 };
 namespace CategoryUtil
 {
@@ -20,7 +19,6 @@ namespace CategoryUtil
         switch (v)
         {
         case Engine: return "Engine";
-        case Game: return "Game";
         default: return "N/A";
         }
     }
