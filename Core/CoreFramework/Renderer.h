@@ -56,7 +56,6 @@ public:
 
 private:
     static constexpr size_t MaxNumDrawCalls = 8192 * 2 * 2 * 2;
-    static constexpr size_t BackgroundCallsEnd = static_cast<size_t>(MaxNumDrawCalls * (3.0f / 4.0f));
 
     Rect WorldViewportRect = { };
     size_t LastDrawcallBufferOverflow = 0;
