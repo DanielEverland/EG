@@ -9,6 +9,7 @@
 
 struct NavRequest
 {
+    Entity EntityToMove;
     IntVector StartPosition;
     IntVector TargetPosition;
     std::shared_ptr<NavigationGraphTraverser> Traverser = nullptr;

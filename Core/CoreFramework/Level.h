@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "EntityContainer.h"
 #include "Navigation.h"
 #include "Components/LocationComponent.h"
 #include "DataStructrues/Vector.h"
@@ -16,11 +17,6 @@ class Level
 {
     struct Chunk
     {
-        struct EntityContainer
-        {
-            std::vector<Entity> Entities;
-        };
-
         EntityContainer Tiles[WorldPositionUtility::ChunkWidth * WorldPositionUtility::ChunkHeight];
     };
     
@@ -33,18 +29,42 @@ public:
     Entity CreateEntity() const;
     Entity CreateEntity(const std::string& templateId) const;
     Entity CreateEntity(const std::string& templateId, const IntVector& position) const;
+
+    template<class T>
+    bool EntityHasComponent(Entity entity)
+    {
+        return GetComponentManager().ContainsComponent<T>(entity);
+    }
+
+    template<class T, typename Predicate>
+    bool EntityHasComponent(Entity entity, Predicate pred)
+    {
+        if (T* comp = TryGetComponent<T>(entity))
+        {
+            return pred(comp);
+        }
+        return false;
+    }
+
+    template<class T>
+    T* TryGetComponent(Entity entity)
+    {
+        return GetComponentManager().TryGetComponent<T>(entity);
+    }
     
     void DestroyEntity(Entity entity);
     ComponentManager& GetComponentManager() { return Components; }
-    const std::vector<Entity>& GetEntitiesAtPosition(const IntVector& position);
+    const EntityContainer& GetEntitiesAtPosition(const IntVector& position);
+    bool IsValidMove(Entity entity, const IntVector& from, const IntVector& to) const;
     const Navigation& GetNavigation() const { return NavigationInstance; }
     
 private:
+    EntityContainer EmptyEntityContainer;
     Navigation NavigationInstance;
     ComponentManager Components;
     std::unordered_map<IntVector, Chunk> Chunks;
     std::vector<Entity> EmptyEntities;
 
     void OnEntityLocationChanged(const GameplayMessage& message);
-    Chunk::EntityContainer* TryGetEntityContainer(const IntVector& worldPosition); 
+    EntityContainer* TryGetEntityContainer(const IntVector& worldPosition); 
 };

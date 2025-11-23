@@ -1,12 +1,14 @@
 #include "Level.h"
 #include "Application.h"
 #include "Game.h"
+#include "Components/CollisionComponent.h"
+#include "Components/NavigableComponent.h"
 #include "Components/TextureRendererComponent.h"
 #include "ECS/EntityFactory.h"
 #include "GameplayMessages/GameplayMessages.h"
 #include "Levels/MapChunk.h"
 
-Level::Level() : Components({ })
+Level::Level()
 {
     GameplayMessages::Get().SubscribeMessage(HashedString("EntityLocationChanged"), std::bind(&Level::OnEntityLocationChanged, this, std::placeholders::_1));
 }
@@ -75,14 +77,43 @@ void Level::DestroyEntity(Entity entity)
     Components.RemoveEntity(entity);
 }
 
-const std::vector<Entity>& Level::GetEntitiesAtPosition(const IntVector& position)
+const EntityContainer& Level::GetEntitiesAtPosition(const IntVector& position)
 {
-    if (Chunk::EntityContainer* container = TryGetEntityContainer(position); container != nullptr)
+    if (EntityContainer* container = TryGetEntityContainer(position); container != nullptr)
     {
-        return container->Entities;
+        return *container;
     }
-    return EmptyEntities;
+    return EmptyEntityContainer;
 }
+
+bool Level::IsValidMove(Entity entity, const IntVector& from, const IntVector& to) const
+{
+    static auto PermittedNavigablePredicate = [](const NavigableComponent* comp) -> bool
+    {
+        return comp->Climbable;  
+    };
+    
+    IntVector diff = from - to;
+    std::shared_ptr<Level> level = Game::Get().GetLevel();
+
+    auto currentPosContainer = level->GetEntitiesAtPosition(from);
+    auto targetPosContainer = level->GetEntitiesAtPosition(to);
+
+    if (diff.Z != 0)
+    {
+        if (!currentPosContainer.AnyHasComponent<NavigableComponent>(PermittedNavigablePredicate))
+            return false;
+        
+        if (!targetPosContainer.AnyHasComponent<NavigableComponent>(PermittedNavigablePredicate))
+            return false;
+    }
+    
+    if (targetPosContainer.AnyHasComponent<CollisionComponent>())
+        return false;
+
+    return true;
+}
+
 
 void Level::OnEntityLocationChanged(const GameplayMessage& baseMsg)
 {
@@ -96,7 +127,7 @@ void Level::OnEntityLocationChanged(const GameplayMessage& baseMsg)
     if (message->OldLocation == message->NewLocation)
         return;
 
-    if (Chunk::EntityContainer* removeFrom = TryGetEntityContainer(message->OldLocation))
+    if (EntityContainer* removeFrom = TryGetEntityContainer(message->OldLocation))
     {
         auto& entities = removeFrom->Entities;
         auto entityIter = std::find(entities.begin(), entities.end(), message->Owner);
@@ -106,7 +137,7 @@ void Level::OnEntityLocationChanged(const GameplayMessage& baseMsg)
         }
     }
     
-    Chunk::EntityContainer* addTo = TryGetEntityContainer(message->NewLocation);
+    EntityContainer* addTo = TryGetEntityContainer(message->NewLocation);
     
     // This is okay, chunk is not currently loaded into memory. Ignore.
     if (addTo == nullptr)
@@ -120,7 +151,7 @@ void Level::OnEntityLocationChanged(const GameplayMessage& baseMsg)
     addTo->Entities.push_back(message->Owner);
 }
 
-Level::Chunk::EntityContainer* Level::TryGetEntityContainer(const IntVector& worldPosition)
+EntityContainer* Level::TryGetEntityContainer(const IntVector& worldPosition)
 {
     IntVector chunkPosition = WorldPositionUtility::WorldPositionToChunkPosition(worldPosition);
     IntVector chunkSpace = WorldPositionUtility::WorldSpaceToChunkSpace(worldPosition);

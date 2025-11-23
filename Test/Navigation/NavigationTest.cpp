@@ -9,12 +9,12 @@
 class TestNavigationGraphTraverser : public NavigationGraphTraverser
 {
 public:
-    bool DoesWorldPositionExist(const IntVector& worldPosition) override
+    bool IsValidMove(Entity entity, const IntVector& from, const IntVector& to) override
     {
-        return worldPosition.X >= 0 && worldPosition.Y >= 0 && worldPosition.Z == 0
-            && worldPosition.X < Size.X && worldPosition.Y < Size.Y;
+        return to.X >= 0 && to.Y >= 0 && to.Z == 0
+            && to.X < Size.X && to.Y < Size.Y;
     }
-    
+
     bool TryGetTraversalDifficulty(const IntVector& from, const IntVector& to, uint8_t& outTraversalDifficulty) override
     {
         auto iter = Tiles.find(to);

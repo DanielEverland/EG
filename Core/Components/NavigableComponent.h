@@ -13,4 +13,5 @@ class NavigableComponent : public Component
 {
 public:
     uint8_t TraversalDifficulty = 0;
+    bool Climbable = false;
 };

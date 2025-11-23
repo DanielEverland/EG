@@ -17,12 +17,6 @@ NavResult Navigation::TryCalculatePath(const NavRequest& request) const
     NavResult result;
     result.Succeeded = false;
 
-    if (!traverser->DoesWorldPositionExist(request.TargetPosition) ||
-        !traverser->DoesWorldPositionExist(request.StartPosition))
-    {
-        return result;
-    }
-
     uint8_t _;
     bool targetPositionNavigable = traverser->TryGetTraversalDifficulty(request.TargetPosition, request.TargetPosition, _);
     bool startPositionNavigable = traverser->TryGetTraversalDifficulty(request.StartPosition, request.StartPosition, _);
@@ -86,7 +80,7 @@ NavResult Navigation::TryCalculatePath(const NavRequest& request) const
         {
             IntVector neighborPos = currentPosition + offset;
 
-            if (!request.Traverser->DoesWorldPositionExist(neighborPos))
+            if (neighborPos != request.TargetPosition && !request.Traverser->IsValidMove(request.EntityToMove, currentPosition, neighborPos))
                 continue;
 
             uint8_t neighborTraversalDifficulty = 0;

@@ -8,4 +8,6 @@ void NavigableComponentFactory::Populate(Entity entity, const Parameters& params
     
     LOAD_PROPERTY(navigableComponent, TraversalDifficulty)
     assert(navigableComponent.TraversalDifficulty != 0);
+
+    LOAD_PROPERTY(navigableComponent, Climbable)
 }

@@ -18,6 +18,7 @@ public:
 
 private:
     void RegisterInput();
-    void HandleMovementInput(int32_t value, bool bIsHorizontal);
+    void HandlePlanarMovementInput(int32_t value, bool bIsHorizontal);
+    void HandleChangePlaneMovementInput(int32_t value);
     void HandleCameraZoom(int32_t value);
 };

@@ -6,7 +6,8 @@
     "Components": [
         {
             "Id": "NavigableComponent",
-            "TraversalDifficulty": 1
+            "TraversalDifficulty": 1,
+            "Climbable": true
         }
     ]
 }

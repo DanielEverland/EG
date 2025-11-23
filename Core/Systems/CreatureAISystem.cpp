@@ -25,6 +25,7 @@ void CreatureAISystem::Execute()
             const Navigation& nav = level->GetNavigation();
 
             NavRequest request;
+            request.EntityToMove = entity;
             request.StartPosition = location.GetLocation();
             request.TargetPosition = targetLocationComp->GetLocation();
             request.Traverser = std::make_shared<LevelNavigationGraphTraverser>(level);
@@ -34,7 +35,7 @@ void CreatureAISystem::Execute()
             {
                 // Always includes start, so we pop that off.
                 result.Path.pop_front();
-                movementComponent.TargetLocation = IntVector2D(result.Path.front());
+                movementComponent.TargetLocation = result.Path.front();
             }
             else
             {

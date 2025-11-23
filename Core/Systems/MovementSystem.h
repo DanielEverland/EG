@@ -8,5 +8,4 @@ class MovementSystem : public System
 {
 public:
     void Execute() override;
-    bool IsValidMove(Entity entity, const IntVector& currentPosition, const IntVector& targetPosition) const;
 };

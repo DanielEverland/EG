@@ -86,6 +86,23 @@ public:
     };
 
     template<class T>
+    bool ContainsComponent(Entity entity)
+    {
+        ComponentContainer<T>& Container = GetContainer<T>();
+        return Container.Contains(entity);
+    }
+
+    template<class T, typename Predicate>
+    bool ContainsComponent(Entity entity, Predicate pred)
+    {
+        if (auto comp = TryGetComponent<T>(entity))
+        {
+            return pred(comp);
+        }
+        return false;
+    }
+
+    template<class T>
     T& AddComponent(Entity entity)
     {
         ComponentContainer<T>& Container = GetContainer<T>();

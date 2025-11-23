@@ -7,23 +7,15 @@ LevelNavigationGraphTraverser::LevelNavigationGraphTraverser(std::shared_ptr<::L
 {
 }
 
-bool LevelNavigationGraphTraverser::DoesWorldPositionExist(const IntVector& worldPosition)
+bool LevelNavigationGraphTraverser::IsValidMove(Entity entity, const IntVector& from, const IntVector& to)
 {
-    return Level->DoesWorldPositionExist(worldPosition);
+    return Level->IsValidMove(entity, from, to);
 }
 
 bool LevelNavigationGraphTraverser::TryGetTraversalDifficulty(const IntVector& from, const IntVector& to, uint8_t& outTraversalDifficulty)
 {
-    auto entities = Level->GetEntitiesAtPosition(to);
-    NavigableComponent* navigableComponent = nullptr;
-    for (Entity neighbor : entities)
-    {
-        navigableComponent = Level->GetComponentManager().TryGetComponent<NavigableComponent>(neighbor);
-                
-        // TODO: Handle multiple entities with navigable component
-        if (navigableComponent != nullptr)
-            break;
-    }
+    const EntityContainer& entityContainer = Level->GetEntitiesAtPosition(to);
+    NavigableComponent* navigableComponent = entityContainer.TryGetFirstComponent<NavigableComponent>();
 
     if (navigableComponent == nullptr)
     {

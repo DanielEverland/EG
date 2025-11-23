@@ -14,7 +14,7 @@ class LevelNavigationGraphTraverser : public NavigationGraphTraverser
 public:
     explicit LevelNavigationGraphTraverser(std::shared_ptr<Level> level);
     
-    bool DoesWorldPositionExist(const IntVector& worldPosition) override;
+    bool IsValidMove(Entity entity, const IntVector& from, const IntVector& to) override;
     bool TryGetTraversalDifficulty(const IntVector& from, const IntVector& to, uint8_t& outTraversalDifficulty) override;
 
 private:

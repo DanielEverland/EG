@@ -188,6 +188,7 @@
     <ClCompile Include="Components\LocationComponent.cpp" />
     <ClCompile Include="CoreFramework\AssetManager.cpp" />
     <ClCompile Include="CoreFramework\Camera.cpp" />
+    <ClCompile Include="CoreFramework\EntityContainer.cpp" />
     <ClCompile Include="CoreFramework\Game.cpp" />
     <ClCompile Include="CoreFramework\GameComponent.cpp" />
     <ClCompile Include="CoreFramework\GameMode.cpp" />
@@ -551,6 +552,7 @@
     <ClInclude Include="CoreFramework\AssetManager.h" />
     <ClInclude Include="CoreFramework\Camera.h" />
     <ClInclude Include="CoreFramework\EngineStatics.h" />
+    <ClInclude Include="CoreFramework\EntityContainer.h" />
     <ClInclude Include="CoreFramework\Game.h" />
     <ClInclude Include="CoreFramework\GameComponent.h" />
     <ClInclude Include="CoreFramework\GameMode.h" />

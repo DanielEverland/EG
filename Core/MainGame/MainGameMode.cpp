@@ -71,10 +71,8 @@ void MainGameMode::RegisterInput()
         const auto action = std::make_shared<AxisInputAction>();
         action->AddKeycodeAxis(SDLK_D, 1, InputEventType::DownOrHeld);
         action->AddKeycodeAxis(SDLK_A, -1, InputEventType::DownOrHeld);
-        action->AddKeycodeAxis(SDLK_RIGHT, 1, InputEventType::DownOrHeld);
-        action->AddKeycodeAxis(SDLK_LEFT, -1, InputEventType::DownOrHeld);
         
-        action->AddCallback(std::bind(&MainGameMode::HandleMovementInput, this, std::placeholders::_1, true));
+        action->AddCallback(std::bind(&MainGameMode::HandlePlanarMovementInput, this, std::placeholders::_1, true));
 
         Input::Get().RegisterAction(action);
     }
@@ -84,10 +82,19 @@ void MainGameMode::RegisterInput()
         const auto action = std::make_shared<AxisInputAction>();
         action->AddKeycodeAxis(SDLK_W, -1, InputEventType::DownOrHeld);
         action->AddKeycodeAxis(SDLK_S, 1, InputEventType::DownOrHeld);
-        action->AddKeycodeAxis(SDLK_UP, -1, InputEventType::DownOrHeld);
-        action->AddKeycodeAxis(SDLK_DOWN, 1, InputEventType::DownOrHeld);
         
-        action->AddCallback(std::bind(&MainGameMode::HandleMovementInput, this, std::placeholders::_1, false));
+        action->AddCallback(std::bind(&MainGameMode::HandlePlanarMovementInput, this, std::placeholders::_1, false));
+
+        Input::Get().RegisterAction(action);
+    }
+
+    // Change plane
+    {
+        const auto action = std::make_shared<AxisInputAction>();
+        action->AddKeycodeAxis(SDLK_UP, 1, InputEventType::DownOrHeld);
+        action->AddKeycodeAxis(SDLK_DOWN, -1, InputEventType::DownOrHeld);
+        
+        action->AddCallback(std::bind(&MainGameMode::HandleChangePlaneMovementInput, this, std::placeholders::_1));
 
         Input::Get().RegisterAction(action);
     }
@@ -103,9 +110,10 @@ void MainGameMode::RegisterInput()
         Input::Get().RegisterAction(action);
     }
 }
-void MainGameMode::HandleMovementInput(int32_t value, bool bIsHorizontal)
+void MainGameMode::HandlePlanarMovementInput(int32_t value, bool bIsHorizontal)
 {
     Game game = Game::Get();
+    std::shared_ptr<Level> level = game.GetLevel();
     Entity possessedEntity = game.GetGameMode()->GetPossessedEntity();
     if (possessedEntity == InvalidEntity)
         return;
@@ -123,8 +131,28 @@ void MainGameMode::HandleMovementInput(int32_t value, bool bIsHorizontal)
         movementComponent.TargetLocation.Y += value;
     }
 
-    auto movementSystem = game.GetSystem<MovementSystem>();
-    if (movementSystem->IsValidMove(possessedEntity, locationComponent.GetLocation(), movementComponent.TargetLocation))
+    if (level->IsValidMove(possessedEntity, locationComponent.GetLocation(), movementComponent.TargetLocation))
+    {
+        Camera::Get().SetSnapToPossessed(true);
+        game.StartRound();
+    }
+}
+
+void MainGameMode::HandleChangePlaneMovementInput(int32_t value)
+{
+    Game game = Game::Get();
+    std::shared_ptr<Level> level = game.GetLevel();
+    Entity possessedEntity = game.GetGameMode()->GetPossessedEntity();
+    if (possessedEntity == InvalidEntity)
+        return;
+
+    auto& movementComponent = game.GetLevel()->GetComponentManager().GetComponentChecked<MovementComponent>(possessedEntity);
+    const auto& locationComponent = game.GetLevel()->GetComponentManager().GetComponentChecked<LocationComponent>(possessedEntity);
+
+    movementComponent.TargetLocation = locationComponent.GetLocation();
+    movementComponent.TargetLocation.Z += value;
+
+    if (level->IsValidMove(possessedEntity, locationComponent.GetLocation(), movementComponent.TargetLocation))
     {
         Camera::Get().SetSnapToPossessed(true);
         game.StartRound();
