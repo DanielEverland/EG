@@ -109,6 +109,16 @@ void MainGameMode::RegisterInput()
 
         Input::Get().RegisterAction(action);
     }
+
+    // Skip turn
+    {
+        const auto action = std::make_shared<DiscreteInputAction>();
+        action->AddKeycode(SDLK_SPACE, InputEventType::DownOrHeld);
+
+        action->AddCallback([]{ Game::Get().StartRound(); });
+
+        Input::Get().RegisterAction(action);   
+    }
 }
 void MainGameMode::HandlePlanarMovementInput(int32_t value, bool bIsHorizontal)
 {
