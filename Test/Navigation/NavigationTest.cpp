@@ -1,4 +1,5 @@
 #include <unordered_map>
+#include <unordered_set>
 
 #include "CoreFramework/Navigation.h"
 #include "gtest/gtest.h"
@@ -11,7 +12,15 @@ class TestNavigationGraphTraverser : public NavigationGraphTraverser
 public:
     bool IsValidMove(Entity entity, const IntVector& from, const IntVector& to) override
     {
-        return to.X >= 0 && to.Y >= 0 && to.Z == 0
+        if (!Tiles.contains(to))
+            return false;
+        
+        IntVector diff = to - from;
+        if (diff.Z != 0 && (!Staircases.contains(from) || !Staircases.contains(to)))
+        {
+            return false;
+        }
+        return to.X >= 0 && to.Y >= 0
             && to.X < Size.X && to.Y < Size.Y;
     }
 
@@ -25,6 +34,7 @@ public:
     }
 
     std::unordered_map<IntVector, uint8_t> Tiles;
+    std::pmr::unordered_set<IntVector> Staircases;
     IntVector2D Size = IntVector2D(32, 32);
 };
 
@@ -81,11 +91,30 @@ protected:
                 RoadLevel->Tiles.emplace(IntVector(i, j, 0), j == 5 || i == 15 ? 1 : 10);
             }
         }
+
+        ///
+        ///     TWO-STORY LEVEL
+        ///     Completely flat with no terrain costs or obstacles, but has a second story with a staircase
+        ///
+        TwoStoryLevel = std::make_shared<TestNavigationGraphTraverser>();
+        for (int i = 0; i < 32; ++i)
+        {
+            for (int j = 0; j < 32; ++j)
+            {
+                for (int k = 0; k < 2; ++k)
+                {
+                    TwoStoryLevel->Tiles.emplace(IntVector(i, j, k), 1);
+                }
+            }
+        }
+        TwoStoryLevel->Staircases.emplace(IntVector(10, 5, 0));
+        TwoStoryLevel->Staircases.emplace(IntVector(10, 5, 1));
     }
 
     std::shared_ptr<TestNavigationGraphTraverser> FlatLevelNoDifficulty;
     std::shared_ptr<TestNavigationGraphTraverser> ConcaveLevel;
     std::shared_ptr<TestNavigationGraphTraverser> RoadLevel;
+    std::shared_ptr<TestNavigationGraphTraverser> TwoStoryLevel;
     Navigation Nav;
 };
 
@@ -205,4 +234,17 @@ TEST_F(NavigationTest, PathInWall)
     NavResult result = Nav.TryCalculatePath(request);
 
     ASSERT_FALSE(result.Succeeded);
+}
+
+TEST_F(NavigationTest, TwoStoryLevels)
+{
+    NavRequest request;
+    request.StartPosition = IntVector(0, 0, 0);
+    request.TargetPosition = IntVector(5, 5, 1);
+    request.Traverser = TwoStoryLevel;
+
+    NavResult result = Nav.TryCalculatePath(request);
+
+    ASSERT_TRUE(result.Succeeded);
+    ASSERT_TRUE(result.Path.size() > 2);
 }

@@ -60,8 +60,8 @@ NavResult Navigation::TryCalculatePath(const NavRequest& request) const
         openNodes.pop();
 
         IntVector currentPosition = curr.first;
-
-        if (currentPosition == request.TargetPosition)
+        IntVector targetDiff = request.TargetPosition - currentPosition;
+        if (abs(targetDiff.X) <= request.PermittedTargetDistances.X && abs(targetDiff.Y) <= request.PermittedTargetDistances.Y && abs(targetDiff.Z) <= request.PermittedTargetDistances.Z)
         {
             std::list<IntVector>& pathList = result.Path;
             pathList.clear();
@@ -80,7 +80,7 @@ NavResult Navigation::TryCalculatePath(const NavRequest& request) const
         {
             IntVector neighborPos = currentPosition + offset;
 
-            if (neighborPos != request.TargetPosition && !request.Traverser->IsValidMove(request.EntityToMove, currentPosition, neighborPos))
+            if (!request.Traverser->IsValidMove(request.EntityToMove, currentPosition, neighborPos))
                 continue;
 
             uint8_t neighborTraversalDifficulty = 0;

@@ -12,5 +12,6 @@ struct NavRequest
     Entity EntityToMove;
     IntVector StartPosition;
     IntVector TargetPosition;
+    IntVector PermittedTargetDistances = IntVector(0, 0, 0);
     std::shared_ptr<NavigationGraphTraverser> Traverser = nullptr;
 };

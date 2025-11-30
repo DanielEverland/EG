@@ -29,13 +29,22 @@ void CreatureAISystem::Execute()
             request.StartPosition = location.GetLocation();
             request.TargetPosition = targetLocationComp->GetLocation();
             request.Traverser = std::make_shared<LevelNavigationGraphTraverser>(level);
+            request.PermittedTargetDistances = IntVector(1, 1, 0);
+            
             NavResult result = nav.TryCalculatePath(request);
 
             if (result.Succeeded)
             {
-                // Always includes start, so we pop that off.
-                result.Path.pop_front();
-                movementComponent.TargetLocation = result.Path.front();
+                if (result.Path.size() == 1) // We're already at the target, path only contains our location
+                {
+                    movementComponent.TargetLocation = targetLocationComp->GetLocation();
+                }
+                else
+                {
+                    // Always includes start, so we pop that off.
+                    result.Path.pop_front();
+                    movementComponent.TargetLocation = result.Path.front();
+                }
             }
             else
             {
