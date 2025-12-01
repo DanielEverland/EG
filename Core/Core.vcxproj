@@ -75,27 +75,27 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\;$(SolutionDir)Thirdparty\xml\;$(SolutionDir)Thirdparty\spdlog\</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\;$(SolutionDir)Thirdparty\xml\;$(SolutionDir)Thirdparty\spdlog\;$(SolutionDir)Thirdparty\imgui\</IncludePath>
     <LibraryPath>$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)</LibraryPath>
-    <PublicIncludeDirectories>$(SolutionDir)Thirdparty\spdlog\;$(PublicIncludeDirectories)</PublicIncludeDirectories>
+    <PublicIncludeDirectories>$(SolutionDir)Thirdparty\spdlog\;$(SolutionDir)Thirdparty\imgui\;$(PublicIncludeDirectories)</PublicIncludeDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\;$(SolutionDir)Thirdparty\xml\;$(SolutionDir)Thirdparty\spdlog\</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\;$(SolutionDir)Thirdparty\xml\;$(SolutionDir)Thirdparty\spdlog\;$(SolutionDir)Thirdparty\imgui\</IncludePath>
     <LibraryPath>$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)</LibraryPath>
-    <PublicIncludeDirectories>$(SolutionDir)Thirdparty\spdlog\;$(PublicIncludeDirectories)</PublicIncludeDirectories>
+    <PublicIncludeDirectories>$(SolutionDir)Thirdparty\spdlog\;$(SolutionDir)Thirdparty\imgui\;$(PublicIncludeDirectories)</PublicIncludeDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\;$(SolutionDir)Thirdparty\xml\;$(SolutionDir)Thirdparty\spdlog\</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\;$(SolutionDir)Thirdparty\xml\;$(SolutionDir)Thirdparty\spdlog\;$(SolutionDir)Thirdparty\imgui\</IncludePath>
     <LibraryPath>$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)</LibraryPath>
-    <PublicIncludeDirectories>$(SolutionDir)Thirdparty\spdlog\;$(PublicIncludeDirectories)</PublicIncludeDirectories>
+    <PublicIncludeDirectories>$(SolutionDir)Thirdparty\spdlog\;$(SolutionDir)Thirdparty\imgui\;$(PublicIncludeDirectories)</PublicIncludeDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\;$(SolutionDir)Thirdparty\xml\;$(SolutionDir)Thirdparty\spdlog\</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\SDL\include;$(ProjectDir);$(SolutionDir)Thirdparty\Json\;$(SolutionDir)Thirdparty\xml\;$(SolutionDir)Thirdparty\spdlog\;$(SolutionDir)Thirdparty\imgui\</IncludePath>
     <LibraryPath>$(SolutionDir)Thirdparty\SDL\lib\$(PlatformTarget)</LibraryPath>
-    <PublicIncludeDirectories>$(SolutionDir)Thirdparty\spdlog\;$(PublicIncludeDirectories)</PublicIncludeDirectories>
+    <PublicIncludeDirectories>$(SolutionDir)Thirdparty\spdlog\;$(SolutionDir)Thirdparty\imgui\;$(PublicIncludeDirectories)</PublicIncludeDirectories>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -178,6 +178,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Thirdparty\imgui\imgui.cpp" />
+    <ClCompile Include="..\Thirdparty\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\Thirdparty\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\Thirdparty\imgui\imgui_impl_sdl3.cpp" />
+    <ClCompile Include="..\Thirdparty\imgui\imgui_impl_sdlrenderer3.cpp" />
+    <ClCompile Include="..\Thirdparty\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\Thirdparty\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Components\Factories\CollisionComponentFactory.cpp" />
     <ClCompile Include="Components\Factories\CreatureComponentFactory.cpp" />
@@ -188,6 +195,7 @@
     <ClCompile Include="Components\LocationComponent.cpp" />
     <ClCompile Include="CoreFramework\AssetManager.cpp" />
     <ClCompile Include="CoreFramework\Camera.cpp" />
+    <ClCompile Include="CoreFramework\DebugRenderer.cpp" />
     <ClCompile Include="CoreFramework\EntityContainer.cpp" />
     <ClCompile Include="CoreFramework\Game.cpp" />
     <ClCompile Include="CoreFramework\GameComponent.cpp" />
@@ -535,6 +543,14 @@
     <ClCompile Include="Utilities\WorldPositionUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Thirdparty\imgui\imconfig.h" />
+    <ClInclude Include="..\Thirdparty\imgui\imgui.h" />
+    <ClInclude Include="..\Thirdparty\imgui\imgui_impl_sdl3.h" />
+    <ClInclude Include="..\Thirdparty\imgui\imgui_impl_sdlrenderer3.h" />
+    <ClInclude Include="..\Thirdparty\imgui\imgui_internal.h" />
+    <ClInclude Include="..\Thirdparty\imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\Thirdparty\imgui\imstb_textedit.h" />
+    <ClInclude Include="..\Thirdparty\imgui\imstb_truetype.h" />
     <ClInclude Include="..\Thirdparty\Json\json.hpp" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Components\CollisionComponent.h" />
@@ -551,6 +567,7 @@
     <ClInclude Include="Components\LocationComponent.h" />
     <ClInclude Include="CoreFramework\AssetManager.h" />
     <ClInclude Include="CoreFramework\Camera.h" />
+    <ClInclude Include="CoreFramework\DebugRenderer.h" />
     <ClInclude Include="CoreFramework\EngineStatics.h" />
     <ClInclude Include="CoreFramework\EntityContainer.h" />
     <ClInclude Include="CoreFramework\Game.h" />

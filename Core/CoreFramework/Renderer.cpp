@@ -9,6 +9,9 @@
 #include "Rendering/Texture.h"
 #include "Rendering/Tileset.h"
 #include "Camera.h"
+#include "DebugRenderer.h"
+#include "imgui_impl_sdl3.h"
+#include "imgui_impl_sdlrenderer3.h"
 #include "Level.h"
 
 bool Renderer::IsWithinWorldSpaceViewport(const Rect& WorldRect) const
@@ -83,7 +86,10 @@ void Renderer::Present()
         }
         SDL_RenderTexture(SDLRenderer, texture->Tileset->SDLTexture, &sourceRect, &destRect);
     }
-    
+
+    DebugRenderer::Draw();
+    ImGui::Render();
+    ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), SDLRenderer);
     SDL_RenderPresent(SDLRenderer);
     
     DrawCallIdx = 0;

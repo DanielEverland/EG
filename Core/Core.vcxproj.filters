@@ -174,7 +174,22 @@
     <ClCompile Include="Utilities\FileHelpers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CoreFramework\Logging.cpp">
+    <ClCompile Include="CoreFramework\EntityContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Logging\CategoryLogFormatter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Logging\FrameCountLogFormatter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Logging\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Logging\VerbosityLogFormatter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\ConversionUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -359,7 +374,22 @@
     <ClInclude Include="Utilities\FileHelpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CoreFramework\Logging.h">
+    <ClInclude Include="CoreFramework\EntityContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging\CategoryLogFormatter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging\FrameCountLogFormatter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging\Logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging\VerbosityLogFormatter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\ConversionUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
