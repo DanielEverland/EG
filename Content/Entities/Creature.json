@@ -16,6 +16,10 @@
         },
         {
             "Id": "MovementComponent"
+        },
+        {
+            "Id": "HealthComponent",
+            "Health": 15.0
         }
     ]
 }

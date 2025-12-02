@@ -30,6 +30,8 @@ public:
     Entity CreateEntity(const std::string& templateId) const;
     Entity CreateEntity(const std::string& templateId, const IntVector& position) const;
 
+    void ConsumeEntitiesMarkedDestroy();
+
     template<class T>
     bool EntityHasComponent(Entity entity)
     {
@@ -64,6 +66,7 @@ private:
     ComponentManager Components;
     std::unordered_map<IntVector, Chunk> Chunks;
     std::vector<Entity> EmptyEntities;
+    std::vector<Entity> EntitiesMarkedDestroy;
 
     void OnEntityLocationChanged(const GameplayMessage& message);
     EntityContainer* TryGetEntityContainer(const IntVector& worldPosition); 

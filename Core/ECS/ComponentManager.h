@@ -6,6 +6,7 @@
 #include <cassert>
 #include <memory>
 #include <ranges>
+#include <type_traits>
 
 #include "ComponentContainer.h"
 #include "Entity.h"
@@ -88,6 +89,7 @@ public:
     template<class T>
     bool ContainsComponent(Entity entity)
     {
+        static_assert(std::derived_from<T, Component> == true, "T does not derive from Component");
         ComponentContainer<T>& Container = GetContainer<T>();
         return Container.Contains(entity);
     }
@@ -95,6 +97,7 @@ public:
     template<class T, typename Predicate>
     bool ContainsComponent(Entity entity, Predicate pred)
     {
+        static_assert(std::derived_from<T, Component> == true, "T does not derive from Component");
         if (auto comp = TryGetComponent<T>(entity))
         {
             return pred(comp);
@@ -105,6 +108,8 @@ public:
     template<class T>
     T& AddComponent(Entity entity)
     {
+        static_assert(std::derived_from<T, Component> == true, "T does not derive from Component");
+        
         ComponentContainer<T>& Container = GetContainer<T>();
         Container.Add(entity);
         return Container.Get(entity);
@@ -121,6 +126,7 @@ public:
     template<class T>
     T* TryGetComponent(Entity entity)
     {
+        static_assert(std::derived_from<T, Component> == true, "T does not derive from Component");
         ComponentContainer<T>& Container = GetContainer<T>();
         if (!Container.Contains(entity))
             return nullptr;
@@ -130,6 +136,7 @@ public:
     template<class T>
     T& GetComponentChecked(Entity entity)
     {
+        static_assert(std::derived_from<T, Component> == true, "T does not derive from Component");
         ComponentContainer<T>& Container = GetContainer<T>();
         assert(Container.Contains(entity));
         return Container.Get(entity);

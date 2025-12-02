@@ -10,7 +10,12 @@
 
 class EntityContainer
 {
-public:    
+public:
+    EntityContainer() = default;
+    EntityContainer(const EntityContainer& other) = delete;
+    EntityContainer(EntityContainer&& other) noexcept;
+    EntityContainer& operator=(const EntityContainer& other) = delete;
+    
     std::vector<Entity> Entities;
 
     template<class T>
@@ -20,6 +25,20 @@ public:
         {
             if (auto comp = GetComponentManager().TryGetComponent<T>(entity))
             {
+                return comp;
+            }
+        }
+        return nullptr;
+    }
+
+    template<class T>
+    T* TryGetFirstComponent(Entity& outEntity) const
+    {
+        for (Entity entity : Entities)
+        {
+            if (auto comp = GetComponentManager().TryGetComponent<T>(entity))
+            {
+                outEntity = entity;
                 return comp;
             }
         }

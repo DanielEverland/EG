@@ -22,6 +22,8 @@ void Game::Tick()
     Input::Get().ProcessInputBuffer();
     
     RealTimeSystems.Tick();
+    
+    CurrentLevel->ConsumeEntitiesMarkedDestroy();
 }
 
 void Game::StartRound()

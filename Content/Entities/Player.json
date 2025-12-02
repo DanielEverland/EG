@@ -7,6 +7,13 @@
         {
             "Id": "TextureRendererComponent",
             "TextureName": "Player"
+        },
+        {
+            "Id": "AttackerComponent"
+        },
+        {
+            "Id": "HealthComponent",
+            "Health": 30.0
         }
     ]
 }

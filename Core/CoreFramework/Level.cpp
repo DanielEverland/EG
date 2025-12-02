@@ -71,10 +71,18 @@ Entity Level::CreateEntity(const std::string& templateId, const IntVector& posit
     Application::Get().GetEntityFactory()->PopulateEntity(entity, templateId, position);
     return entity;
 }
+void Level::ConsumeEntitiesMarkedDestroy()
+{
+    for (Entity toDestroy : EntitiesMarkedDestroy)
+    {
+        Components.RemoveEntity(toDestroy);
+    }
+    EntitiesMarkedDestroy.clear();
+}
 
 void Level::DestroyEntity(Entity entity)
 {
-    Components.RemoveEntity(entity);
+    EntitiesMarkedDestroy.push_back(entity);
 }
 
 const EntityContainer& Level::GetEntitiesAtPosition(const IntVector& position)
@@ -96,8 +104,8 @@ bool Level::IsValidMove(Entity entity, const IntVector& from, const IntVector& t
     IntVector diff = from - to;
     std::shared_ptr<Level> level = Game::Get().GetLevel();
 
-    auto currentPosContainer = level->GetEntitiesAtPosition(from);
-    auto targetPosContainer = level->GetEntitiesAtPosition(to);
+    auto& currentPosContainer = level->GetEntitiesAtPosition(from);
+    auto& targetPosContainer = level->GetEntitiesAtPosition(to);
 
     if (diff.Z != 0)
     {

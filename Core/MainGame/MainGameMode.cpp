@@ -1,6 +1,10 @@
 #include "MainGameMode.h"
 
 #include <unordered_set>
+
+#include "Combat/MeleeAttackEntry.h"
+#include "Components/AttackerComponent.h"
+#include "Components/HealthComponent.h"
 #include "Components/LocationComponent.h"
 #include "Components/MovementComponent.h"
 #include "CoreFramework/Camera.h"
@@ -9,7 +13,9 @@
 #include "Input/Input.h"
 #include "Input/InputAction.h"
 #include "Levels/Map.h"
+#include "Systems/AttackSystem.h"
 #include "Systems/CreatureAISystem.h"
+#include "Systems/DeathSystem.h"
 #include "Systems/MovementSystem.h"
 #include "Utilities/DirectoryHelpers.h"
 
@@ -25,6 +31,8 @@ void MainGameMode::Initialize()
 
     Game::Get().CreateSystem<CreatureAISystem>(SystemCategory::GameTime);
     Game::Get().CreateSystem<MovementSystem>(SystemCategory::GameTime);
+    Game::Get().CreateSystem<AttackSystem>(SystemCategory::GameTime);
+    Game::Get().CreateSystem<DeathSystem>(SystemCategory::GameTime);
 }
 
 void MainGameMode::LoadMap(std::shared_ptr<Level> level)
@@ -124,27 +132,46 @@ void MainGameMode::HandlePlanarMovementInput(int32_t value, bool bIsHorizontal)
 {
     Game game = Game::Get();
     std::shared_ptr<Level> level = game.GetLevel();
+    ComponentManager& componentManager = game.GetLevel()->GetComponentManager();
     Entity possessedEntity = game.GetGameMode()->GetPossessedEntity();
     if (possessedEntity == InvalidEntity)
         return;
 
-    auto& movementComponent = game.GetLevel()->GetComponentManager().GetComponentChecked<MovementComponent>(possessedEntity);
-    const auto& locationComponent = game.GetLevel()->GetComponentManager().GetComponentChecked<LocationComponent>(possessedEntity);
+    auto& movementComponent = componentManager.GetComponentChecked<MovementComponent>(possessedEntity);
+    const auto& locationComponent = componentManager.GetComponentChecked<LocationComponent>(possessedEntity);
 
-    movementComponent.TargetLocation = locationComponent.GetLocation();
+    IntVector targetLocation = locationComponent.GetLocation();
     if (bIsHorizontal)
     {
-        movementComponent.TargetLocation.X += value;
+        targetLocation.X += value;
     }
     else
     {
-        movementComponent.TargetLocation.Y += value;
+        targetLocation.Y += value;
     }
 
-    if (level->IsValidMove(possessedEntity, locationComponent.GetLocation(), movementComponent.TargetLocation))
+    if (level->IsValidMove(possessedEntity, locationComponent.GetLocation(), targetLocation))
     {
+        movementComponent.TargetLocation = targetLocation;
         Camera::Get().SetSnapToPossessed(true);
         game.StartRound();
+        return;
+    }
+
+    if (auto attackComponent = componentManager.TryGetComponent<AttackerComponent>(possessedEntity))
+    {
+        const EntityContainer& containerAtLocation = level->GetEntitiesAtPosition(targetLocation);
+        Entity targetEntity;
+        if (auto _ = containerAtLocation.TryGetFirstComponent<HealthComponent>(targetEntity))
+        {
+            std::shared_ptr<MeleeAttackEntry> meleeAttack = std::make_shared<MeleeAttackEntry>();
+            meleeAttack->Target = targetEntity;
+
+            attackComponent->PendingAttack = meleeAttack;
+            Camera::Get().SetSnapToPossessed(true);
+            game.StartRound();
+            return;
+        }
     }
 }
 
