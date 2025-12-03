@@ -11,6 +11,9 @@
         {
             "Id": "MovementComponent",
             "MovementSpeed": 0.75
+        },
+        {
+            "Id": "AttackerComponent"
         }
     ]
 }
