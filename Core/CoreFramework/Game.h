@@ -38,6 +38,7 @@ public:
     void Tick();
     void StartRound();
     void PrePresent();
+    double GetTime() const { return Time; }
     
     Entity GetNextEntity();
     std::shared_ptr<Level> GetLevel() const { return CurrentLevel; }
@@ -83,6 +84,8 @@ public:
 private:
     static inline Game* Instance = nullptr;
     Entity CurrentEntity = 0;
+    double Time = 0.0;
+    std::chrono::time_point<std::chrono::steady_clock> lastFrameTime = std::chrono::high_resolution_clock::now();
 
     // Ticks once per game round
     SystemScheduler GameTimeSystems;

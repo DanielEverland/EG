@@ -3,6 +3,7 @@
 
 #include "LocationComponent.h"
 #include "GameplayMessages/GameplayMessages.h"
+#include "GameplayMessages/LocationChangedMessage.h"
 
 void LocationComponent::SetLocation(Entity owner, const IntVector& newLocation)
 {

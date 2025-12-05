@@ -1,31 +1,72 @@
 #include "RenderingSystem.h"
 
-#include "Components/LocationComponent.h"
+#include <unordered_set>
+
 #include "Components/TextureRendererComponent.h"
 #include "CoreFramework/Camera.h"
 
 void RenderingSystem::Execute()
 {
-    Renderer& renderer = Renderer::Get();
-    static IntVector2D tileSize = IntVector2D(16 * 2, 24 * 2);
-    IntVector camLoc = Camera::Get().GetPosition();
+    constexpr int32_t renderingMargin = 1;
     
-    Query<LocationComponent, TextureRendererComponent>(
-        [&](const LocationComponent& location, const TextureRendererComponent& renderData)
-        {
-            Rect worldRect = Rect
-            {
-                location.GetLocation().X * tileSize.X - tileSize.X / 2,
-                location.GetLocation().Y * tileSize.Y - tileSize.Y / 2,
-                tileSize.X,
-                tileSize.Y,
-            };
+    Renderer& renderer = Renderer::Get();
+    std::shared_ptr<Level> level = Game::Get().GetLevel();
+    IntVector camLoc = Camera::Get().GetPosition();
+    Rect worldViewport = renderer.GetViewportRect();
+    worldViewport.Width /= Renderer::CellRenderingSize.X;
+    worldViewport.Height /= Renderer::CellRenderingSize.Y;
+    worldViewport.Width += renderingMargin * 2;
+    worldViewport.Height += renderingMargin * 2;
+    worldViewport.X = camLoc.X - worldViewport.Width / 2 - renderingMargin;
+    worldViewport.Y = camLoc.Y - worldViewport.Height / 2 - renderingMargin;
 
-            Vector relativePosition = location.GetLocation() - camLoc;
-            if (renderer.IsWithinWorldSpaceViewport(worldRect) && relativePosition.Z <= FLT_EPSILON)
+    for (int x = worldViewport.X; x < worldViewport.X + worldViewport.Width; ++x)
+    {
+        for (int y = worldViewport.Y; y < worldViewport.Y + worldViewport.Height; ++y)
+        {
+            IntVector2D pos = IntVector2D(x, y);
+            if (camLoc.Z != lastZDepth || !lastRenderedWorldRect.Contains(pos))
             {
-                renderer.Draw(relativePosition, tileSize, renderData.TextureName, renderData.Order);
+                for (int z = 0; z < renderer.GetMaxRenderingDepth(); ++z)
+                {
+                    IntVector worldPos = IntVector(pos.X, pos.Y, camLoc.Z - z);
+                    DrawEntitiesInCell(worldPos);
+                }
             }
         }
-    );
+    }
+
+    std::unordered_set<IntVector> dirtyCells = renderer.PopDirtyCells();
+    for (const IntVector& pos : dirtyCells)
+    {
+        DrawEntitiesInCell(pos);
+    }
+    
+    lastRenderedWorldRect = worldViewport;
+    lastZDepth = camLoc.Z;
+}
+
+void RenderingSystem::DrawEntitiesInCell(const IntVector& worldPosition)
+{
+    std::shared_ptr<Level> level = Game::Get().GetLevel();
+    Renderer& renderer = Renderer::Get();
+    const EntityContainer& container = level->GetEntitiesAtPosition(worldPosition);
+    ComponentManager& componentManager = level->GetComponentManager();
+
+    for (Entity entity : container.Entities)
+    {
+        if (TextureRendererComponent* renderingComp = componentManager.TryGetComponent<TextureRendererComponent>(entity))
+        {
+            Vector relativePosition = worldPosition - Camera::Get().GetPosition();
+            renderer.Draw(relativePosition, Renderer::CellRenderingSize, renderingComp->TextureName, renderingComp->Order);
+        }
+    }
+    
+    Vector pos = Vector(
+        static_cast<float>(worldPosition.X * Renderer::CellRenderingSize.X),
+        static_cast<float>(worldPosition.Y * Renderer::CellRenderingSize.Y),
+        static_cast<float>(worldPosition.Z));
+    
+    Vector size = Vector(Renderer::CellRenderingSize);
+    renderer.DrawDebugBox(pos, size, Color(255, 0, 0, 150), 5.0f);
 }

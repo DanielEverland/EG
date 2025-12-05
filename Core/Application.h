@@ -16,8 +16,8 @@ public:
 
     std::shared_ptr<EntityFactory> GetEntityFactory() const { return EntityTemplateFactory; }
 
-    uint16_t GameTimeMs;
-    uint16_t RenderTimeMs;
+    float GameTimeMs;
+    float RenderTimeMs;
     
     void HandleInputEvent(const SDL_KeyboardEvent& key, bool isKeyDown);
     void Initialize();

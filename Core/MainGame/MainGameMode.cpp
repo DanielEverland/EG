@@ -53,7 +53,7 @@ void MainGameMode::CreatePlayer(std::shared_ptr<Level> level, ComponentManager& 
     Entity playerEntity = level->CreateEntity("Player");
     SetPossessedEntity(playerEntity);
     auto& playerLocation = level->GetComponentManager().GetComponentChecked<LocationComponent>(playerEntity);
-    playerLocation.SetLocation(playerEntity, IntVector(12, 12, 0));
+    playerLocation.SetLocation(playerEntity, IntVector(18, 12, 0));
 }
 
 void MainGameMode::SpawnEnemies(std::shared_ptr<Level> level, ComponentManager& componentManager)

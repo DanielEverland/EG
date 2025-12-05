@@ -11,6 +11,7 @@ void Application::Initialize()
     LoadContent();
     
     Game::Get().Initialize();
+    Renderer::Get().Initialize();
 }
 
 void Application::Tick()

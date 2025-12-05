@@ -9,6 +9,8 @@
 #include <string>
 #include <SDL3/SDL_rect.h>
 
+#include "DataStructrues/Vector.h"
+
 struct Rect
 {
     Rect() = default;
@@ -27,6 +29,7 @@ struct Rect
 
     bool Intersects(const Rect& other) const;
     bool Intersects(const SDL_FRect& other) const;
+    bool Contains(const IntVector2D point) const;
 
     operator SDL_FRect() const;
 

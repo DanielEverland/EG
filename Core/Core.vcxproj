@@ -227,6 +227,7 @@
     <ClCompile Include="ECS\System.cpp" />
     <ClCompile Include="ECS\SystemScheduler.cpp" />
     <ClCompile Include="GameplayMessages\GameplayMessages.cpp" />
+    <ClCompile Include="GameplayMessages\LocationChangedMessage.cpp" />
     <ClCompile Include="Input\GenericHandle.cpp" />
     <ClCompile Include="Input\Input.cpp" />
     <ClCompile Include="Input\InputAction.cpp" />
@@ -609,6 +610,7 @@
     <ClInclude Include="ECS\System.h" />
     <ClInclude Include="ECS\SystemScheduler.h" />
     <ClInclude Include="GameplayMessages\GameplayMessages.h" />
+    <ClInclude Include="GameplayMessages\LocationChangedMessage.h" />
     <ClInclude Include="Input\GenericHandle.h" />
     <ClInclude Include="Input\Input.h" />
     <ClInclude Include="Input\InputAction.h" />

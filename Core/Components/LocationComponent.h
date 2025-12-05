@@ -10,13 +10,6 @@
 #include "GameplayMessages/GameplayMessages.h"
 REGISTER_COMP_FACTORY(LocationComponentFactory, "LocationComponent");
 
-struct LocationChangedMessage : public GameplayMessage
-{
-    Entity Owner;
-    IntVector OldLocation;
-    IntVector NewLocation;
-};
-
 class LocationComponent : public Component
 {
 public:

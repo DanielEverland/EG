@@ -19,6 +19,10 @@ void Game::Initialize()
 
 void Game::Tick()
 {
+    auto diff = std::chrono::duration_cast< std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - lastFrameTime);
+    lastFrameTime = std::chrono::high_resolution_clock::now();
+    Time += static_cast<double>(diff.count()) / 1000000.0;
+    
     Input::Get().ProcessInputBuffer();
     
     RealTimeSystems.Tick();

@@ -5,6 +5,9 @@
 
 void Camera::SetPosition(const IntVector& position)
 {
+    IntVector delta = position - CameraPosition;
+    Renderer::Get().AddCameraMovement(delta);
+    
     CameraPosition = position;
 
     Rect viewportRect = Renderer::Get().GetViewportRect();

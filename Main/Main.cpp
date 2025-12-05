@@ -74,13 +74,13 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     auto startTime = std::chrono::high_resolution_clock::now();
     app.Tick();
     app.PrePresent();
-    auto gameCount = std::chrono::duration_cast< std::chrono::milliseconds >( std::chrono::high_resolution_clock::now() - startTime );
+    auto gameCount = std::chrono::duration_cast< std::chrono::microseconds >( std::chrono::high_resolution_clock::now() - startTime );
     startTime = std::chrono::high_resolution_clock::now();
     Renderer::Get().Present();
-    auto renderCount = std::chrono::duration_cast< std::chrono::milliseconds >( std::chrono::high_resolution_clock::now() - startTime );
+    auto renderCount = std::chrono::duration_cast< std::chrono::microseconds >( std::chrono::high_resolution_clock::now() - startTime );
     
-    app.GameTimeMs = static_cast<uint16_t>(gameCount.count());
-    app.RenderTimeMs = static_cast<uint16_t>(renderCount.count());
+    app.GameTimeMs = static_cast<float>(gameCount.count()) / 1000.0f;
+    app.RenderTimeMs = static_cast<float>(renderCount.count()) / 1000.0f;
     
     return SDL_APP_CONTINUE;
 }

@@ -9,9 +9,11 @@ class Color
 {
 public:
     Color() = default;
-    Color(const uint8_t R, const uint8_t G, const uint8_t B) : R(R), G(G), B(B) { }
+    Color(const uint8_t R, const uint8_t G, const uint8_t B) : R(R), G(G), B(B), A(255) { }
+    Color(const uint8_t R, const uint8_t G, const uint8_t B, const uint8_t A) : R(R), G(G), B(B), A(A) { }
     
     uint8_t R;
     uint8_t G;
     uint8_t B;
+    uint8_t A;
 };

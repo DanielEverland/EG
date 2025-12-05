@@ -5,8 +5,13 @@
 
 #include <array>
 #include <cassert>
+#include <unordered_set>
+
 #include "AssetManager.h"
 #include "DataStructrues/Vector.h"
+#include "ECS/Entity.h"
+#include "GameplayMessages/LocationChangedMessage.h"
+#include "Primitives/Color.h"
 
 struct SDL_Renderer;
 
@@ -18,6 +23,18 @@ enum class DrawCallOrder : uint8_t
 
 class Renderer
 {
+    struct DebugDrawEntry
+    {
+        virtual ~DebugDrawEntry() = default;
+        double EndTime;
+    };
+
+    struct DebugDrawBox : DebugDrawEntry
+    {
+        Rect Rect;
+        Color Color;
+    };
+    
     struct DrawCall
     {
         HashedString TextureName = HashedString("Default");
@@ -47,15 +64,25 @@ public:
 
     SDL_Renderer* GetSDLRenderer() const { return SDLRenderer; }
 
+    void Draw(const Vector& relativeCameraPosition, const IntVector& destRectSize, const HashedString& textureName, DrawCallOrder order);
+
+    void DrawDebugBox(const Vector& worldPosition, const Vector& size, const Color& color, float duration);
+
+    void AddCameraMovement(const IntVector& delta);
     bool IsWithinWorldSpaceViewport(const Rect& WorldRect) const;
     Rect GetViewportRect() const;
     void SetWorldViewportRect(const Rect& worldRect) { WorldViewportRect = worldRect; }
     size_t GetFrameCount() const { return FrameCount; }
-    void Draw(const Vector& relativeCameraPosition, const IntVector& destRectSize, const HashedString& textureName, DrawCallOrder order);
     void Present();
+    void Initialize();
+    uint8_t GetMaxRenderingDepth() const { return ShadingLevels; }
+    std::unordered_set<IntVector> PopDirtyCells();
 
 private:
     static constexpr size_t MaxNumDrawCalls = 8192 * 2 * 2 * 2;
+    static constexpr uint8_t StartingShade = 150;
+    static constexpr uint8_t ShadingLevels = 8;
+    static constexpr uint8_t ShadingPerLevel = (255 - StartingShade) / ShadingLevels;
 
     Rect WorldViewportRect = { };
     size_t LastDrawcallBufferOverflow = 0;
@@ -63,8 +90,15 @@ private:
 
     size_t DrawCallIdx = 0;
     std::array<DrawCall, MaxNumDrawCalls> DrawCalls;
+    std::vector<std::unique_ptr<DebugDrawEntry>> DebugDrawEntries;
+    std::unordered_set<IntVector> DirtyCells;
     
     SDL_Renderer* SDLRenderer = nullptr;
+    SDL_Texture* TerrainRenderTarget = nullptr;
+    SDL_Texture* TerrainRenderTargetBackbuffer = nullptr;
+    IntVector CameraDelta = IntVector(0, 0, 0);
 
-    Renderer::DrawCall& GetDrawCallStruct();
+    DrawCall& GetDrawCallStruct();
+    void DrawDebug();
+    void OnEntityLocationChanged(const GameplayMessage& baseMsg);
 };

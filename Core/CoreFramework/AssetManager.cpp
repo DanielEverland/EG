@@ -65,6 +65,8 @@ void AssetManager::LoadTileSet()
     assert(!fullImagePath.empty());
 
     std::shared_ptr<Tileset> tileset = LoadTileset(fullImagePath.string());
+    if (tileset == nullptr)
+        return;
 
     auto allTiles = info["Tiles"];
     for (auto element : allTiles)
@@ -137,6 +139,8 @@ std::shared_ptr<Tileset> AssetManager::LoadTileset(const std::string& assetFileP
     
     toReturn->SDLTexture = SDL_CreateTextureFromSurface(Renderer::Get().GetSDLRenderer(), toReturn->SDLSurface);
     assert(toReturn->SDLTexture);
+    if (toReturn->SDLTexture == nullptr)
+        return nullptr;
     SDL_SetTextureScaleMode(toReturn->SDLTexture, SDL_SCALEMODE_NEAREST);
     return toReturn;
 }

@@ -69,6 +69,12 @@ struct TemplatedVector2D
     {
         return std::sqrt(std::pow(X, 2) + std::pow(Y, 2));
     }
+
+    template<typename U>
+    TemplatedVector2D operator/ (U val) const
+    {
+        return TemplatedVector2D(X / val, Y / val);
+    }
 };
 
 template<class T>
@@ -140,7 +146,13 @@ struct TemplatedVector
 
     float SizeF() const
     {
-        return std::sqrt(X * X + Y * Y + Z * Z);
+        return std::sqrt(static_cast<float>(X * X + Y * Y + Z * Z));
+    }
+    
+    template<typename U>
+    TemplatedVector operator* (U val) const
+    {
+        return TemplatedVector(X * val, Y * val, Z * val);
     }
 };
 
