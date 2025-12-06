@@ -5,6 +5,7 @@
 #include "Application.h"
 #include "GameSettings.h"
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "Level.h"
 #include "Logging/Logger.h"
 
@@ -118,19 +119,47 @@ void DebugRenderer::DrawEntitiesTabContent()
     ImGui::Checkbox("Debug Under Cursor", &DebugEntitiesUnderCursor);
     if (DebugEntitiesUnderCursor)
     {
-        ImVec2 mousePos = ImGui::GetMousePos();
-        Vector mousePosInWorld = WorldPositionUtility::ScreenPositionToWorld(Vector2D(mousePos.x, mousePos.y));
+        if (!ImGui::IsKeyDown(ImGuiKey_LeftCtrl))
+        {
+            CursorPosition = ImGui::GetMousePos();
+        }
+        Vector mousePosInWorld = WorldPositionUtility::ScreenPositionToWorld(Vector2D(CursorPosition.x, CursorPosition.y));
         IntVector mousePosInCell = WorldPositionUtility::WorldPositionToCellPosition(mousePosInWorld);
-        IntVector chunkPos = WorldPositionUtility::WorldPositionToChunkPosition(IntVector(mousePosInWorld));
-        IntVector chunkSpace = WorldPositionUtility::WorldSpaceToChunkSpace(IntVector(mousePosInWorld));
-        
-        ImGui::SetNextWindowPos(mousePos);
+        IntVector chunkPos = WorldPositionUtility::WorldPositionToChunkPosition(mousePosInCell);
+        IntVector chunkSpace = WorldPositionUtility::WorldSpaceToChunkSpace(mousePosInCell);
 
-        ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoBackground;
+        ImVec2 renderPos = CursorPosition;
+        ImGuiWindow* existingWindow = ImGui::FindWindowByName("##DebugRenderer::DrawEntitiesTabContent_MouseCursorDebug");
+        if (existingWindow != nullptr)
+        {
+            auto viewport = ImGui::GetMainViewport();
+            if (renderPos.y + existingWindow->Size.y > viewport->Size.y)
+            {
+                renderPos.y -= (existingWindow->Size.y + renderPos.y) - viewport->Size.y;
+            }
+            else if (renderPos.y < 0)
+            {
+                renderPos.y = 0;
+            }
+
+            if (renderPos.x + existingWindow->Size.x > viewport->Size.x)
+            {
+                renderPos.x -= (existingWindow->Size.x + renderPos.x) - viewport->Size.x;
+            }
+            else if (renderPos.x < 0)
+            {
+                renderPos.x = 0;
+            }
+        }
+        ImGui::SetNextWindowPos(renderPos);
+        
+
+        ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBackground;
         flags &= ~(ImGuiWindowFlags_NoBackground);
         ImGui::Begin("##DebugRenderer::DrawEntitiesTabContent_MouseCursorDebug", nullptr, flags);
-        
-        ImGui::Text("Mouse World Pos: %s", mousePosInWorld.ToString().c_str());
+
+        ImGui::TextDisabled("Hold down CTRL to interact with window");
+        ImGui::Text("Mouse World Pos: (%.2f, %.2f, %.2f)", mousePosInWorld.X, mousePosInWorld.Y, mousePosInWorld.Z);
         ImGui::Text("Cell Pos: %s", mousePosInCell.ToString().c_str());
 
         ImGui::Text("Chunk: %s", chunkPos.ToString().c_str());
@@ -167,7 +196,7 @@ void DebugRenderer::DrawEntityFoldout(Entity entity)
     std::shared_ptr<Level> level = Game::Get().GetLevel();
     
     std::string id = std::format("Entity ID({})##DebugRenderer::DrawEntityFoldout", entity);
-    ImGui::SetNextItemOpen(true);
+    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::CollapsingHeader(id.c_str(), nullptr))
     {
         std::vector<Component*> comps = level->GetComponentManager().GetAllComponents(entity);
@@ -175,7 +204,7 @@ void DebugRenderer::DrawEntityFoldout(Entity entity)
         for (Component* comp : comps)
         {
             auto treeId = std::format("{}##{}{}", typeid(*comp).name(), entity, typeid(*comp).hash_code());
-            ImGui::SetNextItemOpen(true);
+            ImGui::SetNextItemOpen(true, ImGuiCond_Once);
             if (ImGui::TreeNode(treeId.c_str()))
             {
                 auto iter = Drawers.find(typeid(*comp));

@@ -6,6 +6,7 @@
 #include <typeindex>
 #include <unordered_map>
 #include <memory>
+#include <string>
 
 #include "imgui.h"
 #include "ECS/Entity.h"
@@ -20,7 +21,9 @@ public:
 
 private:
     static inline bool DebugEntitiesUnderCursor = false;
+    static inline ImVec2 CursorPosition = ImVec2(0, 0);
     static inline std::unordered_map<std::type_index, std::unique_ptr<DebugDrawer>> Drawers = { };
+    static inline std::unordered_map<size_t, bool> FoldoutState = { };
     
     template<typename T, typename Comp>
     static ImVec4 GetRenderColor(T highThreshold, T mediumThreshold, T value, Comp comp)
