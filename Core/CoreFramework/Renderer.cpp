@@ -94,6 +94,7 @@ void Renderer::Present()
     if (CameraDelta.SizeF() > FLT_EPSILON)
     {
         SDL_SetRenderTarget(SDLRenderer, TerrainRenderTargetBackbuffer);
+        SDL_RenderClear(SDLRenderer);
         SDL_FRect moveTargetRect = sdlViewportRect;
         moveTargetRect.x -= CameraDelta.X * CellRenderingSize.X;
         moveTargetRect.y -= CameraDelta.Y * CellRenderingSize.Y;
@@ -172,6 +173,9 @@ Renderer::DrawCall& Renderer::GetDrawCallStruct()
 
 void Renderer::DrawDebug()
 {
+    if (DebugDrawEntries.size() == 0)
+        return;
+    
     Vector camPos = Camera::Get().GetPosition();
     camPos.X *= static_cast<float>(CellRenderingSize.X);
     camPos.Y *= static_cast<float>(CellRenderingSize.Y);

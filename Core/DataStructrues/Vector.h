@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <type_traits>
 #include <float.h>
+#include <iosfwd>
+#include <ostream>
 #include <valarray>
 
 template<typename T, typename U>
@@ -182,6 +184,17 @@ struct std::hash<TemplatedVector2D<T>>
         return seed;
     }
 };
+
+// Output formatting
+template<class T>
+inline std::ostream& operator<<(std::ostream& os, const TemplatedVector<T>& v) {
+    return os << "(" << v.X << ", " << v.Y << ", " << v.Z << ')';
+}
+
+template<class T>
+inline std::ostream& operator<<(std::ostream& os, const TemplatedVector2D<T>& v) {
+    return os << "(" << v.X << ", " << v.Y << ')';
+}
 
 // Common types
 typedef TemplatedVector2D<int32_t> IntVector2D;

@@ -29,10 +29,10 @@ void CreatureAISystem::Execute()
             IntVector diff = targetLocationComp->GetLocation() - location.GetLocation();
             if (diff.Z == 0 && std::max(abs(diff.X), abs(diff.Y)) == 1)
             {
-                auto attackEntry = std::make_shared<MeleeAttackEntry>();
+                /*auto attackEntry = std::make_shared<MeleeAttackEntry>();
                 attackEntry->Target = possessedEntity;
 
-                attacker.PendingAttack = attackEntry;
+                attacker.PendingAttack = attackEntry;*/
             }
             else
             {

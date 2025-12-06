@@ -6,10 +6,15 @@
 
 IntVector WorldPositionUtility::WorldPositionToChunkPosition(IntVector WorldPosition)
 {
+    // Required to handle negative values
+    static auto DoDivFloor = [](int Value, int Size) {
+        return Value >= 0 ? Value / Size : (Value - Size + 1) / Size;
+    };
+
     return IntVector
     {
-        WorldPosition.X / ChunkWidth,
-        WorldPosition.Y / ChunkHeight,
+        DoDivFloor(WorldPosition.X, ChunkWidth),
+        DoDivFloor(WorldPosition.Y, ChunkHeight),
         WorldPosition.Z
     };
 }

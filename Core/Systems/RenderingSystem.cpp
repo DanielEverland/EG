@@ -7,7 +7,7 @@
 
 void RenderingSystem::Execute()
 {
-    constexpr int32_t renderingMargin = 1;
+    constexpr int32_t renderingMargin = 0;
     
     Renderer& renderer = Renderer::Get();
     std::shared_ptr<Level> level = Game::Get().GetLevel();
@@ -61,12 +61,13 @@ void RenderingSystem::DrawEntitiesInCell(const IntVector& worldPosition)
             renderer.Draw(relativePosition, Renderer::CellRenderingSize, renderingComp->TextureName, renderingComp->Order);
         }
     }
-    
+
+    // Draw debug rects when updating terrain render target
     Vector pos = Vector(
         static_cast<float>(worldPosition.X * Renderer::CellRenderingSize.X),
         static_cast<float>(worldPosition.Y * Renderer::CellRenderingSize.Y),
         static_cast<float>(worldPosition.Z));
     
     Vector size = Vector(Renderer::CellRenderingSize);
-    renderer.DrawDebugBox(pos, size, Color(255, 0, 0, 150), 5.0f);
+    renderer.DrawDebugBox(pos, size, Color(255, 0, 0, 150), 1.0f);
 }
