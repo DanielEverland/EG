@@ -103,7 +103,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions);WITH_SDL;WITH_SDL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -121,7 +121,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions);WITH_SDL;WITH_SDL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -141,7 +141,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions);WITH_SDL;WITH_SDL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -163,7 +163,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions);WITH_SDL;WITH_SDL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -207,6 +207,7 @@
     <ClCompile Include="CoreFramework\Game.cpp" />
     <ClCompile Include="CoreFramework\GameComponent.cpp" />
     <ClCompile Include="CoreFramework\GameMode.cpp" />
+    <ClCompile Include="CoreFramework\GameSettings.cpp" />
     <ClCompile Include="CoreFramework\Level.cpp" />
     <ClCompile Include="CoreFramework\LevelNavigationGraphTraverser.cpp" />
     <ClCompile Include="CoreFramework\Navigation.cpp" />
@@ -217,6 +218,12 @@
     <ClCompile Include="DataStructrues\HashedString.cpp" />
     <ClCompile Include="DataStructrues\SparseSet.cpp" />
     <ClCompile Include="DataStructrues\Vector.cpp" />
+    <ClCompile Include="Debugging\DebugDrawer.cpp" />
+    <ClCompile Include="Debugging\HealthComponentDebugDrawer.cpp" />
+    <ClCompile Include="Debugging\LocationComponentDebugDrawer.cpp" />
+    <ClCompile Include="Debugging\MovementComponentDebugDrawer.cpp" />
+    <ClCompile Include="Debugging\NavigableComponentDebugDrawer.cpp" />
+    <ClCompile Include="Debugging\TextureRendererComponentDebugDrawer.cpp" />
     <ClCompile Include="ECS\Component.cpp" />
     <ClCompile Include="ECS\ComponentContainer.cpp" />
     <ClCompile Include="ECS\ComponentFactory.cpp" />
@@ -580,8 +587,8 @@
     <ClInclude Include="Components\HealthComponent.h" />
     <ClInclude Include="Components\MovementComponent.h" />
     <ClInclude Include="Components\NavigableComponent.h" />
-    <ClInclude Include="Components\TextureRendererComponent.h" />
     <ClInclude Include="Components\LocationComponent.h" />
+    <ClInclude Include="Components\TextureRendererComponent.h" />
     <ClInclude Include="CoreFramework\AssetManager.h" />
     <ClInclude Include="CoreFramework\Camera.h" />
     <ClInclude Include="CoreFramework\DebugRenderer.h" />
@@ -590,6 +597,7 @@
     <ClInclude Include="CoreFramework\Game.h" />
     <ClInclude Include="CoreFramework\GameComponent.h" />
     <ClInclude Include="CoreFramework\GameMode.h" />
+    <ClInclude Include="CoreFramework\GameSettings.h" />
     <ClInclude Include="CoreFramework\Level.h" />
     <ClInclude Include="CoreFramework\LevelNavigationGraphTraverser.h" />
     <ClInclude Include="CoreFramework\Navigation.h" />
@@ -600,6 +608,12 @@
     <ClInclude Include="DataStructrues\HashedString.h" />
     <ClInclude Include="DataStructrues\SparseSet.h" />
     <ClInclude Include="DataStructrues\Vector.h" />
+    <ClInclude Include="Debugging\DebugDrawer.h" />
+    <ClInclude Include="Debugging\HealthComponentDebugDrawer.h" />
+    <ClInclude Include="Debugging\LocationComponentDebugDrawer.h" />
+    <ClInclude Include="Debugging\MovementComponentDebugDrawer.h" />
+    <ClInclude Include="Debugging\NavigableComponentDebugDrawer.h" />
+    <ClInclude Include="Debugging\TextureRendererComponentDebugDrawer.h" />
     <ClInclude Include="ECS\Component.h" />
     <ClInclude Include="ECS\ComponentContainer.h" />
     <ClInclude Include="ECS\ComponentFactory.h" />

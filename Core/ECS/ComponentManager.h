@@ -142,6 +142,8 @@ public:
         return Container.Get(entity);
     }
 
+    std::vector<Component*> GetAllComponents(Entity entity);
+
     template<class... T>
     Iter<T...> CreateIterator()
     {

@@ -3,9 +3,11 @@
 
 #pragma once
 
+#include "CoreFramework/DebugRenderer.h"
 #include "DataStructrues/Vector.h"
 #include "ECS/Component.h"
 
+#include "Debugging/LocationComponentDebugDrawer.h"
 #include "Factories/LocationComponentFactory.h"
 #include "GameplayMessages/GameplayMessages.h"
 REGISTER_COMP_FACTORY(LocationComponentFactory, "LocationComponent");
@@ -19,3 +21,5 @@ public:
 private:
     IntVector WorldLocation;
 };
+
+REGISTER_DEBUGGER(LocationComponent, LocationComponentDebugDrawer);

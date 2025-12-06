@@ -4,6 +4,7 @@
 
 #include "Components/TextureRendererComponent.h"
 #include "CoreFramework/Camera.h"
+#include "CoreFramework/GameSettings.h"
 
 void RenderingSystem::Execute()
 {
@@ -62,12 +63,15 @@ void RenderingSystem::DrawEntitiesInCell(const IntVector& worldPosition)
         }
     }
 
-    // Draw debug rects when updating terrain render target
-    Vector pos = Vector(
-        static_cast<float>(worldPosition.X * Renderer::CellRenderingSize.X),
-        static_cast<float>(worldPosition.Y * Renderer::CellRenderingSize.Y),
-        static_cast<float>(worldPosition.Z));
+    if (GameSettings::Get().DebugDrawRenderedCells)
+    {
+        // Draw debug rects when updating terrain render target
+        Vector pos = Vector(
+            static_cast<float>(worldPosition.X * Renderer::CellRenderingSize.X),
+            static_cast<float>(worldPosition.Y * Renderer::CellRenderingSize.Y),
+            static_cast<float>(worldPosition.Z));
     
-    Vector size = Vector(Renderer::CellRenderingSize);
-    renderer.DrawDebugBox(pos, size, Color(255, 0, 0, 150), 1.0f);
+        Vector size = Vector(Renderer::CellRenderingSize);
+        renderer.DrawDebugBox(pos, size, Color(255, 0, 0, 150), 1.0f);
+    }
 }

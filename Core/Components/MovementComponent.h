@@ -4,6 +4,8 @@
 #pragma once
 
 #include "DataStructrues/Vector.h"
+#include "CoreFramework/DebugRenderer.h"
+#include "Debugging/MovementComponentDebugDrawer.h"
 #include "ECS/Component.h"
 
 #include "Factories/MovementComponentFactory.h"
@@ -22,3 +24,5 @@ public:
     // Leftover movement after a game tick
     float MovementSpeedRemainder = 0.0f;
 };
+
+REGISTER_DEBUGGER(MovementComponent, MovementComponentDebugDrawer);

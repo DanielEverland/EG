@@ -59,6 +59,7 @@ public:
     const EntityContainer& GetEntitiesAtPosition(const IntVector& position);
     bool IsValidMove(Entity entity, const IntVector& from, const IntVector& to) const;
     const Navigation& GetNavigation() const { return NavigationInstance; }
+    std::vector<IntVector> GetLoadedChunks() const;
     
 private:
     EntityContainer EmptyEntityContainer;

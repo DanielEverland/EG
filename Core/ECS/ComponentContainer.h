@@ -18,6 +18,7 @@ public:
     virtual void Add(Entity entity) = 0;
     virtual bool Contains(Entity entity) = 0;
     virtual void RemoveEntity(Entity entity) = 0;
+    virtual Component* GetBaseComponent(Entity entity) = 0;
     [[nodiscard]] virtual size_t Size() const = 0;
 };
 
@@ -51,6 +52,11 @@ public:
     T& Get(Entity entity)
     {
         return Components.Get(entity);
+    }
+
+    Component* GetBaseComponent(Entity entity) override
+    {
+        return &Components.Get(entity);
     }
 
     [[nodiscard]] size_t Size() const override

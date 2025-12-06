@@ -4,12 +4,16 @@
 #pragma once
 
 #include "ECS/Component.h"
+#include "CoreFramework/DebugRenderer.h"
+#include "Debugging/HealthComponentDebugDrawer.h"
 
 #include "Factories/HealthComponentFactory.h"
 REGISTER_COMP_FACTORY(HealthComponentFactory, "HealthComponent")
 
 class HealthComponent : public Component
 {
-public:
+public:    
     float Health = 10.f;
 };
+
+REGISTER_DEBUGGER(HealthComponent, HealthComponentDebugDrawer);

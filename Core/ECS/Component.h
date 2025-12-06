@@ -5,7 +5,6 @@
 
 class Component
 {
+public:
+    virtual ~Component() = default;
 };
-
-// Strictly enforce empty size of base class
-static_assert(sizeof(Component) == 1);

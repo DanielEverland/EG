@@ -5,6 +5,8 @@
 
 #include <cstdint>
 
+#include "CoreFramework/DebugRenderer.h"
+#include "Debugging/NavigableComponentDebugDrawer.h"
 #include "ECS/Component.h"
 
 #include "Factories/NavigableComponentFactory.h"
@@ -15,3 +17,5 @@ public:
     uint8_t TraversalDifficulty = 0;
     bool Climbable = false;
 };
+
+REGISTER_DEBUGGER(NavigableComponent, NavigableComponentDebugDrawer)

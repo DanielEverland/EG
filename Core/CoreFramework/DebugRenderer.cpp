@@ -3,9 +3,23 @@
 #include <algorithm>
 
 #include "Application.h"
+#include "GameSettings.h"
 #include "imgui.h"
+#include "Level.h"
+#include "Logging/Logger.h"
 
 void DebugRenderer::Draw()
+{
+    DrawFrameTimeGraph();
+    DrawDevMenu();
+}
+
+void DebugRenderer::RegisterDebugDrawer(std::type_index targetIdx, std::unique_ptr<DebugDrawer> drawer)
+{
+    Drawers[targetIdx] = std::move(drawer);
+}
+
+void DebugRenderer::DrawFrameTimeGraph()
 {
     constexpr int32_t HistogramSize = 100;
     static std::array<float, HistogramSize> FPSHistory;
@@ -38,4 +52,146 @@ void DebugRenderer::Draw()
     ImGui::PlotLines("##DebugRendererFPSHistogram", FPSHistory.data(), HistogramSize, FPSHistoryIdx, NULL, 0, MaxFPS, ImVec2(200, 100));
     
     ImGui::End();
+}
+
+void DebugRenderer::DrawDevMenu()
+{
+    static bool bHasInitialized = false;
+    static bool bShowDemoWindow = false;
+
+    if (!bHasInitialized)
+    {
+        bHasInitialized = true;
+
+        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(ImVec2(viewport->WorkPos.x + viewport->Size.x - 550, viewport->WorkPos.y));
+        ImGui::SetNextWindowSize(ImVec2(550, 680));
+        ImGui::SetNextWindowCollapsed(false);
+    }
+    
+    if (!ImGui::Begin("Developer Menu", nullptr, ImGuiWindowFlags_MenuBar))
+    {
+        ImGui::End();
+        return;
+    }
+
+    // MENU BAR
+    {
+        if (ImGui::BeginMenuBar())
+        {
+            if (ImGui::Button("Imgui Demo"))
+            {
+                bShowDemoWindow = !bShowDemoWindow;
+            }
+
+            ImGui::EndMenuBar();
+        }
+    }
+
+    if (bShowDemoWindow)
+    {
+        ImGui::ShowDemoWindow(&bShowDemoWindow);
+    }
+
+    // TABS
+    {
+        if (ImGui::BeginTabBar("DevMenuTabBar"))
+        {
+            if (ImGui::BeginTabItem("Entities"))
+            {
+                DrawEntitiesTabContent();
+                ImGui::EndTabItem();
+            }
+            if (ImGui::BeginTabItem("Rendering"))
+            {
+                ImGui::Checkbox("Draw Dirty Cells", &GameSettings::Get().DebugDrawRenderedCells);
+                ImGui::EndTabItem();
+            }
+            ImGui::EndTabBar();
+        }        
+    }
+    
+    ImGui::End();
+}
+
+void DebugRenderer::DrawEntitiesTabContent()
+{
+    std::shared_ptr<Level> level = Game::Get().GetLevel();
+
+    ImGui::Checkbox("Debug Under Cursor", &DebugEntitiesUnderCursor);
+    if (DebugEntitiesUnderCursor)
+    {
+        ImVec2 mousePos = ImGui::GetMousePos();
+        Vector mousePosInWorld = WorldPositionUtility::ScreenPositionToWorld(Vector2D(mousePos.x, mousePos.y));
+        IntVector mousePosInCell = WorldPositionUtility::WorldPositionToCellPosition(mousePosInWorld);
+        IntVector chunkPos = WorldPositionUtility::WorldPositionToChunkPosition(IntVector(mousePosInWorld));
+        IntVector chunkSpace = WorldPositionUtility::WorldSpaceToChunkSpace(IntVector(mousePosInWorld));
+        
+        ImGui::SetNextWindowPos(mousePos);
+
+        ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoBackground;
+        flags &= ~(ImGuiWindowFlags_NoBackground);
+        ImGui::Begin("##DebugRenderer::DrawEntitiesTabContent_MouseCursorDebug", nullptr, flags);
+        
+        ImGui::Text("Mouse World Pos: %s", mousePosInWorld.ToString().c_str());
+        ImGui::Text("Cell Pos: %s", mousePosInCell.ToString().c_str());
+
+        ImGui::Text("Chunk: %s", chunkPos.ToString().c_str());
+        ImGui::SameLine();
+        ImGui::Text("Chunk Pos: %s", chunkSpace.ToString().c_str());
+
+        ImGui::Separator();
+
+        const auto& container = level->GetEntitiesAtPosition(mousePosInCell);
+        for (Entity entity : container.Entities)
+        {
+            DrawEntityFoldout(entity);
+        }
+
+        ImGui::End();
+    }
+
+    if (ImGui::CollapsingHeader("Chunks"))
+    {
+        std::vector<IntVector> chunks = level->GetLoadedChunks();
+        for (const IntVector& chunkPos : chunks)
+        {
+            std::string treeId = std::format("Chunk {}##DebugRenderer::DrawEntitiesTabContent", chunkPos.ToString().c_str());
+            if (ImGui::TreeNode(treeId.c_str()))
+            {
+                ImGui::TreePop();
+            }
+        }
+    }
+}
+
+void DebugRenderer::DrawEntityFoldout(Entity entity)
+{
+    std::shared_ptr<Level> level = Game::Get().GetLevel();
+    
+    std::string id = std::format("Entity ID({})##DebugRenderer::DrawEntityFoldout", entity);
+    ImGui::SetNextItemOpen(true);
+    if (ImGui::CollapsingHeader(id.c_str(), nullptr))
+    {
+        std::vector<Component*> comps = level->GetComponentManager().GetAllComponents(entity);
+        ImGui::SeparatorText(std::format("Components [{}]##DebugRenderer::DrawEntityFoldout_{}", comps.size(), entity).c_str());
+        for (Component* comp : comps)
+        {
+            auto treeId = std::format("{}##{}{}", typeid(*comp).name(), entity, typeid(*comp).hash_code());
+            ImGui::SetNextItemOpen(true);
+            if (ImGui::TreeNode(treeId.c_str()))
+            {
+                auto iter = Drawers.find(typeid(*comp));
+                if (iter != Drawers.end())
+                {
+                    iter->second->Draw(comp);
+                }
+                else
+                {
+                    ImGui::Text("NO DRAWER");
+                }
+                ImGui::TreePop();
+            }
+        }
+    }
 }

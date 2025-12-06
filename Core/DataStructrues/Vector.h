@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <type_traits>
 #include <float.h>
+#include <format>
 #include <iosfwd>
 #include <ostream>
 #include <valarray>
@@ -77,6 +78,11 @@ struct TemplatedVector2D
     {
         return TemplatedVector2D(X / val, Y / val);
     }
+
+    std::string ToString() const
+    {
+        return std::format("({}, {})", X, Y);
+    }
 };
 
 template<class T>
@@ -94,6 +100,9 @@ struct TemplatedVector
         static_assert(!(std::is_same<T, int>() && std::is_same<U, float>()));
         static_assert(!(std::is_same<T, float>() && std::is_same<U, double>()));
     }
+
+    template<class U>
+    explicit TemplatedVector(TemplatedVector<U> other) : X(static_cast<T>(other.X)), Y(static_cast<T>(other.Y)), Z(static_cast<T>(other.Z)) { }
 
     T X = 0;
     T Y = 0;
@@ -155,6 +164,11 @@ struct TemplatedVector
     TemplatedVector operator* (U val) const
     {
         return TemplatedVector(X * val, Y * val, Z * val);
+    }
+
+    std::string ToString() const
+    {
+        return std::format("({}, {}, {})", X, Y, Z);
     }
 };
 

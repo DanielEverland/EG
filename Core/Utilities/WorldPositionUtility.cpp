@@ -2,7 +2,31 @@
 
 #include <cassert>
 
-#include "Levels/MapChunk.h"
+#include "CoreFramework/Camera.h"
+#include "CoreFramework/Game.h"
+#include "CoreFramework/Renderer.h"
+
+Vector2D WorldPositionUtility::ScreenPositionToWorld(const Vector2D& screenPos)
+{
+    SDL_Rect rect;
+    SDL_GetRenderViewport(Renderer::Get().GetSDLRenderer(), &rect);
+
+    Vector2D relativeScreenPosToCenter = screenPos - Vector2D(rect.w / 2.0f, rect.h / 2.0f);
+    Vector2D relativeCameraOffsetWorldPos = Vector2D(
+        relativeScreenPosToCenter.X / Renderer::CellRenderingSize.X,
+        relativeScreenPosToCenter.Y / Renderer::CellRenderingSize.Y);
+
+    IntVector cameraPos = Camera::Get().GetPosition();
+
+    return Vector2D(
+        static_cast<float>(cameraPos.X) + relativeCameraOffsetWorldPos.X,
+        static_cast<float>(cameraPos.Y) + relativeCameraOffsetWorldPos.Y);
+}
+
+IntVector WorldPositionUtility::WorldPositionToCellPosition(const Vector& worldPosition)
+{
+    return IntVector(static_cast<int32_t>(floor(worldPosition.X)), static_cast<int32_t>(floor(worldPosition.Y)), static_cast<int32_t>(floor(worldPosition.Z)));
+}
 
 IntVector WorldPositionUtility::WorldPositionToChunkPosition(IntVector WorldPosition)
 {

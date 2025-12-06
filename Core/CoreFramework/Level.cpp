@@ -122,6 +122,17 @@ bool Level::IsValidMove(Entity entity, const IntVector& from, const IntVector& t
     return true;
 }
 
+std::vector<IntVector> Level::GetLoadedChunks() const
+{
+    std::vector<IntVector> chunks;
+    chunks.reserve(Chunks.size());
+    for (const IntVector& key : Chunks | std::views::keys)
+    {
+        chunks.push_back(key);
+    }
+    return chunks;
+}
+
 
 void Level::OnEntityLocationChanged(const GameplayMessage& baseMsg)
 {
