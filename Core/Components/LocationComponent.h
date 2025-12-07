@@ -19,7 +19,7 @@ public:
     void SetLocation(Entity owner, const IntVector& newLocation);
 
 private:
-    IntVector WorldLocation;
+    IntVector WorldLocation = IntVector(INT_MAX, INT_MAX, INT_MAX);
 };
 
 REGISTER_DEBUGGER(LocationComponent, LocationComponentDebugDrawer);
